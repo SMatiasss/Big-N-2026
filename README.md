@@ -50,8 +50,8 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 ## Cambios y reasignaciones
 
 | Fecha | Módulo | Cambio | Responsable anterior | Nuevo responsable | Nueva finalización |
-|---|---:|---|---|---|
-| — | — | — | — | — |
+|---|---:|---|---|---|---|
+| — | — | — | — | — | — |
 
 ## Índice de imágenes
 
