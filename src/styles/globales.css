@@ -1,0 +1,9 @@
+body {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  margin: 0;
+}
+
+#app {
+  min-height: 100%;
+}

@@ -1,0 +1,21 @@
+import '@ionic/core/css/ionic.bundle.css';
+import { initialize, alertController } from '@ionic/core/components';
+import { defineCustomElements } from '@ionic/core/loader';
+
+initialize();
+defineCustomElements(window);
+
+const boton = document.getElementById('btn-conectar');
+
+async function mostrarAlerta() {
+    const alert = await alertController.create({
+        header: 'Saludo',
+        message: '¡Hola mundo!',
+        buttons: ['OK']
+    });
+    await alert.present();
+}
+
+if (boton) {
+    boton.addEventListener('click', mostrarAlerta);
+}

@@ -1,0 +1,20 @@
+{
+  "name": "Grupete 2026 - Restaurante",
+  "short_name": "Grupete 2026",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f1ec",
+  "theme_color": "#7a3b2e",
+  "icons": [
+    {
+      "src": "assets/icon/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

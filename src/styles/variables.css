@@ -1,0 +1,11 @@
+/* Paleta de colores del restaurante (contraste, sin blanco/negro puro). */
+:root {
+  --color-fondo: #f4f1ec;
+  --color-superficie: #fffdf9;
+  --color-texto: #2b2521;
+  --color-primario: #7a3b2e;
+  --color-primario-contraste: #fdf6f2;
+  --color-secundario: #3e6259;
+  --color-error: #b3392c;
+  --color-borde: #ddd4c8;
+}

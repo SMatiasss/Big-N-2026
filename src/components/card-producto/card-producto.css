@@ -1,0 +1,12 @@
+.card-producto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--color-superficie, #fff);
+}
+
+.card-producto .precio {
+  font-weight: 600;
+}
