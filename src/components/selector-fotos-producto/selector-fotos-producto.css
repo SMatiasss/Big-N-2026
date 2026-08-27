@@ -59,8 +59,19 @@
   line-height: 1;
 }
 
-.selector-fotos-producto__posicion ion-button {
-  margin: 8px 0 0;
+.selector-fotos-producto__acciones {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 8px;
+}
+
+.selector-fotos-producto__acciones ion-button {
+  margin: 0;
+}
+
+.selector-fotos-producto__acciones ion-button:only-child {
+  grid-column: 1 / -1;
 }
 
 .selector-fotos-producto__error {

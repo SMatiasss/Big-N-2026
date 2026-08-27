@@ -3,10 +3,19 @@
 export const ROLES = {
   ADMIN: 'admin',
   MOZO: 'mozo',
+  // El rol identifica al empleado autorizado para trabajar en cocina.
+  COCINERO: 'cocinero',
+  // Se conserva por compatibilidad: "cocina" es un sector, no el rol cocinero.
   COCINA: 'cocina',
   BAR: 'bar',
   METRE: 'metre',
   CLIENTE: 'cliente',
+};
+
+// Los sectores indican dónde se prepara el producto; no representan roles de usuario.
+export const SECTORES = {
+  COCINA: 'cocina',
+  BAR: 'bar',
 };
 
 export const ESTADOS_PERFIL = {
@@ -31,6 +40,7 @@ export const ESTADOS_ESTADIA = {
 export const TABLAS = {
   PERFILES: 'perfiles',
   PRODUCTOS: 'productos',
+  PRODUCTO_FOTOS: 'producto_fotos',
   MESAS: 'mesas',
   LISTA_ESPERA: 'lista_espera',
   ESTADIAS: 'estadias',
@@ -41,4 +51,13 @@ export const TABLAS = {
   ENCUESTAS: 'encuestas',
   RESPUESTAS_ENCUESTA: 'respuestas_encuesta',
   CUENTAS: 'cuentas',
+};
+
+// El bucket público confirmado para almacenar las imágenes reales de productos.
+export const BUCKETS = {
+  PRODUCTOS: 'productos',
+};
+
+export const TIPOS_PRODUCTO = {
+  PLATO: 'plato',
 };

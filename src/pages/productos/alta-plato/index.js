@@ -2,6 +2,8 @@
 // Los módulos ES permiten mantener cada responsabilidad en un archivo separado.
 import './index.css';
 import { crearSelectorFotosProducto } from '../../../components/selector-fotos-producto/selector-fotos-producto.js';
+import { SECTORES, TIPOS_PRODUCTO } from '../../../config/constantes.js';
+import { crearPlatoCompleto } from '../../../services/productos.service.js';
 import {
   esCampoVacio,
   esEnteroPositivo,
@@ -136,7 +138,7 @@ export function render(container) {
 
             <ion-button class="alta-plato__submit" type="submit" expand="block">
               <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
-              <span>Validar plato</span>
+              <span>Registrar plato</span>
             </ion-button>
           </form>
         </main>
@@ -176,7 +178,7 @@ export function render(container) {
     enviando = valor;
     botonSubmit.disabled = valor;
     botonSubmit.classList.toggle('alta-plato__submit--procesando', valor);
-    textoSubmit.textContent = valor ? 'Validando...' : 'Validar plato';
+    textoSubmit.textContent = valor ? 'Registrando...' : 'Registrar plato';
     selectorFotos.establecerBloqueado(valor);
   }
 
@@ -197,26 +199,53 @@ export function render(container) {
 
   // submit es el evento del formulario. preventDefault evita que el navegador
   // recargue la página y permite controlar la validación con JavaScript.
-  formulario.addEventListener('submit', (evento) => {
+  formulario.addEventListener('submit', async (evento) => {
     evento.preventDefault();
     if (enviando) return;
 
     validacionMostrada = true;
-    establecerProcesando(true);
-
     const datos = obtenerDatosFormulario(formulario);
     const errores = validarFormulario(datos, imagenes);
     const esValido = mostrarResultadoValidacion(formulario, selectorFotos, errores);
 
-    if (esValido) {
-      resultado.textContent = 'Los datos son válidos. El guardado se incorporará en la próxima etapa.';
-      resultado.className = 'alta-plato__resultado alta-plato__resultado--exito';
-    } else {
+    if (!esValido) {
       resultado.textContent = 'Revisá los campos señalados antes de continuar.';
       resultado.className = 'alta-plato__resultado alta-plato__resultado--error';
+      return;
     }
 
-    establecerProcesando(false);
+    establecerProcesando(true);
+    resultado.textContent = '';
+    resultado.className = 'alta-plato__resultado';
+
+    try {
+      // La página sólo arma los datos válidos. El service encapsula el INSERT,
+      // Storage, producto_fotos, limpieza y consulta final de verificación.
+      // La validación del perfil cocina todavía depende de las policies existentes;
+      // su comprobación visual queda pendiente porque Auth/Perfiles están fuera de alcance.
+      // Se envían únicamente columnas que existen en el esquema real de productos;
+      // los campos administrados por la base se omiten para usar sus valores por defecto.
+      const platoCreado = await crearPlatoCompleto({
+        nombre: datos.nombre,
+        descripcion: datos.descripcion,
+        tiempo_elaboracion_min: Number(datos.tiempo),
+        precio: Number(datos.precio),
+        tipo: TIPOS_PRODUCTO.PLATO,
+        // Todo plato se elabora en cocina; el rol que autoriza el alta es "cocinero".
+        sector: SECTORES.COCINA,
+      }, imagenes);
+
+      resultado.textContent = `Plato registrado correctamente. ID verificado: ${platoCreado.id}`;
+      resultado.className = 'alta-plato__resultado alta-plato__resultado--exito';
+    } catch (error) {
+      console.error('No se pudo completar el alta del plato.', error);
+      resultado.textContent = `No se pudo registrar el plato: ${error.message ?? 'error desconocido'}`;
+      resultado.className = 'alta-plato__resultado alta-plato__resultado--error';
+    } finally {
+      // finally se ejecuta tanto en éxito como en error y garantiza que la
+      // interfaz vuelva a habilitarse después de la operación asincrónica.
+      establecerProcesando(false);
+    }
   });
 
   // El router actual no ofrece un ciclo de destrucción. Escuchamos un solo cambio

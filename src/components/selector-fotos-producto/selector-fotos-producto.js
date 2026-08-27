@@ -1,6 +1,11 @@
 // Los estilos pertenecen al componente y se cargan cuando éste se importa.
 import './selector-fotos-producto.css';
-import { esArchivoImagen } from '../../utils/validadores.js';
+import { obtenerErrorArchivoImagen } from '../../utils/validadores.js';
+import {
+  obtenerImagenNativa,
+  ORIGEN_IMAGEN,
+  puedeUsarCameraNativa,
+} from '../../services/imagenes-dispositivo.service.js';
 
 const CANTIDAD_FOTOS = 3;
 
@@ -31,12 +36,19 @@ export function seleccionarImagenLocal() {
   });
 }
 
+// Unifica las fuentes nativas y web bajo el mismo contrato: Promise<File|null>.
+// El componente indica el origen; la página nunca necesita conocerlo.
+async function obtenerImagenPredeterminada({ origen }) {
+  if (!puedeUsarCameraNativa()) return seleccionarImagenLocal();
+  return obtenerImagenNativa(origen);
+}
+
 // Crea el selector visual de tres fotos.
 // Recibe un callback para avisar cambios y una función independiente que obtiene archivos.
 // Devuelve el elemento para insertar en el DOM y métodos para controlarlo desde la página.
 export function crearSelectorFotosProducto({
   onCambio = () => {},
-  obtenerImagen = seleccionarImagenLocal,
+  obtenerImagen = obtenerImagenPredeterminada,
 } = {}) {
   const elemento = document.createElement('section');
   elemento.className = 'selector-fotos-producto';
@@ -47,6 +59,7 @@ export function crearSelectorFotosProducto({
   const archivos = Array(CANTIDAD_FOTOS).fill(null);
   const urlsPreview = Array(CANTIDAD_FOTOS).fill(null);
   let bloqueado = false;
+  let obteniendoImagen = false;
 
   elemento.innerHTML = `
     <div class="selector-fotos-producto__encabezado">
@@ -65,21 +78,21 @@ export function crearSelectorFotosProducto({
   function renderizarPosicion(indice) {
     const posicion = grilla.querySelector(`[data-posicion="${indice}"]`);
     const contenido = posicion.querySelector('.selector-fotos-producto__contenido');
-    const boton = posicion.querySelector('ion-button');
+    const botones = posicion.querySelectorAll('ion-button');
     const numeroVisible = indice + 1;
 
     if (urlsPreview[indice]) {
       contenido.innerHTML = `<img src="${urlsPreview[indice]}" alt="Vista previa de la foto ${numeroVisible} del plato">`;
-      boton.textContent = `Reemplazar foto ${numeroVisible}`;
     } else {
       contenido.innerHTML = `
         <span class="selector-fotos-producto__icono" aria-hidden="true">＋</span>
         <span>Foto ${numeroVisible}</span>
       `;
-      boton.textContent = `Seleccionar foto ${numeroVisible}`;
     }
 
-    boton.disabled = bloqueado;
+    botones.forEach((boton) => {
+      boton.disabled = bloqueado || obteniendoImagen;
+    });
   }
 
   // Reemplaza el archivo de una posición y administra su URL temporal.
@@ -99,15 +112,23 @@ export function crearSelectorFotosProducto({
 
   // Solicita una imagen a la fuente configurada. Hoy es un input local;
   // más adelante podrá ser Camera/Gallery manteniendo este mismo contrato.
-  async function solicitarImagen(indice) {
-    if (bloqueado) return;
+  async function solicitarImagen(indice, origen) {
+    if (bloqueado || obteniendoImagen) return;
 
     try {
-      const archivo = await obtenerImagen({ indice, archivoActual: archivos[indice] });
+      obteniendoImagen = true;
+      renderizarTodasLasPosiciones();
+
+      const archivo = await obtenerImagen({
+        indice,
+        origen,
+        archivoActual: archivos[indice],
+      });
       if (archivo === null || archivo === undefined) return;
 
-      if (!esArchivoImagen(archivo)) {
-        mostrarError('El archivo seleccionado debe ser una imagen válida.');
+      const errorArchivo = obtenerErrorArchivoImagen(archivo);
+      if (errorArchivo) {
+        mostrarError(errorArchivo);
         return;
       }
 
@@ -115,6 +136,17 @@ export function crearSelectorFotosProducto({
     } catch (error) {
       console.error('No se pudo obtener la imagen seleccionada.', error);
       mostrarError('No se pudo seleccionar la imagen. Intentá nuevamente.');
+    } finally {
+      obteniendoImagen = false;
+      renderizarTodasLasPosiciones();
+    }
+  }
+
+  // Redibuja las tres posiciones cuando cambia un estado compartido,
+  // por ejemplo mientras se espera una respuesta de Camera.
+  function renderizarTodasLasPosiciones() {
+    for (let indice = 0; indice < CANTIDAD_FOTOS; indice += 1) {
+      renderizarPosicion(indice);
     }
   }
 
@@ -124,15 +156,29 @@ export function crearSelectorFotosProducto({
     const posicion = document.createElement('article');
     posicion.className = 'selector-fotos-producto__posicion';
     posicion.dataset.posicion = indice;
+    const acciones = puedeUsarCameraNativa()
+      ? `
+        <ion-button type="button" fill="outline" size="small" data-origen="${ORIGEN_IMAGEN.CAMARA}">Cámara</ion-button>
+        <ion-button type="button" fill="outline" size="small" data-origen="${ORIGEN_IMAGEN.GALERIA}">Galería</ion-button>
+      `
+      : '<ion-button type="button" fill="outline" size="small" data-origen="local">Seleccionar archivo</ion-button>';
+
     posicion.innerHTML = `
       <button class="selector-fotos-producto__contenido" type="button" aria-label="Seleccionar foto ${indice + 1}"></button>
-      <ion-button type="button" fill="outline" size="small">Seleccionar foto ${indice + 1}</ion-button>
+      <div class="selector-fotos-producto__acciones">${acciones}</div>
     `;
 
     posicion.querySelector('.selector-fotos-producto__contenido')
-      .addEventListener('click', () => solicitarImagen(indice));
-    posicion.querySelector('ion-button')
-      .addEventListener('click', () => solicitarImagen(indice));
+      .addEventListener('click', () => solicitarImagen(
+        indice,
+        puedeUsarCameraNativa() ? ORIGEN_IMAGEN.GALERIA : 'local',
+      ));
+
+    // Cada botón comunica el origen mediante data-origen. El callback conserva
+    // el índice para reemplazar únicamente la foto elegida.
+    posicion.querySelectorAll('ion-button').forEach((boton) => {
+      boton.addEventListener('click', () => solicitarImagen(indice, boton.dataset.origen));
+    });
 
     grilla.append(posicion);
     renderizarPosicion(indice);
@@ -147,9 +193,7 @@ export function crearSelectorFotosProducto({
   // Bloquea las acciones del selector durante el envío del formulario.
   function establecerBloqueado(valor) {
     bloqueado = Boolean(valor);
-    for (let indice = 0; indice < CANTIDAD_FOTOS; indice += 1) {
-      renderizarPosicion(indice);
-    }
+    renderizarTodasLasPosiciones();
   }
 
   // Libera todas las URLs temporales cuando la página deja de usar el componente.
