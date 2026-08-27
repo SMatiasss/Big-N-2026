@@ -16,6 +16,6 @@
     "@capacitor/cli": "^8.5.0",
     "@capacitor/core": "^8.5.0",
     "@ionic/core": "^9.0.0",
-    "@supabase/supabase-js": "^2.112.3"
+    "@supabase/supabase-js": "^2.112.4"
   }
 }
