@@ -3,7 +3,7 @@ import { getSupabase } from './supabase.client.js';
 import { BUCKETS, TABLAS } from '../config/constantes.js';
 import { esArchivoImagen } from '../utils/validadores.js';
 
-const CANTIDAD_FOTOS_PLATO = 3;
+const CANTIDAD_FOTOS_PRODUCTO = 3;
 
 // Traduce el MIME del File a una extensión admitida por el bucket.
 function obtenerExtensionImagen(archivo) {
@@ -22,6 +22,18 @@ export async function listarCarta() {
   const { data, error } = await getSupabase().from(TABLAS.PRODUCTOS).select('*');
   if (error) throw error;
   return data;
+}
+
+// Busca coincidencias de nombre sin distinguir mayúsculas, igual que el índice
+// único de productos. La base seguirá siendo la protección final ante concurrencia.
+export async function existeProductoEnCarta(nombre) {
+  const nombreNormalizado = nombre.trim().toLocaleLowerCase('es');
+  const { data, error } = await getSupabase()
+    .from(TABLAS.PRODUCTOS)
+    .select('id, nombre');
+
+  if (error) throw error;
+  return data.some((producto) => producto.nombre.trim().toLocaleLowerCase('es') === nombreNormalizado);
 }
 
 // Consulta un producto por UUID junto con sus fotografías relacionadas.
@@ -76,14 +88,17 @@ async function limpiarAltaIncompleta(productoId, pathsSubidos) {
   }
 }
 
-// Registra un plato completo en Supabase.
-// Primero crea el producto, luego sube sus tres imágenes y finalmente inserta
-// producto_fotos. Si algo falla, intenta limpiar todo lo creado y propaga el error original.
-export async function crearPlatoCompleto(datosPlato, imagenes) {
+// Registra cualquier producto completo. Centraliza INSERT, Storage, fotos y verificación
+// para que platos y bebidas compartan el mismo flujo sin duplicar persistencia.
+async function crearProductoCompleto(datosProducto, imagenes) {
   if (!Array.isArray(imagenes)
-    || imagenes.length !== CANTIDAD_FOTOS_PLATO
+    || imagenes.length !== CANTIDAD_FOTOS_PRODUCTO
     || !imagenes.every(esArchivoImagen)) {
-    throw new Error('El plato debe contener exactamente tres imágenes válidas.');
+    throw new Error('El producto debe contener exactamente tres imágenes válidas.');
+  }
+
+  if (await existeProductoEnCarta(datosProducto.nombre)) {
+    throw new Error('Ya existe un producto con ese nombre en la carta.');
   }
 
   const supabase = getSupabase();
@@ -93,7 +108,7 @@ export async function crearPlatoCompleto(datosPlato, imagenes) {
   try {
     // await pausa esta función hasta recibir la fila insertada. Su UUID generado
     // por PostgreSQL se usa para organizar y relacionar las tres fotografías.
-    productoCreado = await altaProducto(datosPlato);
+    productoCreado = await altaProducto(datosProducto);
 
     const fotosParaInsertar = [];
 
@@ -102,7 +117,7 @@ export async function crearPlatoCompleto(datosPlato, imagenes) {
     for (let indice = 0; indice < imagenes.length; indice += 1) {
       const archivo = imagenes[indice];
       const extension = obtenerExtensionImagen(archivo);
-      const path = `platos/${productoCreado.id}/${crypto.randomUUID()}.${extension}`;
+      const path = `productos/${datosProducto.tipo}/${productoCreado.id}/${crypto.randomUUID()}.${extension}`;
 
       const { data: subida, error: errorSubida } = await supabase.storage
         .from(BUCKETS.PRODUCTOS)
@@ -136,6 +151,18 @@ export async function crearPlatoCompleto(datosPlato, imagenes) {
     if (productoCreado?.id) {
       await limpiarAltaIncompleta(productoCreado.id, pathsSubidos);
     }
+    if (errorOriginal?.code === '23505') {
+      throw new Error('Ya existe un producto con ese nombre en la carta.');
+    }
     throw errorOriginal;
   }
+}
+
+// Los wrappers mantienen una API expresiva para cada historia de usuario.
+export function crearPlatoCompleto(datosPlato, imagenes) {
+  return crearProductoCompleto(datosPlato, imagenes);
+}
+
+export function crearBebidaCompleta(datosBebida, imagenes) {
+  return crearProductoCompleto(datosBebida, imagenes);
 }

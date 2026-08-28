@@ -50,7 +50,7 @@ function obtenerTipoMime(resultado, blob) {
   return 'image/jpeg';
 }
 
-// Convierte el MediaResult real de Camera 8.2 en el File que usa HU02.
+// Convierte el MediaResult real de Camera 8.2 en el File que usan las altas de productos.
 // Intenta webPath, luego la URI convertida para WebView y finalmente thumbnail.
 // Devuelve un File compatible con previews, validadores y Supabase Storage.
 async function resultadoCameraAFile(resultado) {
@@ -75,7 +75,7 @@ async function resultadoCameraAFile(resultado) {
 
   const tipo = obtenerTipoMime(resultado, blob);
   const extension = tipo === 'image/jpeg' ? 'jpg' : tipo.split('/')[1];
-  const nombre = `plato-${crypto.randomUUID()}.${extension}`;
+  const nombre = `producto-${crypto.randomUUID()}.${extension}`;
 
   // File hereda de Blob y además agrega nombre y fecha. Esa forma es la que
   // ya espera el selector y la que luego puede subir Supabase Storage.

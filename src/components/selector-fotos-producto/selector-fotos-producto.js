@@ -49,6 +49,7 @@ async function obtenerImagenPredeterminada({ origen }) {
 export function crearSelectorFotosProducto({
   onCambio = () => {},
   obtenerImagen = obtenerImagenPredeterminada,
+  descripcionProducto = 'del producto',
 } = {}) {
   const elemento = document.createElement('section');
   elemento.className = 'selector-fotos-producto';
@@ -63,7 +64,7 @@ export function crearSelectorFotosProducto({
 
   elemento.innerHTML = `
     <div class="selector-fotos-producto__encabezado">
-      <h2 id="titulo-fotos-producto">Fotos del plato</h2>
+      <h2 id="titulo-fotos-producto">Fotos ${descripcionProducto}</h2>
       <p>Seleccioná exactamente tres imágenes.</p>
     </div>
     <div class="selector-fotos-producto__grilla"></div>
@@ -82,7 +83,7 @@ export function crearSelectorFotosProducto({
     const numeroVisible = indice + 1;
 
     if (urlsPreview[indice]) {
-      contenido.innerHTML = `<img src="${urlsPreview[indice]}" alt="Vista previa de la foto ${numeroVisible} del plato">`;
+      contenido.innerHTML = `<img src="${urlsPreview[indice]}" alt="Vista previa de la foto ${numeroVisible} ${descripcionProducto}">`;
     } else {
       contenido.innerHTML = `
         <span class="selector-fotos-producto__icono" aria-hidden="true">＋</span>

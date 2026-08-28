@@ -160,6 +160,7 @@ export function render(container) {
   // La página recibe archivos mediante onCambio, sin conocer si provienen de
   // un input local o, en una etapa futura, de Camera/Gallery.
   const selectorFotos = crearSelectorFotosProducto({
+    descripcionProducto: 'del plato',
     onCambio(indice, archivo) {
       imagenes[indice] = archivo;
 
