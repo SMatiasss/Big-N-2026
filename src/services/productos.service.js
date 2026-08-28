@@ -106,9 +106,20 @@ async function crearProductoCompleto(datosProducto, imagenes) {
   let productoCreado;
 
   try {
+    // El creador se obtiene de la sesión verificada, no del formulario ni de
+    // metadata editable. Esto deja trazabilidad y permite un rollback seguro.
+    const { data: usuarioActual, error: errorUsuario } = await supabase.auth.getUser();
+    if (errorUsuario) throw errorUsuario;
+    if (!usuarioActual.user) {
+      throw new Error('Necesitás iniciar sesión para registrar un producto.');
+    }
+
     // await pausa esta función hasta recibir la fila insertada. Su UUID generado
     // por PostgreSQL se usa para organizar y relacionar las tres fotografías.
-    productoCreado = await altaProducto(datosProducto);
+    productoCreado = await altaProducto({
+      ...datosProducto,
+      creado_por: usuarioActual.user.id,
+    });
 
     const fotosParaInsertar = [];
 
@@ -117,6 +128,8 @@ async function crearProductoCompleto(datosProducto, imagenes) {
     for (let indice = 0; indice < imagenes.length; indice += 1) {
       const archivo = imagenes[indice];
       const extension = obtenerExtensionImagen(archivo);
+      // La policy de Storage limita las altas al prefijo productos. El tipo
+      // separa platos y bebidas dentro del mismo bucket compartido.
       const path = `productos/${datosProducto.tipo}/${productoCreado.id}/${crypto.randomUUID()}.${extension}`;
 
       const { data: subida, error: errorSubida } = await supabase.storage

@@ -89,7 +89,7 @@ export function render(container) {
               </div>
             </div>
             <div class="alta-bebida__fotos"></div>
-            <ion-note class="alta-bebida__resultado" aria-live="polite"></ion-note>
+            <div class="alta-bebida__resultado" role="status" aria-live="polite" aria-atomic="true"></div>
             <ion-button class="alta-bebida__submit" type="submit" expand="block">
               <ion-spinner name="crescent" aria-hidden="true"></ion-spinner><span>Registrar bebida</span>
             </ion-button>

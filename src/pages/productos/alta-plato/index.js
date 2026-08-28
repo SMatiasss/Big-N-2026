@@ -134,7 +134,7 @@ export function render(container) {
 
             <div class="alta-plato__fotos"></div>
 
-            <ion-note class="alta-plato__resultado" aria-live="polite"></ion-note>
+            <div class="alta-plato__resultado" role="status" aria-live="polite" aria-atomic="true"></div>
 
             <ion-button class="alta-plato__submit" type="submit" expand="block">
               <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
