@@ -5,6 +5,8 @@ export const ROLES = {
   MOZO: 'mozo',
   // El rol identifica al empleado autorizado para trabajar en cocina.
   COCINERO: 'cocinero',
+  // El cantinero es el perfil autorizado para administrar bebidas del bar.
+  CANTINERO: 'cantinero',
   // Se conserva por compatibilidad: "cocina" es un sector, no el rol cocinero.
   COCINA: 'cocina',
   BAR: 'bar',
@@ -60,4 +62,5 @@ export const BUCKETS = {
 
 export const TIPOS_PRODUCTO = {
   PLATO: 'plato',
+  BEBIDA: 'bebida',
 };
