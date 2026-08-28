@@ -18,6 +18,9 @@ const CODIGOS_CANCELACION = new Set([
   CameraErrorCode.ChooseMediaCancelled,
 ]);
 
+const LADO_MAXIMO_IMAGEN = 1280;
+const CALIDAD_JPEG = 0.7;
+
 // Informa si se puede usar la implementación nativa de Camera.
 // Devuelve false en un navegador o si faltó sincronizar el plugin.
 export function puedeUsarCameraNativa() {
@@ -50,6 +53,45 @@ function obtenerTipoMime(resultado, blob) {
   return 'image/jpeg';
 }
 
+// Android puede devolver un archivo grande aunque Camera reciba opciones de calidad.
+// Esta segunda compresión limita las dimensiones y genera un JPEG liviano antes de validarlo.
+async function comprimirImagenNativa(blob) {
+  const imagen = await createImageBitmap(blob);
+  const escala = Math.min(
+    1,
+    LADO_MAXIMO_IMAGEN / imagen.width,
+    LADO_MAXIMO_IMAGEN / imagen.height,
+  );
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(imagen.width * escala));
+  canvas.height = Math.max(1, Math.round(imagen.height * escala));
+
+  const contexto = canvas.getContext('2d');
+  if (!contexto) {
+    imagen.close();
+    throw new Error('No se pudo preparar la imagen tomada con el dispositivo.');
+  }
+
+  contexto.fillStyle = '#ffffff';
+  contexto.fillRect(0, 0, canvas.width, canvas.height);
+  contexto.drawImage(imagen, 0, 0, canvas.width, canvas.height);
+  imagen.close();
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (imagenComprimida) => {
+        if (imagenComprimida) {
+          resolve(imagenComprimida);
+        } else {
+          reject(new Error('No se pudo comprimir la imagen tomada con el dispositivo.'));
+        }
+      },
+      'image/jpeg',
+      CALIDAD_JPEG,
+    );
+  });
+}
+
 // Convierte el MediaResult real de Camera 8.2 en el File que usan las altas de productos.
 // Intenta webPath, luego la URI convertida para WebView y finalmente thumbnail.
 // Devuelve un File compatible con previews, validadores y Supabase Storage.
@@ -73,13 +115,15 @@ async function resultadoCameraAFile(resultado) {
     throw new Error('Camera no devolvió una ruta o contenido de imagen utilizable.');
   }
 
-  const tipo = obtenerTipoMime(resultado, blob);
-  const extension = tipo === 'image/jpeg' ? 'jpg' : tipo.split('/')[1];
-  const nombre = `producto-${crypto.randomUUID()}.${extension}`;
+  const blobComprimido = await comprimirImagenNativa(blob);
+  const nombre = `producto-${crypto.randomUUID()}.jpg`;
 
   // File hereda de Blob y además agrega nombre y fecha. Esa forma es la que
   // ya espera el selector y la que luego puede subir Supabase Storage.
-  return new File([blob], nombre, { type: tipo, lastModified: Date.now() });
+  return new File([blobComprimido], nombre, {
+    type: 'image/jpeg',
+    lastModified: Date.now(),
+  });
 }
 
 // Obtiene una foto desde cámara o galería en una plataforma nativa.
@@ -94,9 +138,9 @@ export async function obtenerImagenNativa(origen) {
 
     if (origen === ORIGEN_IMAGEN.CAMARA) {
       resultado = await Camera.takePhoto({
-        quality: 85,
-        targetWidth: 1600,
-        targetHeight: 1600,
+        quality: 70,
+        targetWidth: LADO_MAXIMO_IMAGEN,
+        targetHeight: LADO_MAXIMO_IMAGEN,
         correctOrientation: true,
         encodingType: EncodingType.JPEG,
         saveToGallery: false,
@@ -106,9 +150,9 @@ export async function obtenerImagenNativa(origen) {
       const seleccion = await Camera.chooseFromGallery({
         mediaType: MediaTypeSelection.Photo,
         allowMultipleSelection: false,
-        quality: 85,
-        targetWidth: 1600,
-        targetHeight: 1600,
+        quality: 70,
+        targetWidth: LADO_MAXIMO_IMAGEN,
+        targetHeight: LADO_MAXIMO_IMAGEN,
         correctOrientation: true,
         includeMetadata: true,
       });
