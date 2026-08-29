@@ -45,6 +45,7 @@ async function renderSesionIniciada(container, session) {
     const { rol, esJefe } = await obtenerPermisosProductos();
     const puedeCargarPlatos = rol === ROLES.COCINERO || esJefe;
     const puedeCargarBebidas = rol === ROLES.CANTINERO || esJefe;
+    const puedeDarAltaEmpleados = rol === ROLES.DUENO || rol === ROLES.SUPERVISOR;
 
     // Este menú facilita la demo; las policies de Supabase siguen autorizando cada operación.
     if (puedeCargarPlatos || puedeCargarBebidas) {
@@ -62,6 +63,15 @@ async function renderSesionIniciada(container, session) {
       const botonAltaBebida = container.querySelector('#btn-alta-bebida');
       botonAltaBebida.hidden = false;
       botonAltaBebida.addEventListener('click', () => navegarA('/productos/alta-bebida'));
+    }
+
+    if (puedeDarAltaEmpleados) {
+      const botonAltaEmpleado = document.createElement('ion-button');
+      botonAltaEmpleado.id = 'btn-alta-empleado';
+      botonAltaEmpleado.setAttribute('expand', 'block');
+      botonAltaEmpleado.textContent = 'Alta de empleado';
+      botonAltaEmpleado.addEventListener('click', () => navegarA('/empleados/alta-empleado'));
+      container.querySelector('#btn-cerrar-sesion').before(botonAltaEmpleado);
     }
   } catch {
     mensajeError.textContent = 'No se pudieron cargar las acciones disponibles para el perfil.';

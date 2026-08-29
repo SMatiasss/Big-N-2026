@@ -11,6 +11,21 @@ export function esDniValido(valor) {
   return /^\d{7,8}$/.test(String(valor).trim());
 }
 
+export function esCuilValido(valor) {
+  const cuil = String(valor).replace(/\D/g, '');
+  if (!/^\d{11}$/.test(cuil)) return false;
+
+  const pesos = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
+  const suma = pesos.reduce((total, peso, indice) => total + Number(cuil[indice]) * peso, 0);
+  const resto = 11 - (suma % 11);
+  const verificador = resto === 11 ? 0 : resto === 10 ? 9 : resto;
+  return Number(cuil[10]) === verificador;
+}
+
+export function esNombrePersonaValido(valor) {
+  return /^[a-záéíóúüñ]+(?:[ '-][a-záéíóúüñ]+)*$/i.test(String(valor).trim());
+}
+
 export function esCampoVacio(valor) {
   return valor === undefined || valor === null || String(valor).trim() === '';
 }

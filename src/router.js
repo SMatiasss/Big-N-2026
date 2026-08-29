@@ -5,7 +5,7 @@ const rutas = {
   '/login': () => import('./pages/auth/login/index.js'),
   '/ingreso-anonimo': () => import('./pages/auth/ingreso-anonimo/index.js'),
 
-  '/empleados/alta': () => import('./pages/empleados/alta-empleado/index.js'),
+  '/empleados/alta-empleado': () => import('./pages/empleados/alta-empleado/index.js'),
   '/empleados': () => import('./pages/empleados/listado-empleados/index.js'),
 
   '/productos/alta-plato': () => import('./pages/productos/alta-plato/index.js'),

@@ -1,2 +1,11 @@
-.selector-avatar-foto {
+.selector-avatar-foto { margin-top: 24px; }
+.selector-avatar-foto h2 { color: var(--color-texto); font-size: 1.15rem; margin: 0 0 4px; }
+.selector-avatar-foto p { color: var(--ion-color-medium, #666); margin: 0 0 12px; }
+.selector-avatar-foto__preview {
+  align-items: center; background: var(--color-fondo); border: 2px dashed var(--color-borde);
+  border-radius: 50%; color: var(--ion-color-medium, #666); display: flex; height: 144px;
+  justify-content: center; margin: 0 auto 12px; overflow: hidden; width: 144px;
 }
+.selector-avatar-foto__preview img { height: 100%; object-fit: cover; width: 100%; }
+.selector-avatar-foto ion-note { display: block; min-height: 20px; padding-top: 6px; }
+.selector-avatar-foto--invalido .selector-avatar-foto__preview { border-color: var(--color-error); }

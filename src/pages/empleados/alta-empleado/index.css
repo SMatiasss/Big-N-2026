@@ -1,0 +1,17 @@
+.alta-empleado { background: var(--color-fondo); }
+.alta-empleado__contenido { margin: 0 auto; max-width: 860px; padding: 24px 18px 40px; }
+.alta-empleado__introduccion h1 { color: var(--color-texto); font-size: clamp(1.7rem, 5vw, 2.3rem); margin: 0 0 6px; }
+.alta-empleado__introduccion p { color: var(--ion-color-medium, #666); margin: 0 0 24px; }
+.alta-empleado__formulario { background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: 16px; padding: 20px; }
+.alta-empleado .campo-formulario { margin-bottom: 16px; }
+.alta-empleado .campo-formulario ion-item, .alta-empleado__perfil { --background: transparent; --border-color: var(--color-borde); --highlight-color-focused: var(--color-secundario); --padding-start: 0; }
+.alta-empleado .campo-formulario ion-note { display: block; min-height: 20px; padding: 5px 4px 0; }
+.alta-empleado .campo-formulario--invalido ion-item { --border-color: var(--color-error); --highlight-color-focused: var(--color-error); }
+.alta-empleado .campo-formulario--valido ion-item { --border-color: var(--color-secundario); }
+.alta-empleado__fila { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.alta-empleado__perfil { margin-bottom: 8px; }
+.alta-empleado__resultado-escaneo { background: var(--color-fondo); border: 1px solid var(--color-borde); border-radius: 8px; font-family: ui-monospace, monospace; font-size: .82rem; margin: -12px 0 20px; overflow-wrap: anywhere; padding: 10px; white-space: pre-wrap; }
+.alta-empleado__resultado { display: block; font-weight: 600; min-height: 24px; padding: 20px 0 8px; text-align: center; }
+.alta-empleado__resultado--exito { color: var(--color-secundario); }.alta-empleado__resultado--error { color: var(--color-error); }
+.alta-empleado__submit { margin: 8px 0 0; --background: var(--color-primario); --color: var(--color-primario-contraste); }
+@media (max-width: 600px) { .alta-empleado__contenido { padding: 18px 12px 28px; }.alta-empleado__formulario { border-radius: 12px; padding: 16px 12px; }.alta-empleado__fila { gap: 0; grid-template-columns: 1fr; } }

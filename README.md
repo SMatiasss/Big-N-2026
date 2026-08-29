@@ -23,7 +23,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 
 | Nº | Módulo (objetivo)                                 | Responsable  | Inicio | Finalización | Branch | Estado |
 | -: | ------------------------------------------------- | ------------ | --------------- | --------------------- | --------- | --------- |
-| 01 | Agregar un empleado                               | Soria        | - | - | - | Pendiente |
+| 01 | Agregar un empleado                               | Soria        | 28/08 | - | - | En curso |
 | 02 | Agregar un nuevo plato                            | Cespedes     | 26/08 | 28/08 | feat(hu02): implementar interfaz de alta de plato + demo-alta-movil | Finalizada |
 | 03 | Agregar una nueva bebida                          | Cespedes     | 28/08 | 28/08 |feat(hu03): implementar interfaz de alta de bebida + demo-alta-movil| Finalizada |
 | 04 | Agregar una nueva mesa                            | Terenghi Goy | - | - | - | Pendiente |

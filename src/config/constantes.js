@@ -2,6 +2,8 @@
 
 export const ROLES = {
   ADMIN: 'admin',
+  DUENO: 'dueno',
+  SUPERVISOR: 'supervisor',
   MOZO: 'mozo',
   // El rol identifica al empleado autorizado para trabajar en cocina.
   COCINERO: 'cocinero',

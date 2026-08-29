@@ -1,2 +1,4 @@
-.lector-qr {
-}
+.lector-qr { margin-bottom: 24px; }
+.lector-qr h2 { color: var(--color-texto); font-size: 1.15rem; margin: 0 0 4px; }
+.lector-qr p { color: var(--ion-color-medium, #666); margin: 0 0 12px; }
+.lector-qr ion-note { display: block; min-height: 20px; padding-top: 6px; }
