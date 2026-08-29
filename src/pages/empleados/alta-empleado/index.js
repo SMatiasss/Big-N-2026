@@ -41,8 +41,11 @@ function extraerDatosDni(contenido) {
     throw new Error('La lectura es inválida o está incompleta: faltan DNI, nombre o apellido.');
   }
 
-  const cuilCompleto = campos.find((valor) => /^\d{11}$/.test(valor));
-  const fragmentoCuil = campos.slice(indiceDni + 1).find((valor) => /^\d{3}$/.test(valor));
+  // El número de trámite también puede tener 11 dígitos, pero precede al DNI.
+  // El CUIL o su fragmento sólo aparecen después del número de documento.
+  const camposDespuesDelDni = campos.slice(indiceDni + 1);
+  const cuilCompleto = camposDespuesDelDni.find((valor) => /^\d{11}$/.test(valor));
+  const fragmentoCuil = camposDespuesDelDni.find((valor) => /^\d{3}$/.test(valor));
   const cuil = cuilCompleto ?? (fragmentoCuil
     ? `${fragmentoCuil.slice(0, 2)}${campos[indiceDni]}${fragmentoCuil[2]}`
     : '');
