@@ -1,5 +1,15 @@
 {
-  "appId": "com.ejemplo.pruebas",
-  "appName": "Pruebas",
-  "webDir": "dist"
+  "appId": "com.ejemplo.BigN",
+  "appName": "Big N",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "backgroundColor": "#DDA15E",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
+    }
+  }
 }
