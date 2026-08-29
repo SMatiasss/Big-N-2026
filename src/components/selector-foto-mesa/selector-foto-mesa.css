@@ -1,0 +1,92 @@
+.selector-foto-mesa {
+  display: block;
+  margin-top: 24px;
+}
+
+.selector-foto-mesa__encabezado h2 {
+  color: var(--color-texto);
+  font-size: 1.15rem;
+  margin: 0 0 4px;
+}
+
+.selector-foto-mesa__encabezado p {
+  color: var(--ion-color-medium, #666);
+  margin: 0 0 14px;
+}
+
+.selector-foto-mesa__posicion {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 320px;
+  min-width: 0;
+}
+
+.selector-foto-mesa__contenido {
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  background: var(--color-superficie);
+  border: 2px dashed var(--color-borde);
+  border-radius: 12px;
+  color: var(--color-secundario);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font: inherit;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
+}
+
+.selector-foto-mesa__contenido:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-secundario) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.selector-foto-mesa__contenido img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.selector-foto-mesa__icono {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.selector-foto-mesa__acciones {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 8px;
+}
+
+.selector-foto-mesa__acciones ion-button {
+  margin: 0;
+}
+
+.selector-foto-mesa__acciones ion-button:only-child {
+  grid-column: 1 / -1;
+}
+
+.selector-foto-mesa__error {
+  display: block;
+  min-height: 20px;
+  padding-top: 6px;
+  text-align: center;
+}
+
+.selector-foto-mesa--invalido .selector-foto-mesa__contenido {
+  border-color: var(--color-error);
+}
+
+@media (max-width: 600px) {
+  .selector-foto-mesa__posicion {
+    max-width: none;
+  }
+
+  .selector-foto-mesa__contenido {
+    aspect-ratio: 16 / 10;
+  }
+}

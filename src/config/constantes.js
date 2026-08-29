@@ -22,6 +22,13 @@ export const SECTORES = {
   BAR: 'bar',
 };
 
+// Coincide con el enum tipo_mesa del schema (01_schema.sql).
+export const TIPOS_MESA = {
+  ESTANDAR: 'estandar',
+  VIP: 'vip',
+  MOVILIDAD_REDUCIDA: 'movilidad_reducida',
+};
+
 export const ESTADOS_PERFIL = {
   PENDIENTE: 'pendiente',
   APROBADO: 'aprobado',
@@ -57,9 +64,10 @@ export const TABLAS = {
   CUENTAS: 'cuentas',
 };
 
-// El bucket público confirmado para almacenar las imágenes reales de productos.
+// Buckets públicos de Supabase Storage para las imágenes reales de cada entidad.
 export const BUCKETS = {
   PRODUCTOS: 'productos',
+  MESAS: 'mesas',
 };
 
 export const TIPOS_PRODUCTO = {

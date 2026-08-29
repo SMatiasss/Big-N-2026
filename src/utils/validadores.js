@@ -37,7 +37,8 @@ export function esTextoObligatorioValido(valor) {
 }
 
 // Valida cantidades que deben expresarse como números enteros mayores que cero,
-// por ejemplo el tiempo de elaboración de un plato.
+// por ejemplo el tiempo de elaboración de un plato, el número de mesa
+// o la cantidad de comensales.
 export function esEnteroPositivo(valor) {
   if (esCampoVacio(valor)) return false;
 
@@ -54,7 +55,7 @@ export function esNumeroPositivo(valor) {
   return Number.isFinite(numero) && numero > 0;
 }
 
-// Explica por qué un archivo no cumple el contrato del bucket productos.
+// Explica por qué un archivo no cumple el contrato del bucket de imágenes.
 // Devuelve una cadena vacía cuando el archivo es válido.
 export function obtenerErrorArchivoImagen(archivo) {
   if (!(archivo instanceof File) || archivo.size === 0) {
