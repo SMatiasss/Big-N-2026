@@ -30,8 +30,7 @@ async function renderSesionIniciada(container, session) {
       <div id="acciones-demo-productos" hidden>
         <h3>Acciones de demo</h3>
         <p id="perfil-sesion"></p>
-        <ion-button id="btn-alta-plato" expand="block" hidden>Alta de plato</ion-button>
-        <ion-button id="btn-alta-bebida" expand="block" hidden>Alta de bebida</ion-button>
+        <div id="botones-acciones"></div>
       </div>
       <ion-button id="btn-cerrar-sesion" color="danger">Cerrar sesión</ion-button>
       <div id="mensaje-error"></div>
@@ -49,40 +48,29 @@ async function renderSesionIniciada(container, session) {
     const puedeDarAltaMesa = rol === ROLES.DUENO || rol === ROLES.SUPERVISOR;
 
     // Este menú facilita la demo; las policies de Supabase siguen autorizando cada operación.
-    if (puedeCargarPlatos || puedeCargarBebidas) {
+    // Cada botón se crea (y por lo tanto sólo existe en el DOM) si el rol lo permite: usar el
+    // atributo "hidden" sobre un ion-button ya creado no alcanza, porque el propio CSS del
+    // componente fija su "display" y termina pisando la regla nativa de "hidden".
+    const contenedorBotones = container.querySelector('#botones-acciones');
+
+    function agregarBotonAccion(id, texto, ruta) {
+      const boton = document.createElement('ion-button');
+      boton.id = id;
+      boton.setAttribute('expand', 'block');
+      boton.textContent = texto;
+      boton.addEventListener('click', () => navegarA(ruta));
+      contenedorBotones.append(boton);
+    }
+
+    if (puedeCargarPlatos || puedeCargarBebidas || puedeDarAltaEmpleados || puedeDarAltaMesa) {
       container.querySelector('#acciones-demo-productos').hidden = false;
       container.querySelector('#perfil-sesion').textContent = `Perfil: ${rol}`;
     }
 
-    if (puedeCargarPlatos) {
-      const botonAltaPlato = container.querySelector('#btn-alta-plato');
-      botonAltaPlato.hidden = false;
-      botonAltaPlato.addEventListener('click', () => navegarA('/productos/alta-plato'));
-    }
-
-    if (puedeCargarBebidas) {
-      const botonAltaBebida = container.querySelector('#btn-alta-bebida');
-      botonAltaBebida.hidden = false;
-      botonAltaBebida.addEventListener('click', () => navegarA('/productos/alta-bebida'));
-    }
-
-    if (puedeDarAltaEmpleados) {
-      const botonAltaEmpleado = document.createElement('ion-button');
-      botonAltaEmpleado.id = 'btn-alta-empleado';
-      botonAltaEmpleado.setAttribute('expand', 'block');
-      botonAltaEmpleado.textContent = 'Alta de empleado';
-      botonAltaEmpleado.addEventListener('click', () => navegarA('/empleados/alta-empleado'));
-      container.querySelector('#btn-cerrar-sesion').before(botonAltaEmpleado);
-    }
-
-    if (puedeDarAltaMesa) {
-      const botonAltaMesa = document.createElement('ion-button');
-      botonAltaMesa.id = 'btn-alta-mesa';
-      botonAltaMesa.setAttribute('expand', 'block');
-      botonAltaMesa.textContent = 'Alta de mesa';
-      botonAltaMesa.addEventListener('click', () => navegarA('/mesas/alta'));
-      container.querySelector('#btn-cerrar-sesion').before(botonAltaMesa);
-    }
+    if (puedeCargarPlatos) agregarBotonAccion('btn-alta-plato', 'Alta de plato', '/productos/alta-plato');
+    if (puedeCargarBebidas) agregarBotonAccion('btn-alta-bebida', 'Alta de bebida', '/productos/alta-bebida');
+    if (puedeDarAltaEmpleados) agregarBotonAccion('btn-alta-empleado', 'Alta de empleado', '/empleados/alta-empleado');
+    if (puedeDarAltaMesa) agregarBotonAccion('btn-alta-mesa', 'Alta de mesa', '/mesas/alta');
   } catch {
     mensajeError.textContent = 'No se pudieron cargar las acciones disponibles para el perfil.';
   }
