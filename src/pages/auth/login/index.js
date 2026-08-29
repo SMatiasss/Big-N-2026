@@ -102,9 +102,17 @@ function renderFormularioLogin(container) {
 
   const form = container.querySelector('#form-login');
   const mensajeError = container.querySelector('#mensaje-error');
+  const botonIngresar = form.querySelector('ion-button[type="submit"]');
+  // ion-button[type="submit"] dentro de un form a veces dispara "submit" dos
+  // veces por un mismo click (manejo interno de Ionic + comportamiento nativo
+  // del botón). Esta bandera evita que el segundo dispare un signIn/render
+  // por duplicado (que en renderSesionIniciada terminaba duplicando botones).
+  let enviando = false;
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (enviando) return;
+
     mensajeError.textContent = '';
 
     const datos = new FormData(form);
@@ -122,12 +130,17 @@ function renderFormularioLogin(container) {
       return;
     }
 
+    enviando = true;
+    botonIngresar.disabled = true;
+
     try {
       await signIn(email, password);
       render(container);
     } catch (error) {
       mensajeError.textContent = error.message;
       await vibrarError();
+      enviando = false;
+      botonIngresar.disabled = false;
     }
   });
 

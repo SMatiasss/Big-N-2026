@@ -1,10 +1,20 @@
 import './index.css';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
-import { ROLES } from '../../../config/constantes.js';
+import { ROLES, ROLES_EMPLEADO } from '../../../config/constantes.js';
 import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
 
-const ROLES_DISPONIBLES = Object.values(ROLES);
+const ROLES_DISPONIBLES = ROLES_EMPLEADO;
+
+// Etiquetas legibles para el combo; el valor que se guarda sigue siendo el de ROLES.
+const ETIQUETAS_ROL = {
+  [ROLES.DUENO]: 'Dueño',
+  [ROLES.SUPERVISOR]: 'Supervisor',
+  [ROLES.METRE]: 'Metre',
+  [ROLES.MOZO]: 'Mozo',
+  [ROLES.COCINERO]: 'Cocinero',
+  [ROLES.CANTINERO]: 'Cantinero',
+};
 
 function datosFormulario(formulario) {
   return Object.fromEntries(['nombre', 'apellido', 'dni', 'cuil', 'email', 'password', 'rol'].map((campo) => [campo, formulario.querySelector(`#${campo}-empleado`).value?.trim() ?? '']));
@@ -67,7 +77,7 @@ function cargarValorEnCampo(formulario, campo, valor) {
 
 export function render(container) {
   const opcionesRoles = ROLES_DISPONIBLES
-    .map((rol) => `<ion-select-option value="${rol}">${rol}</ion-select-option>`)
+    .map((rol) => `<ion-select-option value="${rol}">${ETIQUETAS_ROL[rol] ?? rol}</ion-select-option>`)
     .join('');
 
   container.innerHTML = `
@@ -111,7 +121,8 @@ export function render(container) {
   formulario.addEventListener('submit', (evento) => {
     evento.preventDefault(); mostrarValidacion = true; const errores = validar(datosFormulario(formulario), foto); actualizar(); avatar.mostrarError(errores.foto ?? '');
     if (Object.keys(errores).length) { resultado.textContent = 'Revisá los campos señalados antes de continuar.'; resultado.className = 'alta-empleado__resultado alta-empleado__resultado--error'; return; }
-    resultado.textContent = `Datos del empleado con perfil ${datosFormulario(formulario).rol} validados correctamente. El alta remota requiere el endpoint seguro de administración aún no configurado.`;
+    const rolSeleccionado = datosFormulario(formulario).rol;
+    resultado.textContent = `Datos del empleado con perfil ${ETIQUETAS_ROL[rolSeleccionado] ?? rolSeleccionado} validados correctamente. El alta remota requiere el endpoint seguro de administración aún no configurado.`;
     resultado.className = 'alta-empleado__resultado alta-empleado__resultado--exito';
   });
   window.addEventListener('hashchange', () => avatar.destruir(), { once: true });
