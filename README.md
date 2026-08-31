@@ -16,8 +16,8 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 |---|---|
 | **Soria Matias (Líder)** | 01, 08, 18, 19, 22 |
 | **Cespedes Andrés** | 02, 03, 06, 11, 15, 20 |
-| **Terenghi Goy Estéfano** | 04, 05, 09, 10, 13, 16 |
-| **Romero Facundo** | 07, 12, 14, 17, 21 |
+| **Terenghi Goy Estéfano** | 04, 09, 10, 13, 16 |
+| **Romero Facundo** | 05, 07, 12, 14, 17, 21 |
 
 ## Módulos asignados
 

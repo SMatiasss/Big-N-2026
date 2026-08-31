@@ -1,3 +1,4 @@
+import { App } from '@capacitor/app';
 import '@ionic/core/css/ionic.bundle.css';
 import { initialize } from '@ionic/core/components';
 import { defineCustomElements } from '@ionic/core/loader';
@@ -28,4 +29,14 @@ window.addEventListener('load', () => {
         }, 500);
     }
     }, 4000); // 3.5 segundos en pantalla
+});
+// location.hash = '/mesas/alta'
+iniciarRouter(document.querySelector('#app'));
+
+// El router cambia de pantalla vía location.hash, lo que apila entradas en el
+// historial del WebView. Por eso el botón "atrás" físico puede resolverse
+// simplemente retrocediendo ese historial en lugar de cerrar la app.
+App.addListener('backButton', ({ canGoBack }) => {
+  if (canGoBack) window.history.back();
+  else App.exitApp();
 });

@@ -16,6 +16,17 @@ export const ROLES = {
   CLIENTE: 'cliente',
 };
 
+// Roles asignables desde el alta de empleado: excluye ADMIN/COCINA/BAR/CLIENTE,
+// que no son valores válidos de la columna perfiles.rol en la base (ver rol_usuario en 01_schema.sql).
+export const ROLES_EMPLEADO = [
+  ROLES.DUENO,
+  ROLES.SUPERVISOR,
+  ROLES.METRE,
+  ROLES.MOZO,
+  ROLES.COCINERO,
+  ROLES.CANTINERO,
+];
+
 // Los sectores indican dónde se prepara el producto; no representan roles de usuario.
 export const SECTORES = {
   COCINA: 'cocina',
