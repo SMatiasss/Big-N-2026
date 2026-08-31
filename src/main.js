@@ -13,14 +13,19 @@ initSupabase();
 //location.hash = '/mesas/alta'
 iniciarRouter(document.querySelector('#app'));
 
+
+// Splash screen con movimiento y sonido custom
 window.addEventListener('load', () => {
+    const sonido = new Audio('/assets/sonidos/sonido-inicio.mp3');
+    sonido.play().catch(e => console.log("Bloqueado en web PC, pero sonará en celular:", e));
+
     setTimeout(() => {
     const splash = document.getElementById('web-splash');
     if (splash) {
         splash.style.opacity = '0'; // Inicia el desvanecimiento
         setTimeout(() => {
         splash.remove(); // La borra para que puedas usar la app
-        }, 500); // Dura lo mismo que la transición
+        }, 500);
     }
-    }, 3500); // 2.5 segundos en pantalla
+    }, 4000); // 3.5 segundos en pantalla
 });

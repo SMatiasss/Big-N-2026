@@ -20,8 +20,10 @@
     align-items: center;
     justify-content: center;
 }
+
 .splash-logo img {
-    width: 150px; /* Tu logo centrado */
+    width: 400px;
+    animation: latido 2s infinite ease-in-out; 
 }
 
 .splash-footer {
@@ -29,9 +31,26 @@
     color: #283618;
     font-family: sans-serif;
     margin-bottom: 20px;
+    animation: subirYAparecer 1.2s ease-out forwards; /* Aparece una sola vez en 1.2 segundos */
 }
 .splash-footer p {
     margin: 5px 0;
     font-size: 16px;
     font-weight: 600;
 }
+
+/* 1. Creamos las animaciones */
+@keyframes latido {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); } /* Se agranda un 10% */
+    100% { transform: scale(1); }
+}
+
+@keyframes subirYAparecer {
+    0% { opacity: 0; transform: translateY(20px); } /* Empieza invisible y más abajo */
+    100% { opacity: 1; transform: translateY(0); }  /* Termina en su lugar normal */
+}
+
+
+
+
