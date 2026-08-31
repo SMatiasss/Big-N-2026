@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Pruebas</string>
-    <string name="title_activity_main">Pruebas</string>
+    <string name="app_name">Big N</string>
+    <string name="title_activity_main">Big N</string>
     <string name="package_name">com.ejemplo.pruebas</string>
     <string name="custom_url_scheme">com.ejemplo.pruebas</string>
 </resources>

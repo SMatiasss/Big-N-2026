@@ -12,8 +12,10 @@
     "vite": "^8.2.0"
   },
   "dependencies": {
+    "@capacitor-community/native-audio": "^8.0.0",
     "@capacitor-mlkit/barcode-scanning": "^8.1.0",
     "@capacitor/android": "^8.5.0",
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/app": "^8.1.1",
     "@capacitor/camera": "^8.2.3",
     "@capacitor/cli": "^8.5.0",
@@ -21,5 +23,10 @@
     "@capacitor/haptics": "^8.0.2",
     "@ionic/core": "^9.0.0",
     "@supabase/supabase-js": "^2.112.4"
+  },
+  "overrides": {
+    "@capacitor/assets": {
+      "sharp": "^0.35.4"
+    }
   }
 }
