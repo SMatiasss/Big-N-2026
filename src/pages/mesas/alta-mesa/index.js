@@ -2,8 +2,10 @@
 // pero con los campos y la foto única que requiere una mesa.
 import './index.css';
 import { crearSelectorFotoMesa } from '../../../components/selector-foto-mesa/selector-foto-mesa.js';
+import { mostrarToast } from '../../../components/toast-error/toast-error.js';
 import { TIPOS_MESA } from '../../../config/constantes.js';
 import { crearMesaCompleta } from '../../../services/mesas.service.js';
+import { navegarA } from '../../../router.js';
 import {
   esArchivoImagen,
   esCampoVacio,
@@ -76,7 +78,7 @@ function mostrarResultadoValidacion(formulario, selectorFoto, errores) {
 // Renderiza la interfaz de alta de mesa dentro del contenedor que entrega el router.
 export function render(container) {
   container.innerHTML = `
-    <ion-page class="alta-mesa">
+    <ion-page class="ion-page alta-mesa">
       <ion-header>
         <ion-toolbar color="primary">
           <ion-title>Alta de mesa</ion-title>
@@ -208,12 +210,20 @@ export function render(container) {
         tipo: datos.tipo,
       }, foto);
 
-      resultado.textContent = `Mesa registrada correctamente. QR generado: ${mesaCreada.qr_token}`;
-      resultado.className = 'alta-mesa__resultado alta-mesa__resultado--exito';
+      // El qr_token es sólo un dato interno de verificación; no es algo que
+      // el cliente final deba ver. Se vuelve al listado (que se re-renderiza
+      // entero y por lo tanto se actualiza) recién cuando el usuario toca OK.
+      mostrarToast({
+        mensaje: 'Mesa registrada correctamente.',
+        tipo: 'exito',
+        onCerrar: () => navegarA('/mesas'),
+      });
     } catch (error) {
       console.error('No se pudo completar el alta de la mesa.', error);
-      resultado.textContent = `No se pudo registrar la mesa: ${error.message ?? 'error desconocido'}`;
-      resultado.className = 'alta-mesa__resultado alta-mesa__resultado--error';
+      mostrarToast({
+        mensaje: `No se pudo registrar la mesa: ${error.message ?? 'error desconocido'}`,
+        tipo: 'error',
+      });
     } finally {
       establecerProcesando(false);
     }

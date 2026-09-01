@@ -4,25 +4,36 @@ import {
   signIn,
   signOut,
 } from '../../../services/auth.service.js';
-import { ROLES } from '../../../config/constantes.js';
+import { ROLES, ROLES_EMPLEADO } from '../../../config/constantes.js';
 import { getSupabase } from '../../../services/supabase.client.js';
 import { esEmailValido, esCampoVacio } from '../../../utils/validadores.js';
 import { vibrarError } from '../../../utils/vibracion.js';
 import { navegarA } from '../../../router.js';
 
+// Cada llamada a render() toma un número de generación. Si mientras se espera
+// una consulta asincrónica (getSession, obtenerPermisosProductos) arranca OTRA
+// llamada a render() -por el motivo que sea: doble submit, doble invocación al
+// arrancar la app, etc.-, la ejecución vieja lo detecta y no vuelve a tocar el
+// DOM; sólo la más nueva termina de construir la pantalla. Así se evita la
+// duplicación de botones sin depender de adivinar cada disparador posible.
+let generacionRender = 0;
+
 export async function render(container) {
+  const generacion = ++generacionRender;
   const {
     data: { session },
   } = await getSupabase().auth.getSession();
 
+  if (generacion !== generacionRender) return;
+
   if (session) {
-    await renderSesionIniciada(container, session);
+    await renderSesionIniciada(container, session, generacion);
   } else {
     renderFormularioLogin(container);
   }
 }
 
-async function renderSesionIniciada(container, session) {
+async function renderSesionIniciada(container, session, generacion) {
   container.innerHTML = `
     <ion-content>
       <h2>Sesión iniciada</h2>
@@ -42,10 +53,14 @@ async function renderSesionIniciada(container, session) {
 
   try {
     const { rol, esJefe } = await obtenerPermisosProductos();
+    if (generacion !== generacionRender) return;
+
     const puedeCargarPlatos = rol === ROLES.COCINERO || esJefe;
     const puedeCargarBebidas = rol === ROLES.CANTINERO || esJefe;
     const puedeDarAltaEmpleados = rol === ROLES.DUENO || rol === ROLES.SUPERVISOR;
-    const puedeDarAltaMesa = rol === ROLES.DUENO || rol === ROLES.SUPERVISOR;
+    // El listado de mesas lo puede ver cualquier trabajador; quién puede dar de
+    // alta una mesa se decide adentro de ese listado (botón "+"), no acá.
+    const puedeVerMesas = ROLES_EMPLEADO.includes(rol);
 
     // Este menú facilita la demo; las policies de Supabase siguen autorizando cada operación.
     // Cada botón se crea (y por lo tanto sólo existe en el DOM) si el rol lo permite: usar el
@@ -62,7 +77,7 @@ async function renderSesionIniciada(container, session) {
       contenedorBotones.append(boton);
     }
 
-    if (puedeCargarPlatos || puedeCargarBebidas || puedeDarAltaEmpleados || puedeDarAltaMesa) {
+    if (puedeCargarPlatos || puedeCargarBebidas || puedeDarAltaEmpleados || puedeVerMesas) {
       container.querySelector('#acciones-demo-productos').hidden = false;
       container.querySelector('#perfil-sesion').textContent = `Perfil: ${rol}`;
     }
@@ -70,7 +85,7 @@ async function renderSesionIniciada(container, session) {
     if (puedeCargarPlatos) agregarBotonAccion('btn-alta-plato', 'Alta de plato', '/productos/alta-plato');
     if (puedeCargarBebidas) agregarBotonAccion('btn-alta-bebida', 'Alta de bebida', '/productos/alta-bebida');
     if (puedeDarAltaEmpleados) agregarBotonAccion('btn-alta-empleado', 'Alta de empleado', '/empleados/alta-empleado');
-    if (puedeDarAltaMesa) agregarBotonAccion('btn-alta-mesa', 'Alta de mesa', '/mesas/alta');
+    if (puedeVerMesas) agregarBotonAccion('btn-mesas', 'Mesas', '/mesas');
   } catch {
     mensajeError.textContent = 'No se pudieron cargar las acciones disponibles para el perfil.';
   }

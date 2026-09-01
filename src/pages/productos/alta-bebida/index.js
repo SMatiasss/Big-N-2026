@@ -61,7 +61,7 @@ function mostrarResultadoValidacion(formulario, selectorFotos, errores) {
 // Renderiza HU03 y conserva localmente las tres posiciones de imágenes.
 export function render(container) {
   container.innerHTML = `
-    <ion-page class="alta-bebida">
+    <ion-page class="ion-page alta-bebida">
       <ion-header><ion-toolbar color="primary"><ion-title>Alta de bebida</ion-title></ion-toolbar></ion-header>
       <ion-content>
         <main class="alta-bebida__contenido">

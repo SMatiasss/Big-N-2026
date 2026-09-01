@@ -1,2 +1,43 @@
+/* Estilo mínimo funcional; el diseño final queda pendiente. */
 .toast-error {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.45);
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  padding: 16px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 9999;
+}
+
+.toast-error__tarjeta {
+  background: var(--color-superficie);
+  border-radius: 16px;
+  max-width: 340px;
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+}
+
+.toast-error__mensaje {
+  color: var(--color-texto);
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.toast-error--exito .toast-error__mensaje {
+  color: var(--color-secundario);
+}
+
+.toast-error--error .toast-error__mensaje {
+  color: var(--color-error);
+}
+
+.toast-error__boton {
+  --background: var(--color-primario);
+  --color: var(--color-primario-contraste);
+  margin: 0;
 }

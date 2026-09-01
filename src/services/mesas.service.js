@@ -61,7 +61,9 @@ export async function crearMesaCompleta(datosMesa, foto) {
 }
 
 export async function listarMesas() {
-  const { data, error } = await getSupabase().from(TABLAS.MESAS).select('*');
+  // numero es unique en el schema, así que Postgres ya tiene el índice
+  // que hace este order by gratis; no hace falta uno aparte.
+  const { data, error } = await getSupabase().from(TABLAS.MESAS).select('*').order('numero');
   if (error) throw error;
   return data;
 }

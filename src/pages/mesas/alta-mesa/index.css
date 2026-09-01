@@ -66,10 +66,6 @@
   text-align: center;
 }
 
-.alta-mesa__resultado--exito {
-  color: var(--color-secundario);
-}
-
 .alta-mesa__resultado--error {
   color: var(--color-error);
 }

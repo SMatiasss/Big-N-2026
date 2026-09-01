@@ -81,7 +81,7 @@
       .join('');
 
     container.innerHTML = `
-      <ion-page class="alta-empleado"><ion-header><ion-toolbar color="primary"><ion-title>Alta de empleado</ion-title></ion-toolbar></ion-header><ion-content><main class="alta-empleado__contenido">
+      <ion-page class="ion-page alta-empleado"><ion-header><ion-toolbar color="primary"><ion-title>Alta de empleado</ion-title></ion-toolbar></ion-header><ion-content><main class="alta-empleado__contenido">
         <header class="alta-empleado__introduccion"><h1>Nuevo empleado</h1><p>Completá los datos del empleado, tomá su foto y, si está disponible, leé el DNI.</p></header>
         <form class="alta-empleado__formulario" novalidate><div class="alta-empleado__lector-qr"></div><pre class="alta-empleado__resultado-escaneo" aria-live="polite" hidden></pre>
           <div class="alta-empleado__fila"><div class="campo-formulario" data-campo="nombre"><ion-item><ion-input id="nombre-empleado" label="Nombre" label-placement="stacked" maxlength="80" required></ion-input></ion-item><ion-note color="danger" data-error="nombre"></ion-note></div><div class="campo-formulario" data-campo="apellido"><ion-item><ion-input id="apellido-empleado" label="Apellido" label-placement="stacked" maxlength="80" required></ion-input></ion-item><ion-note color="danger" data-error="apellido"></ion-note></div></div>

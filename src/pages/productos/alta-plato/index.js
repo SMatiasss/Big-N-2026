@@ -87,7 +87,7 @@ function mostrarResultadoValidacion(formulario, selectorFotos, errores) {
 // También conecta los eventos y conserva el estado temporal de la pantalla.
 export function render(container) {
   container.innerHTML = `
-    <ion-page class="alta-plato">
+    <ion-page class="ion-page alta-plato">
       <ion-header>
         <ion-toolbar color="primary">
           <ion-title>Alta de plato</ion-title>

@@ -1,0 +1,5 @@
+ion-fab ion-fab-button {
+  --background: var(--color-primario);
+  --color: var(--color-primario-contraste);
+  font-size: 1.6rem;
+}
