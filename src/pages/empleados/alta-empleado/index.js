@@ -7,7 +7,11 @@ import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-fot
 import {
   ROLES,
   ROLES_EMPLEADO,
+  ESTADOS_PERFIL,
 } from '../../../config/constantes.js';
+
+import { signUp } from '../../../services/auth.service.js';
+import { altaPerfil } from '../../../services/perfiles.service.js';
 
 import {
   esCampoVacio,
@@ -584,6 +588,10 @@ export function render(container) {
     '.alta-empleado__resultado-escaneo'
   );
 
+  const botonGuardar = formulario.querySelector(
+    '.alta-empleado__submit'
+  );
+
 
   /* =========================================================
      ESTADO
@@ -594,6 +602,8 @@ export function render(container) {
   let datosDniEscaneados = null;
 
   let mostrarValidacion = false;
+
+  let enviandoAlta = false;
 
 
   /* =========================================================
@@ -797,9 +807,13 @@ export function render(container) {
 
   formulario.addEventListener(
     'submit',
-    (evento) => {
+    async (evento) => {
 
       evento.preventDefault();
+
+      if (enviandoAlta) {
+        return;
+      }
 
       mostrarValidacion = true;
 
@@ -830,19 +844,38 @@ export function render(container) {
       }
 
 
-      const rolSeleccionado =
-        datosFormulario(formulario).rol;
+      enviandoAlta = true;
+      botonGuardar.disabled = true;
 
+      try {
+        const datos = datosFormulario(formulario);
+        const { user } = await signUp(datos.email, datos.password);
 
-      resultado.textContent =
-        `Datos del empleado con perfil ${
-          ETIQUETAS_ROL[rolSeleccionado] ??
-          rolSeleccionado
-        } validados correctamente. El alta remota requiere el endpoint seguro de administración aún no configurado.`;
+        if (!user) {
+          throw new Error('No se pudo obtener el usuario creado en Supabase Auth.');
+        }
 
+        await altaPerfil({
+          id: user.id,
+          apellidos: datos.apellido,
+          nombres: datos.nombre,
+          dni: datos.dni,
+          cuil: datos.cuil,
+          email: datos.email,
+          foto_url: 'https://placehold.co/200x200/png?text=Empleado',
+          rol: datos.rol,
+          estado: ESTADOS_PERFIL.APROBADO,
+        });
 
-      resultado.className =
-        'alta-empleado__resultado alta-empleado__resultado--exito';
+        resultado.textContent = 'Empleado creado y aprobado correctamente.';
+        resultado.className = 'alta-empleado__resultado alta-empleado__resultado--exito';
+      } catch (error) {
+        resultado.textContent = error.message ?? 'No se pudo crear el empleado.';
+        resultado.className = 'alta-empleado__resultado alta-empleado__resultado--error';
+      } finally {
+        enviandoAlta = false;
+        botonGuardar.disabled = false;
+      }
 
     }
   );
