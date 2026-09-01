@@ -1,17 +1,683 @@
-.alta-empleado { background: var(--color-fondo); }
-.alta-empleado__contenido { margin: 0 auto; max-width: 860px; padding: 24px 18px 40px; }
-.alta-empleado__introduccion h1 { color: var(--color-texto); font-size: clamp(1.7rem, 5vw, 2.3rem); margin: 0 0 6px; }
-.alta-empleado__introduccion p { color: var(--ion-color-medium, #666); margin: 0 0 24px; }
-.alta-empleado__formulario { background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: 16px; padding: 20px; }
-.alta-empleado .campo-formulario { margin-bottom: 16px; }
-.alta-empleado .campo-formulario ion-item, .alta-empleado__perfil { --background: transparent; --border-color: var(--color-borde); --highlight-color-focused: var(--color-secundario); --padding-start: 0; }
-.alta-empleado .campo-formulario ion-note { display: block; min-height: 20px; padding: 5px 4px 0; }
-.alta-empleado .campo-formulario--invalido ion-item { --border-color: var(--color-error); --highlight-color-focused: var(--color-error); }
-.alta-empleado .campo-formulario--valido ion-item { --border-color: var(--color-secundario); }
-.alta-empleado__fila { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.alta-empleado__perfil { margin-bottom: 8px; }
-.alta-empleado__resultado-escaneo { background: var(--color-fondo); border: 1px solid var(--color-borde); border-radius: 8px; font-family: ui-monospace, monospace; font-size: .82rem; margin: -12px 0 20px; overflow-wrap: anywhere; padding: 10px; white-space: pre-wrap; }
-.alta-empleado__resultado { display: block; font-weight: 600; min-height: 24px; padding: 20px 0 8px; text-align: center; }
-.alta-empleado__resultado--exito { color: var(--color-secundario); }.alta-empleado__resultado--error { color: var(--color-error); }
-.alta-empleado__submit { margin: 8px 0 0; --background: var(--color-primario); --color: var(--color-primario-contraste); }
-@media (max-width: 600px) { .alta-empleado__contenido { padding: 18px 12px 28px; }.alta-empleado__formulario { border-radius: 12px; padding: 16px 12px; }.alta-empleado__fila { gap: 0; grid-template-columns: 1fr; } }
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Outfit:wght@700&display=swap');
+
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+.alta-empleado {
+  --fondo-empleado: #606c38;
+  --fondo-campo-empleado: #4a572c;
+  --fondo-hover-empleado: #53632f;
+  --acento-empleado: #dda15e;
+  --marco-dni-empleado: #bc6c25;
+
+  --texto-claro-empleado: #fefae0;
+  --texto-suave-empleado: #8f956f;
+  --borde-empleado: #6e6939;
+
+  --fuente-geist: 'Geist', sans-serif;
+  --fuente-outfit: 'Outfit', sans-serif;
+
+  --sombra-submit: 0 3px 3px rgb(42 49 19 / 42%);
+
+  background: var(--fondo-empleado);
+  color: var(--texto-claro-empleado);
+
+  font-family: var(--fuente-geist);
+  font-weight: 400;
+}
+
+
+/* =========================================================
+   IONIC
+   ========================================================= */
+
+.alta-empleado ion-content {
+  --background: var(--fondo-empleado);
+}
+
+
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+
+.alta-empleado__contenido {
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 440px;
+  min-height: 100%;
+
+  margin: 0 auto;
+  padding: 25px 18px;
+}
+
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.alta-empleado__introduccion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin: 0 0 14px;
+}
+
+.alta-empleado__introduccion h1 {
+  margin: 0;
+
+  color: var(--texto-claro-empleado);
+
+  font-family: var(--fuente-outfit);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+}
+
+.alta-empleado__volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+
+  margin: 0;
+  padding: 0 0 4px;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: var(--fondo-hover-empleado);
+  color: var(--texto-claro-empleado);
+
+  cursor: pointer;
+
+  font-family: system-ui, sans-serif;
+  font-size: 29px;
+  font-weight: 700;
+  line-height: 32px;
+}
+
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+
+.alta-empleado__formulario {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  min-height: calc(100vh - 140px);
+}
+
+
+/* =========================================================
+   FOTO
+   ========================================================= */
+
+.alta-empleado .selector-avatar-foto {
+  position: relative;
+
+  width: 142px;
+
+  margin: 2px auto 42px;
+}
+
+.alta-empleado .selector-avatar-foto :is(h2, p, ion-note) {
+  display: none;
+}
+
+.alta-empleado .selector-avatar-foto__preview {
+  position: relative;
+
+  box-sizing: border-box;
+
+  width: 140px;
+  height: 140px;
+
+  margin: 0 auto;
+
+  background: var(--fondo-campo-empleado);
+  border: 2px dashed var(--acento-empleado);
+  border-radius: 50%;
+
+  color: transparent;
+}
+
+.alta-empleado .selector-avatar-foto__preview::before {
+  content: '';
+
+  position: absolute;
+  top: calc(50% - 8px);
+  left: calc(50% - 11px);
+
+  box-sizing: border-box;
+
+  width: 20px;
+  height: 15px;
+
+  border: 2px solid var(--texto-claro-empleado);
+  border-radius: 4px;
+}
+
+.alta-empleado .selector-avatar-foto__preview::after {
+  content: '';
+
+  position: absolute;
+  top: calc(50% - 3px);
+  left: calc(50% - 4px);
+
+  box-sizing: border-box;
+
+  width: 5px;
+  height: 5px;
+
+  border: 2px solid var(--texto-claro-empleado);
+  border-radius: 50%;
+}
+
+.alta-empleado .selector-avatar-foto__preview img {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+/* =========================================================
+   BOTÓN +
+   ========================================================= */
+
+.alta-empleado .selector-avatar-foto ion-button {
+  position: absolute;
+  right: 0;
+  bottom: -9px;
+
+  width: 25px;
+  height: 25px;
+  min-width: 25px;
+  min-height: 25px;
+
+  margin: 0;
+
+  --background: var(--acento-empleado);
+  --background-hover: var(--acento-empleado);
+  --background-activated: var(--acento-empleado);
+  --background-focused: var(--acento-empleado);
+
+  --border-radius: 50%;
+  --box-shadow: none;
+  --color: transparent;
+}
+
+.alta-empleado .selector-avatar-foto ion-button::part(native) {
+  box-sizing: border-box;
+
+  width: 25px;
+  height: 25px;
+
+  padding: 0;
+
+  border-radius: 50%;
+
+  color: transparent;
+  font-size: 0;
+}
+
+.alta-empleado .selector-avatar-foto ion-button::after {
+  content: '+';
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  transform: translate(-50%, -50%);
+
+  color: var(--texto-claro-empleado);
+
+  font-family: system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   LECTOR DNI
+   ========================================================= */
+
+.alta-empleado .lector-qr {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 40px 1fr;
+  grid-template-rows: auto auto;
+
+  box-sizing: border-box;
+
+  width: 100%;
+  min-height: 62px;
+
+  margin: 0 0 10px;
+  padding: 0 10px;
+
+  background: var(--fondo-campo-empleado) !important;
+
+  border: 1px solid var(--marco-dni-empleado) !important;
+  border-radius: 10px !important;
+
+  overflow: hidden;
+}
+
+.alta-empleado .lector-qr h2 {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+
+  margin: 0 0 1px;
+
+  color: var(--texto-claro-empleado) !important;
+
+  font-family: var(--fuente-outfit) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 17px !important;
+}
+
+.alta-empleado .lector-qr p {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
+
+  max-width: 230px;
+
+  margin: 0;
+
+  color: var(--texto-suave-empleado) !important;
+
+  font-family: var(--fuente-geist) !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  line-height: 13px !important;
+}
+
+.alta-empleado .lector-qr ion-button {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+
+  width: 31px !important;
+  height: 31px !important;
+  min-width: 31px !important;
+  min-height: 31px !important;
+
+  margin: 0 !important;
+
+  --background: var(--marco-dni-empleado) !important;
+  --background-hover: var(--marco-dni-empleado) !important;
+  --background-activated: var(--marco-dni-empleado) !important;
+  --background-focused: var(--marco-dni-empleado) !important;
+
+  --border-radius: 50% !important;
+  --box-shadow: none !important;
+  --color: transparent !important;
+
+  background: var(--marco-dni-empleado) !important;
+  border-radius: 50% !important;
+}
+
+.alta-empleado .lector-qr ion-button::part(native) {
+  box-sizing: border-box;
+
+  width: 31px !important;
+  height: 31px !important;
+  min-width: 31px !important;
+  min-height: 31px !important;
+
+  padding: 0 !important;
+
+  background: var(--marco-dni-empleado) !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+
+  color: transparent !important;
+  font-size: 0 !important;
+}
+
+.alta-empleado .lector-qr ion-note {
+  display: none;
+}
+
+
+/* =========================================================
+   RESULTADO ESCANEO
+   ========================================================= */
+
+.alta-empleado__resultado-escaneo {
+  display: none !important;
+
+  box-sizing: border-box;
+
+  width: 100%;
+
+  margin: 0 0 8px;
+  padding: 8px;
+
+  background: rgb(74 87 44 / 80%);
+  border: 1px solid var(--marco-dni-empleado);
+
+  color: var(--texto-claro-empleado);
+
+  font-size: 11px;
+  line-height: 14px;
+}
+
+
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+
+.alta-empleado .campo-formulario {
+  width: 100%;
+  margin: 0 0 8px;
+}
+
+.alta-empleado .campo-formulario label {
+  display: block;
+  box-sizing: border-box;
+
+  width: 100%;
+  margin: 0 0 4px;
+
+  color: var(--texto-claro-empleado);
+
+  font-size: 12px;
+  line-height: 14px;
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   CONTROLES DE FORMULARIO
+   ========================================================= */
+
+.alta-empleado .campo-control {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 40px;
+  min-height: 40px;
+
+  margin: 0;
+  padding: 0 10px;
+
+  background: var(--fondo-campo-empleado) !important;
+
+  border: 1px solid var(--borde-empleado) !important;
+  border-radius: 10px !important;
+
+  color: var(--texto-claro-empleado) !important;
+
+  font-family: var(--fuente-geist) !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.alta-empleado input.campo-control {
+  display: block;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  outline: none;
+  box-shadow: none;
+
+  line-height: 40px !important;
+  text-align: left;
+
+  caret-color: var(--texto-claro-empleado);
+}
+
+
+/* Placeholder */
+
+.alta-empleado input.campo-control::placeholder {
+  color: var(--texto-suave-empleado) !important;
+  opacity: 1 !important;
+}
+
+
+/* Focus */
+
+.alta-empleado input.campo-control:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+/* Autofill */
+
+.alta-empleado input.campo-control:-webkit-autofill,
+.alta-empleado input.campo-control:-webkit-autofill:hover,
+.alta-empleado input.campo-control:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--texto-claro-empleado);
+
+  -webkit-box-shadow:
+    0 0 0 1000px var(--fondo-campo-empleado) inset;
+
+  box-shadow:
+    0 0 0 1000px var(--fondo-campo-empleado) inset;
+
+  caret-color: var(--texto-claro-empleado);
+}
+
+
+/* =========================================================
+   SELECT ROL
+   ========================================================= */
+
+.alta-empleado ion-select.campo-control {
+  display: block;
+
+  --background: var(--fondo-campo-empleado);
+  --color: var(--texto-claro-empleado);
+  --placeholder-color: var(--texto-suave-empleado);
+  --placeholder-opacity: 1;
+
+  --highlight-color-focused: var(--marco-dni-empleado);
+  --highlight-color-valid: var(--marco-dni-empleado);
+
+  line-height: 40px !important;
+}
+
+
+/* =========================================================
+   FILA DNI / CUIL
+   ========================================================= */
+
+.alta-empleado__fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  width: 100%;
+}
+
+
+/* =========================================================
+   ERRORES
+   ========================================================= */
+
+.alta-empleado .campo-formulario ion-note {
+  display: block;
+
+  min-height: 0;
+
+  padding: 2px 3px 0;
+
+  font-size: 10px;
+}
+
+.alta-empleado .campo-formulario--invalido input {
+  border-color: #ffd0bf !important;
+  outline: 1px solid #ffd0bf !important;
+}
+
+
+/* =========================================================
+   RESULTADO
+   ========================================================= */
+
+.alta-empleado__resultado {
+  min-height: 20px;
+
+  padding: 7px 0;
+
+  font-size: 11px;
+  line-height: 14px;
+
+  text-align: center;
+}
+
+.alta-empleado__resultado--error {
+  color: #ffe1d3;
+}
+
+
+/* =========================================================
+   BOTÓN GUARDAR
+   ========================================================= */
+
+.alta-empleado__submit {
+  width: 100%;
+  height: 45px;
+  min-height: 45px;
+
+  margin: auto 0 0;
+
+  --background: var(--acento-empleado) !important;
+  --background-hover: var(--acento-empleado) !important;
+  --background-activated: var(--acento-empleado) !important;
+  --background-focused: var(--acento-empleado) !important;
+
+  --color: var(--texto-claro-empleado) !important;
+  --border-radius: 9px !important;
+  --box-shadow: var(--sombra-submit) !important;
+
+  font-family: var(--fuente-outfit) !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+
+  text-transform: none !important;
+}
+
+.alta-empleado__submit::part(native) {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 45px;
+
+  padding: 0;
+
+  background: var(--acento-empleado) !important;
+  border-radius: 9px !important;
+
+  color: var(--texto-claro-empleado) !important;
+
+  box-shadow: var(--sombra-submit) !important;
+}
+
+
+/* =========================================================
+   MENÚ DESPLEGABLE - PERFIL
+   ========================================================= */
+
+ion-popover {
+  --background: #4a572c;
+  --color: #fefae0;
+}
+
+ion-popover::part(content) {
+  background: #4a572c !important;
+  border: 1px solid #6e6939 !important;
+  border-radius: 10px !important;
+}
+
+ion-popover ion-list,
+ion-popover ion-select-popover {
+  --background: #4a572c !important;
+  --color: #fefae0 !important;
+
+  background: #4a572c !important;
+}
+
+ion-popover ion-list {
+  padding: 4px 0 !important;
+}
+
+ion-popover ion-select-popover ion-item {
+  --background: #4a572c !important;
+  --background-hover: #53632f !important;
+  --background-activated: #53632f !important;
+  --background-focused: #53632f !important;
+  --color: #fefae0 !important;
+
+  font-size: 14px !important;
+}
+
+ion-popover ion-select-popover ion-item::part(native) {
+  background: #4a572c !important;
+  color: #fefae0 !important;
+}
+
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 340px) {
+  .alta-empleado .lector-qr p {
+    font-size: 9px !important;
+  }
+}
+
+@media (min-width: 640px) {
+  .alta-empleado__contenido {
+    padding-top: 50px;
+  }
+
+  .alta-empleado .selector-avatar-foto {
+    margin-bottom: 50px;
+  }
+
+  .alta-empleado__formulario {
+    max-width: 380px;
+    margin: 0 auto;
+  }
+}

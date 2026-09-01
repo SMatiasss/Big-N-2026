@@ -7,9 +7,9 @@ export function crearLectorQr({ onLectura = () => {} } = {}) {
   const elemento = document.createElement('section');
   elemento.className = 'lector-qr';
   elemento.innerHTML = `
-    <h2>Datos desde DNI</h2>
+    <h2>Escanear DNI</h2>
     <p>Escaneá el código QR o PDF417 del DNI para completar los datos disponibles.</p>
-    <ion-button type="button" fill="outline" expand="block">Leer DNI</ion-button>
+    <ion-button type="button" fill="outline" expand="block"></ion-button>
     <ion-note color="danger" aria-live="polite"></ion-note>
   `;
   const boton = elemento.querySelector('ion-button');
