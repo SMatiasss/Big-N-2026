@@ -6,6 +6,8 @@ import { ROLES, ROLES_EMPLEADO, ESTADOS_PERFIL,} from '../../../config/constante
 import { signUp } from '../../../services/auth.service.js';
 import { altaPerfil } from '../../../services/perfiles.service.js';
 import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 
 
 const ROLES_DISPONIBLES = ROLES_EMPLEADO;
@@ -736,17 +738,11 @@ export function render(container) {
 
         if (datosDniEscaneados.cuil) {
 
-          mostrarResultado(
-            'Datos del DNI cargados. Revisalos antes de continuar.',
-            'exito'
-          );
+          mostrarToastNormal('Datos del DNI cargados. Revisalos antes de continuar.');
 
         } else {
 
-          mostrarResultado(
-            'Datos cargados; completá el CUIL manualmente.',
-            'exito'
-          );
+          mostrarToastNormal('Datos cargados; completá el CUIL manualmente.');
 
         }
 
@@ -755,10 +751,7 @@ export function render(container) {
 
       } catch (error) {
 
-        mostrarResultado(
-          error.message,
-          'error'
-        );
+        mostrarToastError(error.message);
 
       }
     },
@@ -839,10 +832,7 @@ export function render(container) {
 
       if (Object.keys(errores).length) {
 
-        mostrarResultado(
-          'Revisá los campos señalados antes de continuar.',
-          'error'
-        );
+        mostrarToastError('Revisá los campos señalados antes de continuar.');
 
         return;
       }
@@ -871,19 +861,13 @@ export function render(container) {
           estado: ESTADOS_PERFIL.APROBADO,
         });
 
-        mostrarResultado(
-          'Empleado creado y aprobado correctamente.',
-          'exito'
-        );
+        mostrarToastNormal('Empleado creado y aprobado correctamente.');
 
-        setTimeout(() => { navegarA('/auth/login')}, 2000);
+        setTimeout(() => { navegarA('/login')}, 2000);
 
       } catch (error) {
 
-        mostrarResultado(
-          error.message ?? 'No se pudo crear el empleado.',
-          'error'
-        );
+        mostrarToastError(error.message ?? 'No se pudo crear el empleado.');
 
       } finally {
         enviandoAlta = false;
