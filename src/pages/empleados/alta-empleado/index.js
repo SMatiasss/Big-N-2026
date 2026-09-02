@@ -1,26 +1,13 @@
 import './index.css';
-
+import { navegarA } from '../../../router.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
-
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
-
-import {
-  ROLES,
-  ROLES_EMPLEADO,
-  ESTADOS_PERFIL,
-} from '../../../config/constantes.js';
-
+import { ROLES, ROLES_EMPLEADO, ESTADOS_PERFIL,} from '../../../config/constantes.js';
 import { signUp } from '../../../services/auth.service.js';
 import { altaPerfil } from '../../../services/perfiles.service.js';
-
-import {
-  esCampoVacio,
-  esCuilValido,
-  esDniValido,
-  esEmailValido,
-  esNombrePersonaValido,
-  obtenerErrorArchivoImagen,
-} from '../../../utils/validadores.js';
+import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 
 
 const ROLES_DISPONIBLES = ROLES_EMPLEADO;
@@ -549,6 +536,7 @@ export function render(container) {
               class="alta-empleado__resultado"
               role="status"
               aria-live="polite"
+              hidden
             ></div>
 
 
@@ -591,6 +579,26 @@ export function render(container) {
   const botonGuardar = formulario.querySelector(
     '.alta-empleado__submit'
   );
+
+
+  /* =========================================================
+     NOTIFICACIÓN
+     ========================================================= */
+
+  function mostrarResultado(mensaje, tipo = 'exito') {
+    resultado.textContent = mensaje;
+
+    resultado.className =
+      `alta-empleado__resultado alta-empleado__resultado--${tipo}`;
+
+    resultado.hidden = false;
+  }
+
+  function ocultarResultado() {
+    resultado.hidden = true;
+    resultado.textContent = '';
+    resultado.className = 'alta-empleado__resultado';
+  }
 
 
   /* =========================================================
@@ -730,30 +738,20 @@ export function render(container) {
 
         if (datosDniEscaneados.cuil) {
 
-          resultado.textContent =
-            'Datos del DNI cargados. Revisalos antes de continuar.';
+          mostrarToastNormal('Datos del DNI cargados. Revisalos antes de continuar.');
 
         } else {
 
-          resultado.textContent =
-            'Datos cargados; completá el CUIL manualmente.';
+          mostrarToastNormal('Datos cargados; completá el CUIL manualmente.');
 
         }
-
-
-        resultado.className =
-          'alta-empleado__resultado alta-empleado__resultado--exito';
 
 
         actualizar();
 
       } catch (error) {
 
-        resultado.textContent =
-          error.message;
-
-        resultado.className =
-          'alta-empleado__resultado alta-empleado__resultado--error';
+        mostrarToastError(error.message);
 
       }
     },
@@ -793,7 +791,7 @@ export function render(container) {
 
           actualizar();
 
-          resultado.textContent = '';
+          ocultarResultado();
 
         }
       );
@@ -834,11 +832,7 @@ export function render(container) {
 
       if (Object.keys(errores).length) {
 
-        resultado.textContent =
-          'Revisá los campos señalados antes de continuar.';
-
-        resultado.className =
-          'alta-empleado__resultado alta-empleado__resultado--error';
+        mostrarToastError('Revisá los campos señalados antes de continuar.');
 
         return;
       }
@@ -867,11 +861,14 @@ export function render(container) {
           estado: ESTADOS_PERFIL.APROBADO,
         });
 
-        resultado.textContent = 'Empleado creado y aprobado correctamente.';
-        resultado.className = 'alta-empleado__resultado alta-empleado__resultado--exito';
+        mostrarToastNormal('Empleado creado y aprobado correctamente.');
+
+        setTimeout(() => { navegarA('/login')}, 2000);
+
       } catch (error) {
-        resultado.textContent = error.message ?? 'No se pudo crear el empleado.';
-        resultado.className = 'alta-empleado__resultado alta-empleado__resultado--error';
+
+        mostrarToastError(error.message ?? 'No se pudo crear el empleado.');
+
       } finally {
         enviandoAlta = false;
         botonGuardar.disabled = false;

@@ -96,7 +96,7 @@ async function renderSesionIniciada(container, session, generacion) {
 
     if (puedeCargarPlatos) agregarBotonAccion('btn-alta-plato', 'Alta de plato', '/productos/alta-plato');
     if (puedeCargarBebidas) agregarBotonAccion('btn-alta-bebida', 'Alta de bebida', '/productos/alta-bebida');
-    if (puedeDarAltaEmpleados) agregarBotonAccion('btn-alta-empleado', 'Alta de empleado', '/empleados/alta-empleado');
+    if (puedeDarAltaEmpleados) agregarBotonAccion('btn-empleados', 'Empleados', '/empleados');
     if (puedeVerMesas) agregarBotonAccion('btn-mesas', 'Mesas', '/mesas');
     if (puedeVerListaEspera) agregarBotonAccion('btn-lista-espera', 'Lista de espera', '/lista-espera/metre');
 

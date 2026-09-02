@@ -554,18 +554,64 @@
    ========================================================= */
 
 .alta-empleado__resultado {
-  min-height: 20px;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  z-index: 9999;
 
-  padding: 7px 0;
+  width: calc(100% - 30px);
+  max-width: 320px;
+  min-height: 0;
 
-  font-size: 11px;
-  line-height: 14px;
+  box-sizing: border-box;
 
+  padding: 22px 18px 20px;
+  transform: translateX(-50%);
+
+  background: var(--texto-claro-empleado);
+  border: 2px solid var(--marco-dni-empleado);
+  border-radius: 0 0 18px 18px;
+
+  color: #283618;
+  font-family: var(--fuente-outfit);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 21px;
   text-align: center;
+
+  box-shadow: 0 4px 12px rgb(42 49 19 / 25%);
+
+  animation: aparecer-notificacion 0.35s ease-out;
 }
 
-.alta-empleado__resultado--error {
-  color: #ffe1d3;
+
+/* CÍRCULO */
+
+.alta-empleado__resultado::after {
+  content: '';
+
+  position: absolute;
+  top: 12px;
+  right: 14px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #bc6c25;
+  border-radius: 50%;
+}
+
+
+/* ANIMACIÓN */
+
+@keyframes aparecer-notificacion {
+  from {
+    transform: translate(-50%, -100%);
+  }
+
+  to {
+    transform: translate(-50%, 0);
+  }
 }
 
 

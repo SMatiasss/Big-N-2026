@@ -1,8 +1,7 @@
 // Alta de empleado/cliente, aprobar/rechazar perfiles (puntos 1, 5-8, 9).
 import { getSupabase } from './supabase.client.js';
-import { BUCKETS, ESTADOS_PERFIL, ROLES, TABLAS } from '../config/constantes.js';
+import { BUCKETS, ESTADOS_PERFIL, ROLES, ROLES_EMPLEADO, TABLAS } from '../config/constantes.js';
 import { esArchivoImagen } from '../utils/validadores.js';
-
 export async function altaPerfil(perfil) {
   const { data, error } = await getSupabase().from(TABLAS.PERFILES).insert(perfil).select().single();
   if (error) throw error;
@@ -98,6 +97,17 @@ export async function rechazarPerfil(perfilId) {
     .eq('id', perfilId)
     .select()
     .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function listarEmpleados() {
+  const { data, error } = await getSupabase()
+    .from(TABLAS.PERFILES)
+    .select('id, nombres, apellidos, rol, estado')
+    .neq('rol', 'cliente_registrado')
+    .neq('rol', 'cliente_anonimo')
+    .order('apellidos', { ascending: true });
   if (error) throw error;
   return data;
 }

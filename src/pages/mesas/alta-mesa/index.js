@@ -2,7 +2,8 @@
 // pero con los campos y la foto única que requiere una mesa.
 import './index.css';
 import { crearSelectorFotoMesa } from '../../../components/selector-foto-mesa/selector-foto-mesa.js';
-import { mostrarToast } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { TIPOS_MESA } from '../../../config/constantes.js';
 import { crearMesaCompleta } from '../../../services/mesas.service.js';
 import { navegarA } from '../../../router.js';
@@ -211,19 +212,12 @@ export function render(container) {
       }, foto);
 
       // El qr_token es sólo un dato interno de verificación; no es algo que
-      // el cliente final deba ver. Se vuelve al listado (que se re-renderiza
-      // entero y por lo tanto se actualiza) recién cuando el usuario toca OK.
-      mostrarToast({
-        mensaje: 'Mesa registrada correctamente.',
-        tipo: 'exito',
-        onCerrar: () => navegarA('/mesas'),
-      });
+      // el cliente final deba ver. Se vuelve al listado tras mostrar el toast.
+      mostrarToastNormal('Mesa registrada correctamente.');
+      setTimeout(() => navegarA('/mesas'), 2000);
     } catch (error) {
       console.error('No se pudo completar el alta de la mesa.', error);
-      mostrarToast({
-        mensaje: `No se pudo registrar la mesa: ${error.message ?? 'error desconocido'}`,
-        tipo: 'error',
-      });
+      mostrarToastError(`No se pudo registrar la mesa: ${error.message ?? 'error desconocido'}`);
     } finally {
       establecerProcesando(false);
     }
