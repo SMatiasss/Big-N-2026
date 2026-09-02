@@ -1,6 +1,5 @@
-// Variante de una sola foto del selector-fotos-producto: misma fuente de imágenes
-// (cámara nativa vía Capacitor o input local en navegador) y mismo contrato de callbacks,
-// pero pensada para una única posición en lugar de una grilla de tres.
+// Selector visual de foto de la mesa adaptado al diseño de Alta Mesa:
+// contenedor rectangular con borde punteado, ícono de cámara y texto "Tomar o subir foto".
 import './selector-foto-mesa.css';
 import { obtenerErrorArchivoImagen } from '../../utils/validadores.js';
 import {
@@ -10,7 +9,6 @@ import {
 } from '../../services/imagenes-dispositivo.service.js';
 
 // Abre el selector de archivos del navegador cuando no hay Camera nativa disponible.
-// Devuelve una Promise con un File o null si el usuario cancela la selección.
 function seleccionarImagenLocal() {
   return new Promise((resolve) => {
     const input = document.createElement('input');
@@ -37,36 +35,22 @@ async function obtenerImagenPredeterminada({ origen }) {
   return obtenerImagenNativa(origen);
 }
 
-// Crea el selector visual de la foto de la mesa.
-// Recibe un callback para avisar cambios y una función independiente que obtiene archivos.
-// Devuelve el elemento para insertar en el DOM y métodos para controlarlo desde la página.
 export function crearSelectorFotoMesa({
   onCambio = () => {},
   obtenerImagen = obtenerImagenPredeterminada,
-  tituloEncabezado = 'Foto de la mesa',
-  descripcionEncabezado = 'Sacá una foto que muestre la mesa completa.',
-  etiquetaAria = 'Seleccionar foto de la mesa',
-  textoPlaceholder = 'Foto de la mesa',
-  iconoPlaceholder = '＋',
 } = {}) {
   const elemento = document.createElement('section');
   elemento.className = 'selector-foto-mesa';
-  elemento.setAttribute('aria-labelledby', 'titulo-foto-mesa');
 
-  // El archivo y su URL de preview son el estado del componente.
   let archivo = null;
   let urlPreview = null;
   let bloqueado = false;
   let obteniendoImagen = false;
 
   elemento.innerHTML = `
-    <div class="selector-foto-mesa__encabezado">
-      <h2 id="titulo-foto-mesa">${tituloEncabezado}</h2>
-      <p>${descripcionEncabezado}</p>
-    </div>
     <article class="selector-foto-mesa__posicion">
-      <button class="selector-foto-mesa__contenido" type="button" aria-label="${etiquetaAria}"></button>
-      <div class="selector-foto-mesa__acciones"></div>
+      <button class="selector-foto-mesa__contenido" type="button" aria-label="Tomar o subir foto de la mesa"></button>
+      <div class="selector-foto-mesa__acciones" hidden></div>
     </article>
     <ion-note class="selector-foto-mesa__error" color="danger" aria-live="polite"></ion-note>
   `;
@@ -75,32 +59,39 @@ export function crearSelectorFotoMesa({
   const acciones = elemento.querySelector('.selector-foto-mesa__acciones');
   const mensajeError = elemento.querySelector('.selector-foto-mesa__error');
 
-  acciones.innerHTML = puedeUsarCameraNativa()
-    ? `
-      <ion-button type="button" fill="outline" size="small" data-origen="${ORIGEN_IMAGEN.CAMARA}">Cámara</ion-button>
-      <ion-button type="button" fill="outline" size="small" data-origen="${ORIGEN_IMAGEN.GALERIA}">Galería</ion-button>
-    `
-    : '<ion-button type="button" fill="outline" size="small" data-origen="local">Seleccionar archivo</ion-button>';
+  if (puedeUsarCameraNativa()) {
+    acciones.hidden = false;
+    acciones.innerHTML = `
+      <button type="button" class="selector-foto-mesa__boton-fuente" data-origen="${ORIGEN_IMAGEN.CAMARA}">Cámara</button>
+      <button type="button" class="selector-foto-mesa__boton-fuente" data-origen="${ORIGEN_IMAGEN.GALERIA}">Galería</button>
+    `;
+  }
 
-  // Actualiza solamente la presentación. La obtención del archivo ocurre
-  // fuera de esta función para mantener separadas ambas responsabilidades.
   function renderizar() {
     if (urlPreview) {
-      contenido.innerHTML = `<img src="${urlPreview}" alt="Vista previa: ${textoPlaceholder}">`;
+      contenido.innerHTML = `
+        <div class="selector-foto-mesa__preview-wrap">
+          <img src="${urlPreview}" alt="Vista previa de la mesa">
+          <span class="selector-foto-mesa__cambiar-badge">Cambiar foto</span>
+        </div>
+      `;
     } else {
       contenido.innerHTML = `
-        <span class="selector-foto-mesa__icono" aria-hidden="true">${iconoPlaceholder}</span>
-        <span>${textoPlaceholder}</span>
+        <div class="selector-foto-mesa__placeholder">
+          <svg class="selector-foto-mesa__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <span class="selector-foto-mesa__texto">Tomar o subir foto</span>
+        </div>
       `;
     }
 
-    acciones.querySelectorAll('ion-button').forEach((boton) => {
+    acciones.querySelectorAll('button').forEach((boton) => {
       boton.disabled = bloqueado || obteniendoImagen;
     });
   }
 
-  // Reemplaza el archivo actual y administra su URL temporal.
-  // URL.revokeObjectURL libera la memoria ocupada por el preview anterior.
   function establecerImagen(nuevoArchivo) {
     if (urlPreview) URL.revokeObjectURL(urlPreview);
 
@@ -112,7 +103,6 @@ export function crearSelectorFotoMesa({
     onCambio(archivo);
   }
 
-  // Solicita una imagen a la fuente configurada (cámara, galería o input local).
   async function solicitarImagen(origen) {
     if (bloqueado || obteniendoImagen) return;
 
@@ -139,28 +129,27 @@ export function crearSelectorFotoMesa({
     }
   }
 
-  contenido.addEventListener('click', () => solicitarImagen(
-    puedeUsarCameraNativa() ? ORIGEN_IMAGEN.GALERIA : 'local',
-  ));
-
-  // Cada botón comunica el origen mediante data-origen.
-  acciones.querySelectorAll('ion-button').forEach((boton) => {
-    boton.addEventListener('click', () => solicitarImagen(boton.dataset.origen));
+  contenido.addEventListener('click', () => {
+    solicitarImagen(puedeUsarCameraNativa() ? ORIGEN_IMAGEN.CAMARA : 'local');
   });
 
-  // Muestra el error de la foto y marca visualmente el grupo.
+  acciones.querySelectorAll('button').forEach((boton) => {
+    boton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      solicitarImagen(boton.dataset.origen);
+    });
+  });
+
   function mostrarError(mensaje = '') {
     mensajeError.textContent = mensaje;
     elemento.classList.toggle('selector-foto-mesa--invalido', Boolean(mensaje));
   }
 
-  // Bloquea las acciones del selector durante el envío del formulario.
   function establecerBloqueado(valor) {
     bloqueado = Boolean(valor);
     renderizar();
   }
 
-  // Libera la URL temporal cuando la página deja de usar el componente.
   function destruir() {
     if (urlPreview) URL.revokeObjectURL(urlPreview);
   }

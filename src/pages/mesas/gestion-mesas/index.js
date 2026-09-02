@@ -1,59 +1,59 @@
-// Listado de mesas (punto 4). Cualquier trabajador puede entrar a mirarlo;
-// el botón "+" para dar de alta sólo aparece si el rol puede hacerlo
-// (las policies de Supabase siguen siendo la barrera real, esto es sólo UI).
+// Gestión de mesas adaptada al diseño temático de la aplicación:
+// encabezado con botón volver y alta (+), leyenda de estados y cuadrícula de 3 columnas.
 import './index.css';
-import { crearBotonFlotante } from '../../../components/boton-flotante/boton-flotante.js';
-import { ROLES } from '../../../config/constantes.js';
-import { obtenerPermisosProductos } from '../../../services/auth.service.js';
 import { listarMesas } from '../../../services/mesas.service.js';
 import { navegarA } from '../../../router.js';
 
-const ETIQUETAS_TIPO = {
-  estandar: 'Estándar',
-  vip: 'VIP',
-  movilidad_reducida: 'Movilidad reducida',
-};
-
-const ETIQUETAS_ESTADO = {
-  libre: 'Libre',
-  ocupada: 'Ocupada',
-};
-
-// Arma el <li> de una mesa. Si todavía no tiene foto (dato viejo o alta
-// incompleta) muestra un cartel en su lugar en vez de un <img> roto.
 function tarjetaMesa(mesa) {
-  const foto = mesa.foto_url
-    ? `<img src="${mesa.foto_url}" alt="Foto de la mesa ${mesa.numero}">`
-    : '<div class="gestion-mesas__foto-vacia" aria-hidden="true">Sin foto</div>';
+  const estado = mesa.estado ?? 'libre';
+  const estadoClase = `mesa-card--${estado}`;
+  const comensalesTexto = `${mesa.cantidad_comensales ?? 4} pers`;
 
   return `
-    <li class="gestion-mesas__tarjeta">
-      <div class="gestion-mesas__tarjeta-foto">${foto}</div>
-      <div class="gestion-mesas__tarjeta-info">
-        <h2>Mesa ${mesa.numero}</h2>
-        <p>${ETIQUETAS_TIPO[mesa.tipo] ?? mesa.tipo} · ${mesa.cantidad_comensales} comensales</p>
-        <span class="gestion-mesas__estado gestion-mesas__estado--${mesa.estado}">${ETIQUETAS_ESTADO[mesa.estado] ?? mesa.estado}</span>
-      </div>
-    </li>
+    <article class="mesa-card ${estadoClase}" data-id="${mesa.id}" data-numero="${mesa.numero}">
+      <span class="mesa-card__numero">${mesa.numero}</span>
+      <span class="mesa-card__comensales">${comensalesTexto}</span>
+    </article>
   `;
 }
 
 export function render(container) {
   container.innerHTML = `
-    <ion-page class="ion-page gestion-mesas">
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>Mesas</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
+    <ion-page class="gestion-mesas">
       <ion-content>
         <main class="gestion-mesas__contenido">
+          <header class="gestion-mesas__header">
+            <button class="gestion-mesas__volver" type="button" aria-label="Volver">‹</button>
+            <h1 class="gestion-mesas__titulo">Mesas</h1>
+            <button class="gestion-mesas__boton-alta" type="button" aria-label="Agregar mesa">+</button>
+          </header>
+
+          <!-- LEYENDA -->
+          <div class="gestion-mesas__leyenda" aria-label="Referencias de estado">
+            <span class="leyenda-item">
+              <span class="leyenda-punto leyenda-punto--libre" aria-hidden="true"></span>
+              <span>Libre</span>
+            </span>
+            <span class="leyenda-item">
+              <span class="leyenda-punto leyenda-punto--ocupada" aria-hidden="true"></span>
+              <span>Ocupada</span>
+            </span>
+            <span class="leyenda-item">
+              <span class="leyenda-punto leyenda-punto--reservada" aria-hidden="true"></span>
+              <span>Reservada</span>
+            </span>
+          </div>
+
+          <!-- ESTADO DE CARGA -->
           <div class="gestion-mesas__estado-carga">
             <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
             <span>Cargando mesas...</span>
           </div>
-          <ul class="gestion-mesas__lista" hidden></ul>
+
+          <!-- GRID DE MESAS -->
+          <div class="gestion-mesas__grid" hidden></div>
+
+          <!-- MENSAJE VACÍO O ERROR -->
           <p class="gestion-mesas__mensaje" role="status" aria-live="polite" hidden></p>
         </main>
       </ion-content>
@@ -61,35 +61,31 @@ export function render(container) {
   `;
 
   const estadoCarga = container.querySelector('.gestion-mesas__estado-carga');
-  const lista = container.querySelector('.gestion-mesas__lista');
+  const grid = container.querySelector('.gestion-mesas__grid');
   const mensaje = container.querySelector('.gestion-mesas__mensaje');
 
-  const botonFlotante = crearBotonFlotante({
-    etiqueta: 'Agregar mesa',
-    onClick: () => navegarA('/mesas/alta'),
+  // Volver
+  container.querySelector('.gestion-mesas__volver').addEventListener('click', () => {
+    window.history.back();
   });
-  container.querySelector('ion-content').append(botonFlotante.elemento);
 
-  // El alta de mesa es sólo para dueño o supervisor (punto 4). El resto del
-  // personal ve el listado igual, pero sin la posibilidad de agregar.
-  obtenerPermisosProductos()
-    .then(({ rol }) => {
-      if (rol === ROLES.DUENO || rol === ROLES.SUPERVISOR) botonFlotante.mostrar();
-    })
-    .catch((error) => console.error('No se pudieron determinar los permisos para el alta de mesa.', error));
+  // Agregar mesa (+)
+  container.querySelector('.gestion-mesas__boton-alta').addEventListener('click', () => {
+    navegarA('/mesas/alta');
+  });
 
   listarMesas()
     .then((mesas) => {
       estadoCarga.hidden = true;
 
-      if (mesas.length === 0) {
+      if (!mesas || mesas.length === 0) {
         mensaje.textContent = 'Todavía no hay mesas cargadas.';
         mensaje.hidden = false;
         return;
       }
 
-      lista.innerHTML = mesas.map(tarjetaMesa).join('');
-      lista.hidden = false;
+      grid.innerHTML = mesas.map(tarjetaMesa).join('');
+      grid.hidden = false;
     })
     .catch((error) => {
       estadoCarga.hidden = true;

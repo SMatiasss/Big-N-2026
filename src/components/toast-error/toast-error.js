@@ -11,6 +11,7 @@ export function mostrarToastError(mensaje) {
   document.body.append(toast);
 
   requestAnimationFrame(() => {
+    toast.classList.add('toast-error--visible');
     requestAnimationFrame(() => {
       toast.classList.add('toast-error--visible');
     });

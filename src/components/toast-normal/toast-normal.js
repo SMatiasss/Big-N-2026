@@ -11,6 +11,7 @@ export function mostrarToastNormal(mensaje) {
   document.body.append(toast);
 
   requestAnimationFrame(() => {
+    toast.classList.add('toast-normal--visible');
     requestAnimationFrame(() => {
       toast.classList.add('toast-normal--visible');
     });

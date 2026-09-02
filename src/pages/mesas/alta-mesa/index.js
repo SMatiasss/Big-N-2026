@@ -1,5 +1,5 @@
-// Alta de mesa (punto 4). Misma estructura y estilo que productos/alta-plato,
-// pero con los campos y la foto única que requiere una mesa.
+// Alta de mesa adaptada al diseño temático de la aplicación:
+// diseño idéntico al mockup (fondo #606c38, campos #4a572c, etiquetas #dda15e, segmented controls y toasts).
 import './index.css';
 import { crearSelectorFotoMesa } from '../../../components/selector-foto-mesa/selector-foto-mesa.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
@@ -14,8 +14,6 @@ import {
 } from '../../../utils/validadores.js';
 
 // Valida los datos ingresados antes de aceptar el formulario.
-// Recibe un objeto con los campos y el archivo de la foto.
-// Devuelve un objeto cuyas propiedades contienen los errores encontrados.
 function validarFormulario(datos, foto) {
   const errores = {};
 
@@ -36,37 +34,37 @@ function validarFormulario(datos, foto) {
   }
 
   if (!esArchivoImagen(foto)) {
-    errores.foto = 'Sacá una foto de la mesa.';
+    errores.foto = 'Tomá o subí una foto de la mesa.';
   }
 
   return errores;
 }
 
-// Lee los valores actuales de los componentes Ionic y elimina espacios
-// innecesarios en los campos de texto.
+// Lee los valores actuales de los controles.
 function obtenerDatosFormulario(formulario) {
   return {
-    numero: formulario.querySelector('#numero-mesa').value ?? '',
-    cantidad: formulario.querySelector('#cantidad-mesa').value ?? '',
-    tipo: formulario.querySelector('#tipo-mesa').value ?? '',
+    numero: formulario.querySelector('#numero-mesa')?.value?.trim() ?? '',
+    cantidad: formulario.querySelector('#cantidad-mesa')?.value?.trim() ?? '',
+    tipo: formulario.querySelector('#tipo-mesa')?.value ?? TIPOS_MESA.ESTANDAR,
+    estado: formulario.querySelector('#estado-mesa')?.value ?? 'libre',
   };
 }
 
-// Actualiza el mensaje y el aspecto visual de un campo.
+// Actualiza el aspecto visual y mensaje de error de un campo.
 function mostrarErrorCampo(formulario, campo, mensaje = '') {
   const item = formulario.querySelector(`[data-campo="${campo}"]`);
-  const nota = formulario.querySelector(`[data-error="${campo}"]`);
-  const control = item.querySelector('ion-input, ion-select');
+  if (!item) return;
+
+  const nota = item.querySelector(`[data-error="${campo}"]`);
+  const control = item.querySelector('input');
   const hayError = Boolean(mensaje);
 
-  nota.textContent = mensaje;
+  if (nota) nota.textContent = mensaje;
   item.classList.toggle('campo-formulario--invalido', hayError);
-  item.classList.toggle('campo-formulario--valido', !hayError && !esCampoVacio(control.value));
-  control.setAttribute('aria-invalid', String(hayError));
+  if (control) control.setAttribute('aria-invalid', String(hayError));
 }
 
-// Presenta todos los errores junto a sus controles y devuelve true
-// cuando el formulario completo es válido.
+// Presenta los errores y devuelve true si no hay fallos.
 function mostrarResultadoValidacion(formulario, selectorFoto, errores) {
   ['numero', 'cantidad', 'tipo'].forEach((campo) => {
     mostrarErrorCampo(formulario, campo, errores[campo] ?? '');
@@ -76,59 +74,123 @@ function mostrarResultadoValidacion(formulario, selectorFoto, errores) {
   return Object.keys(errores).length === 0;
 }
 
-// Renderiza la interfaz de alta de mesa dentro del contenedor que entrega el router.
 export function render(container) {
   container.innerHTML = `
-    <ion-page class="ion-page alta-mesa">
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>Alta de mesa</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
+    <ion-page class="alta-mesa">
       <ion-content>
         <main class="alta-mesa__contenido">
-          <header class="alta-mesa__introduccion">
-            <h1>Nueva mesa</h1>
-            <p>Completá los datos y sacá una foto para identificar la mesa.</p>
+          <header class="alta-mesa__header">
+            <button class="alta-mesa__volver" type="button" aria-label="Volver">‹</button>
+            <h1 class="alta-mesa__titulo">Alta Mesa</h1>
           </header>
 
           <form class="alta-mesa__formulario" novalidate>
+            <!-- NÚMERO Y ASIENTOS -->
             <div class="alta-mesa__fila-numerica">
               <div class="campo-formulario" data-campo="numero">
-                <ion-item>
-                  <ion-input id="numero-mesa" label="Número" label-placement="stacked" type="number" inputmode="numeric" min="1" step="1" required></ion-input>
-                </ion-item>
-                <ion-note color="danger" data-error="numero" aria-live="polite"></ion-note>
+                <label class="campo-label" for="numero-mesa">NÚMERO</label>
+                <input
+                  id="numero-mesa"
+                  name="numero"
+                  class="campo-control"
+                  type="number"
+                  inputmode="numeric"
+                  min="1"
+                  step="1"
+                  placeholder="14"
+                  required
+                >
+                <span class="campo-error" data-error="numero" role="alert"></span>
               </div>
 
               <div class="campo-formulario" data-campo="cantidad">
-                <ion-item>
-                  <ion-input id="cantidad-mesa" label="Cantidad de comensales" label-placement="stacked" type="number" inputmode="numeric" min="1" step="1" required></ion-input>
-                </ion-item>
-                <ion-note color="danger" data-error="cantidad" aria-live="polite"></ion-note>
+                <label class="campo-label" for="cantidad-mesa">ASIENTOS</label>
+                <div class="campo-control-asientos">
+                  <input
+                    id="cantidad-mesa"
+                    name="cantidad"
+                    class="campo-control campo-control--asientos"
+                    type="number"
+                    inputmode="numeric"
+                    min="1"
+                    step="1"
+                    placeholder="4"
+                    value="4"
+                    required
+                  >
+                  <span class="campo-control-asientos__sufijo">personas</span>
+                  <div class="campo-control-asientos__stepper">
+                    <button type="button" class="asientos-step-btn asientos-step-btn--up" aria-label="Aumentar asientos">▲</button>
+                    <button type="button" class="asientos-step-btn asientos-step-btn--down" aria-label="Disminuir asientos">▼</button>
+                  </div>
+                </div>
+                <span class="campo-error" data-error="cantidad" role="alert"></span>
               </div>
             </div>
 
+            <!-- TIPO DE MESA -->
             <div class="campo-formulario" data-campo="tipo">
-              <ion-item>
-                <ion-select id="tipo-mesa" label="Tipo" label-placement="stacked" placeholder="Seleccioná un tipo" interface="popover" required>
-                  <ion-select-option value="${TIPOS_MESA.ESTANDAR}">Estándar</ion-select-option>
-                  <ion-select-option value="${TIPOS_MESA.VIP}">VIP</ion-select-option>
-                  <ion-select-option value="${TIPOS_MESA.MOVILIDAD_REDUCIDA}">Movilidad reducida</ion-select-option>
-                </ion-select>
-              </ion-item>
-              <ion-note color="danger" data-error="tipo" aria-live="polite"></ion-note>
+              <label class="campo-label">TIPO DE MESA</label>
+              <div class="selector-segmentos selector-segmentos--tipo" role="radiogroup" aria-label="Tipo de mesa">
+                <button
+                  type="button"
+                  class="selector-segmentos__opcion selector-segmentos__opcion--activa"
+                  data-valor="${TIPOS_MESA.ESTANDAR}"
+                >
+                  Estándar
+                </button>
+                <button
+                  type="button"
+                  class="selector-segmentos__opcion"
+                  data-valor="${TIPOS_MESA.VIP}"
+                >
+                  VIP
+                </button>
+                <button
+                  type="button"
+                  class="selector-segmentos__opcion"
+                  data-valor="${TIPOS_MESA.MOVILIDAD_REDUCIDA}"
+                >
+                  Adaptada
+                </button>
+              </div>
+              <input type="hidden" id="tipo-mesa" name="tipo" value="${TIPOS_MESA.ESTANDAR}">
+              <span class="campo-error" data-error="tipo" role="alert"></span>
             </div>
 
-            <div class="alta-mesa__foto"></div>
+            <!-- DISPONIBILIDAD INICIAL -->
+            <div class="campo-formulario" data-campo="estado">
+              <label class="campo-label">DISPONIBILIDAD INICIAL</label>
+              <div class="selector-segmentos selector-segmentos--estado" role="radiogroup" aria-label="Disponibilidad inicial">
+                <button
+                  type="button"
+                  class="selector-segmentos__opcion selector-segmentos__opcion--activa"
+                  data-valor="libre"
+                >
+                  Vacía (Libre)
+                </button>
+                <button
+                  type="button"
+                  class="selector-segmentos__opcion"
+                  data-valor="ocupada"
+                >
+                  Ocupada
+                </button>
+              </div>
+              <input type="hidden" id="estado-mesa" name="estado" value="libre">
+            </div>
 
-            <div class="alta-mesa__resultado" role="status" aria-live="polite" aria-atomic="true"></div>
+            <!-- FOTO DE UBICACIÓN -->
+            <div class="campo-formulario" data-campo="foto">
+              <label class="campo-label">FOTO DE UBICACIÓN</label>
+              <div class="alta-mesa__foto"></div>
+            </div>
 
-            <ion-button class="alta-mesa__submit" type="submit" expand="block">
+            <!-- BOTÓN GUARDAR -->
+            <button class="alta-mesa__submit" type="submit">
               <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
-              <span>Registrar mesa</span>
-            </ion-button>
+              <span>Guardar Mesa</span>
+            </button>
           </form>
         </main>
       </ion-content>
@@ -138,9 +200,51 @@ export function render(container) {
   const formulario = container.querySelector('.alta-mesa__formulario');
   const botonSubmit = formulario.querySelector('.alta-mesa__submit');
   const textoSubmit = botonSubmit.querySelector('span');
-  const resultado = formulario.querySelector('.alta-mesa__resultado');
 
-  // Estado temporal de la foto de la mesa mientras se completa el formulario.
+  // Volver
+  container.querySelector('.alta-mesa__volver').addEventListener('click', () => {
+    window.history.back();
+  });
+
+  // Selector de segmentos (TIPO DE MESA)
+  const inputTipo = formulario.querySelector('#tipo-mesa');
+  const botonesTipo = formulario.querySelectorAll('.selector-segmentos--tipo .selector-segmentos__opcion');
+  botonesTipo.forEach((boton) => {
+    boton.addEventListener('click', () => {
+      botonesTipo.forEach((b) => b.classList.remove('selector-segmentos__opcion--activa'));
+      boton.classList.add('selector-segmentos__opcion--activa');
+      inputTipo.value = boton.dataset.valor;
+      mostrarErrorCampo(formulario, 'tipo', '');
+    });
+  });
+
+  // Selector de segmentos (DISPONIBILIDAD INICIAL)
+  const inputEstado = formulario.querySelector('#estado-mesa');
+  const botonesEstado = formulario.querySelectorAll('.selector-segmentos--estado .selector-segmentos__opcion');
+  botonesEstado.forEach((boton) => {
+    boton.addEventListener('click', () => {
+      botonesEstado.forEach((b) => b.classList.remove('selector-segmentos__opcion--activa'));
+      boton.classList.add('selector-segmentos__opcion--activa');
+      inputEstado.value = boton.dataset.valor;
+    });
+  });
+
+  // Botones de incremento/decremento de asientos
+  const inputCantidad = formulario.querySelector('#cantidad-mesa');
+  formulario.querySelector('.asientos-step-btn--up')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const val = parseInt(inputCantidad.value, 10) || 0;
+    inputCantidad.value = val + 1;
+    inputCantidad.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  formulario.querySelector('.asientos-step-btn--down')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const val = parseInt(inputCantidad.value, 10) || 1;
+    inputCantidad.value = Math.max(1, val - 1);
+    inputCantidad.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+
+  // Selector de foto
   let foto = null;
   let enviando = false;
   let validacionMostrada = false;
@@ -148,7 +252,6 @@ export function render(container) {
   const selectorFoto = crearSelectorFotoMesa({
     onCambio(archivo) {
       foto = archivo;
-
       if (validacionMostrada) {
         const errores = validarFormulario(obtenerDatosFormulario(formulario), foto);
         selectorFoto.mostrarError(errores.foto ?? '');
@@ -158,28 +261,23 @@ export function render(container) {
 
   formulario.querySelector('.alta-mesa__foto').append(selectorFoto.elemento);
 
-  // Habilita o bloquea toda acción de envío y selección de foto.
+  // Bloqueo durante envío
   function establecerProcesando(valor) {
     enviando = valor;
     botonSubmit.disabled = valor;
     botonSubmit.classList.toggle('alta-mesa__submit--procesando', valor);
-    textoSubmit.textContent = valor ? 'Registrando...' : 'Registrar mesa';
+    textoSubmit.textContent = valor ? 'Guardando...' : 'Guardar Mesa';
     selectorFoto.establecerBloqueado(valor);
   }
 
-  // Después del primer submit, cada cambio vuelve a validar su campo para
-  // que el error desaparezca apenas el usuario lo corrija.
-  formulario.querySelectorAll('ion-input, ion-select').forEach((control) => {
-    const evento = control.tagName === 'ION-SELECT' ? 'ionChange' : 'ionInput';
-    control.addEventListener(evento, () => {
+  // Validación dinámica
+  formulario.querySelectorAll('input:not([type="hidden"])').forEach((control) => {
+    control.addEventListener('input', () => {
       if (!validacionMostrada) return;
-
       const datos = obtenerDatosFormulario(formulario);
       const errores = validarFormulario(datos, foto);
-      const campo = control.closest('[data-campo]').dataset.campo;
-      mostrarErrorCampo(formulario, campo, errores[campo] ?? '');
-      resultado.textContent = '';
-      resultado.className = 'alta-mesa__resultado';
+      const campo = control.closest('[data-campo]')?.dataset.campo;
+      if (campo) mostrarErrorCampo(formulario, campo, errores[campo] ?? '');
     });
   });
 
@@ -193,26 +291,20 @@ export function render(container) {
     const esValido = mostrarResultadoValidacion(formulario, selectorFoto, errores);
 
     if (!esValido) {
-      resultado.textContent = 'Revisá los campos señalados antes de continuar.';
-      resultado.className = 'alta-mesa__resultado alta-mesa__resultado--error';
+      mostrarToastError('Revisá los campos señalados antes de continuar.');
       return;
     }
 
     establecerProcesando(true);
-    resultado.textContent = '';
-    resultado.className = 'alta-mesa__resultado';
 
     try {
-      // El service encapsula el INSERT, la subida a Storage y el guardado
-      // de la URL pública en foto_url; el QR lo genera la base automáticamente.
-      const mesaCreada = await crearMesaCompleta({
+      await crearMesaCompleta({
         numero: Number(datos.numero),
         cantidad_comensales: Number(datos.cantidad),
         tipo: datos.tipo,
+        estado: datos.estado,
       }, foto);
 
-      // El qr_token es sólo un dato interno de verificación; no es algo que
-      // el cliente final deba ver. Se vuelve al listado tras mostrar el toast.
       mostrarToastNormal('Mesa registrada correctamente.');
       setTimeout(() => navegarA('/mesas'), 2000);
     } catch (error) {
@@ -223,7 +315,5 @@ export function render(container) {
     }
   });
 
-  // El router actual no ofrece un ciclo de destrucción. Escuchamos un solo cambio
-  // de ruta para liberar el preview cuando el usuario abandona esta pantalla.
   window.addEventListener('hashchange', () => selectorFoto.destruir(), { once: true });
 }

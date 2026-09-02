@@ -1,102 +1,339 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Outfit:wght@700&display=swap');
+
+/* =========================================================
+   ALTA MESA - DISEÑO CALIBRADO CON ESPACIADO PERFECTO
+   ========================================================= */
+
 .alta-mesa {
-  background: var(--color-fondo);
+  --fondo: #606c38;
+  --fondo-campo: #4a572c;
+  --acento: #bc6c25;
+  --acento-secundario: #dda15e;
+  --texto-claro: #fefae0;
+  --texto-oscuro: #283618;
+  --texto-suave: #8f956f;
+  --fuente-geist: 'Geist', sans-serif;
+  --fuente-outfit: 'Outfit', sans-serif;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+  height: 100%;
+}
+
+.alta-mesa ion-content {
+  --background: var(--fondo);
+  height: 100%;
 }
 
 .alta-mesa__contenido {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100%;
   margin: 0 auto;
-  max-width: 860px;
-  padding: 24px 18px 40px;
+  padding: 22px 20px 30px;
+  display: flex;
+  flex-direction: column;
 }
 
-.alta-mesa__introduccion h1 {
-  color: var(--color-texto);
-  font-size: clamp(1.7rem, 5vw, 2.3rem);
-  margin: 0 0 6px;
-}
-
-.alta-mesa__introduccion p {
-  color: var(--ion-color-medium, #666);
+/* ENCABEZADO */
+.alta-mesa__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   margin: 0 0 24px;
+  flex-shrink: 0;
 }
 
+.alta-mesa__volver {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: var(--fondo-campo);
+  border: none;
+  border-radius: 50%;
+  color: var(--texto-claro);
+  font-family: var(--fuente-outfit);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+
+.alta-mesa__volver:active {
+  opacity: 0.7;
+}
+
+.alta-mesa__titulo {
+  margin: 0;
+  color: var(--texto-claro);
+  font-family: var(--fuente-outfit);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* FORMULARIO */
 .alta-mesa__formulario {
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: 16px;
-  padding: 20px;
-}
-
-.campo-formulario {
-  margin-bottom: 16px;
-}
-
-.campo-formulario ion-item {
-  --background: transparent;
-  --border-color: var(--color-borde);
-  --highlight-color-focused: var(--color-secundario);
-  --padding-start: 0;
-}
-
-.campo-formulario ion-note {
-  display: block;
-  min-height: 20px;
-  padding: 5px 4px 0;
-}
-
-.campo-formulario--invalido ion-item {
-  --border-color: var(--color-error);
-  --highlight-color-focused: var(--color-error);
-}
-
-.campo-formulario--valido ion-item {
-  --border-color: var(--color-secundario);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 24px;
 }
 
 .alta-mesa__fila-numerica {
   display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr 1.15fr;
+  gap: 13px;
 }
 
-.alta-mesa__resultado {
-  display: block;
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* LABELS EN COLOR CREMA Y MAYOR TAMAÑO */
+.campo-label {
+  color: var(--texto-claro);
+  font-family: var(--fuente-outfit);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.campo-control {
+  box-sizing: border-box;
+  width: 100%;
+  height: 56px;
+  padding: 0 18px;
+  background: var(--fondo-campo);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+  font-size: 18px;
   font-weight: 600;
-  min-height: 24px;
-  padding: 20px 0 8px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.campo-control:focus {
+  border-color: var(--acento-secundario);
+}
+
+.campo-control::placeholder {
+  color: var(--texto-suave);
+  opacity: 0.8;
+}
+
+/* ASIENTOS CON "personas" Y BOTONES */
+.campo-control-asientos {
+  display: flex;
+  align-items: center;
+  background: var(--fondo-campo);
+  border-radius: 16px;
+  border: 2px solid transparent;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 0 12px 0 18px;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+
+.campo-control-asientos:focus-within {
+  border-color: var(--acento-secundario);
+}
+
+.campo-control--asientos {
+  flex: 0 0 36px;
+  width: 36px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: 100%;
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+  font-size: 18px;
+  font-weight: 600;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.campo-control--asientos::-webkit-inner-spin-button,
+.campo-control--asientos::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.campo-control-asientos__sufijo {
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+  font-size: 17px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.campo-control-asientos__stepper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  height: 40px;
+  width: 26px;
+  flex-shrink: 0;
+}
+
+.asientos-step-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 18px;
+  background: rgba(254, 250, 224, 0.12);
+  border: none;
+  border-radius: 5px;
+  color: var(--texto-claro);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s;
+}
+
+.asientos-step-btn:hover {
+  background: rgba(254, 250, 224, 0.25);
+}
+
+.asientos-step-btn:active {
+  background: rgba(254, 250, 224, 0.4);
+}
+
+/* SELECTOR DE SEGMENTOS (PILL BAR) */
+.selector-segmentos {
+  display: flex;
+  background: var(--fondo-campo);
+  border-radius: 16px;
+  padding: 5px;
+  gap: 5px;
+}
+
+.selector-segmentos__opcion {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: rgba(254, 250, 224, 0.7);
+  font-family: var(--fuente-geist);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 13px 7px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
   text-align: center;
+  white-space: nowrap;
 }
 
-.alta-mesa__resultado--error {
-  color: var(--color-error);
+/* OPCIÓN SELECCIONADA CON COLOR CREMA INTERNO */
+.selector-segmentos__opcion--activa {
+  background: var(--acento);
+  color: var(--texto-claro);
+  font-weight: 700;
 }
 
+/* FOTO DE UBICACIÓN AMPLIA */
+.alta-mesa__foto {
+  width: 100%;
+  min-height: 260px;
+  height: 260px;
+  display: flex;
+}
+
+.alta-mesa__foto .selector-foto-mesa {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.alta-mesa__foto .selector-foto-mesa__posicion {
+  width: 100%;
+  display: flex;
+}
+
+.alta-mesa__foto .selector-foto-mesa__contenido {
+  width: 100%;
+  min-height: 260px;
+  height: 260px;
+}
+
+/* BOTÓN SUBMIT SIEMPRE ABAJO Y CON TEXTO COLOR CREMA */
 .alta-mesa__submit {
-  margin: 8px 0 0;
-  --background: var(--color-primario);
-  --color: var(--color-primario-contraste);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 58px;
+  margin-top: 10px;
+  flex-shrink: 0;
+  background: var(--acento);
+  color: var(--texto-claro);
+  border: none;
+  border-radius: 18px;
+  font-family: var(--fuente-outfit);
+  font-size: 19px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgb(42 49 19 / 35%);
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.alta-mesa__submit:active {
+  transform: scale(0.98);
+}
+
+.alta-mesa__submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .alta-mesa__submit ion-spinner {
   display: none;
-  margin-right: 8px;
+  width: 24px;
+  height: 24px;
+  --color: var(--texto-claro);
 }
 
 .alta-mesa__submit--procesando ion-spinner {
   display: inline-block;
 }
 
-@media (max-width: 600px) {
-  .alta-mesa__contenido {
-    padding: 18px 12px 28px;
-  }
+/* ERRORES */
+.campo-error {
+  display: none;
+  font-size: 13px;
+  margin-top: 3px;
+  font-family: var(--fuente-geist);
+  color: #ef4444;
+}
 
-  .alta-mesa__formulario {
-    border-radius: 12px;
-    padding: 16px 12px;
-  }
+.campo-formulario--invalido .campo-error {
+  display: block;
+}
 
-  .alta-mesa__fila-numerica {
-    gap: 0;
-    grid-template-columns: 1fr;
-  }
+.campo-formulario--invalido .campo-control,
+.campo-formulario--invalido .campo-control-asientos,
+.campo-formulario--invalido .selector-segmentos {
+  border-color: #ef4444;
 }

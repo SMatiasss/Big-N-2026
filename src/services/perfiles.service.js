@@ -105,8 +105,7 @@ export async function listarEmpleados() {
   const { data, error } = await getSupabase()
     .from(TABLAS.PERFILES)
     .select('id, nombres, apellidos, rol, estado')
-    .neq('rol', 'cliente_registrado')
-    .neq('rol', 'cliente_anonimo')
+    .in('rol', ROLES_EMPLEADO)
     .order('apellidos', { ascending: true });
   if (error) throw error;
   return data;
