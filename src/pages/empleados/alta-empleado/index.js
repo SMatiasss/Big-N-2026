@@ -1,26 +1,11 @@
 import './index.css';
-
+import { navegarA } from '../../../router.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
-
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
-
-import {
-  ROLES,
-  ROLES_EMPLEADO,
-  ESTADOS_PERFIL,
-} from '../../../config/constantes.js';
-
+import { ROLES, ROLES_EMPLEADO, ESTADOS_PERFIL,} from '../../../config/constantes.js';
 import { signUp } from '../../../services/auth.service.js';
 import { altaPerfil } from '../../../services/perfiles.service.js';
-
-import {
-  esCampoVacio,
-  esCuilValido,
-  esDniValido,
-  esEmailValido,
-  esNombrePersonaValido,
-  obtenerErrorArchivoImagen,
-} from '../../../utils/validadores.js';
+import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
 
 
 const ROLES_DISPONIBLES = ROLES_EMPLEADO;
@@ -549,6 +534,7 @@ export function render(container) {
               class="alta-empleado__resultado"
               role="status"
               aria-live="polite"
+              hidden
             ></div>
 
 
@@ -591,6 +577,26 @@ export function render(container) {
   const botonGuardar = formulario.querySelector(
     '.alta-empleado__submit'
   );
+
+
+  /* =========================================================
+     NOTIFICACIÓN
+     ========================================================= */
+
+  function mostrarResultado(mensaje, tipo = 'exito') {
+    resultado.textContent = mensaje;
+
+    resultado.className =
+      `alta-empleado__resultado alta-empleado__resultado--${tipo}`;
+
+    resultado.hidden = false;
+  }
+
+  function ocultarResultado() {
+    resultado.hidden = true;
+    resultado.textContent = '';
+    resultado.className = 'alta-empleado__resultado';
+  }
 
 
   /* =========================================================
@@ -730,30 +736,29 @@ export function render(container) {
 
         if (datosDniEscaneados.cuil) {
 
-          resultado.textContent =
-            'Datos del DNI cargados. Revisalos antes de continuar.';
+          mostrarResultado(
+            'Datos del DNI cargados. Revisalos antes de continuar.',
+            'exito'
+          );
 
         } else {
 
-          resultado.textContent =
-            'Datos cargados; completá el CUIL manualmente.';
+          mostrarResultado(
+            'Datos cargados; completá el CUIL manualmente.',
+            'exito'
+          );
 
         }
-
-
-        resultado.className =
-          'alta-empleado__resultado alta-empleado__resultado--exito';
 
 
         actualizar();
 
       } catch (error) {
 
-        resultado.textContent =
-          error.message;
-
-        resultado.className =
-          'alta-empleado__resultado alta-empleado__resultado--error';
+        mostrarResultado(
+          error.message,
+          'error'
+        );
 
       }
     },
@@ -793,7 +798,7 @@ export function render(container) {
 
           actualizar();
 
-          resultado.textContent = '';
+          ocultarResultado();
 
         }
       );
@@ -834,11 +839,10 @@ export function render(container) {
 
       if (Object.keys(errores).length) {
 
-        resultado.textContent =
-          'Revisá los campos señalados antes de continuar.';
-
-        resultado.className =
-          'alta-empleado__resultado alta-empleado__resultado--error';
+        mostrarResultado(
+          'Revisá los campos señalados antes de continuar.',
+          'error'
+        );
 
         return;
       }
@@ -867,11 +871,20 @@ export function render(container) {
           estado: ESTADOS_PERFIL.APROBADO,
         });
 
-        resultado.textContent = 'Empleado creado y aprobado correctamente.';
-        resultado.className = 'alta-empleado__resultado alta-empleado__resultado--exito';
+        mostrarResultado(
+          'Empleado creado y aprobado correctamente.',
+          'exito'
+        );
+
+        setTimeout(() => { navegarA('/auth/login')}, 2000);
+
       } catch (error) {
-        resultado.textContent = error.message ?? 'No se pudo crear el empleado.';
-        resultado.className = 'alta-empleado__resultado alta-empleado__resultado--error';
+
+        mostrarResultado(
+          error.message ?? 'No se pudo crear el empleado.',
+          'error'
+        );
+
       } finally {
         enviandoAlta = false;
         botonGuardar.disabled = false;
