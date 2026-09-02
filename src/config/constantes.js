@@ -14,6 +14,10 @@ export const ROLES = {
   BAR: 'bar',
   METRE: 'metre',
   CLIENTE: 'cliente',
+  // Los dos valores reales de cliente en el enum rol_usuario (01_schema.sql).
+  // ROLES.CLIENTE ('cliente') no coincide con ninguno de los dos y no se usa.
+  CLIENTE_REGISTRADO: 'cliente_registrado',
+  CLIENTE_ANONIMO: 'cliente_anonimo',
 };
 
 // Roles asignables desde el alta de empleado: excluye ADMIN/COCINA/BAR/CLIENTE,
@@ -59,6 +63,19 @@ export const ESTADOS_ESTADIA = {
   CERRADA: 'cerrada',
 };
 
+// Coincide con el enum estado_espera del schema (01_schema.sql).
+export const ESTADOS_ESPERA = {
+  ESPERANDO: 'esperando',
+  ASIGNADO: 'asignado',
+  CANCELADO: 'cancelado',
+};
+
+// Coincide con el enum estado_mesa del schema (01_schema.sql).
+export const ESTADOS_MESA = {
+  LIBRE: 'libre',
+  OCUPADA: 'ocupada',
+};
+
 export const TABLAS = {
   PERFILES: 'perfiles',
   PRODUCTOS: 'productos',
@@ -73,12 +90,21 @@ export const TABLAS = {
   ENCUESTAS: 'encuestas',
   RESPUESTAS_ENCUESTA: 'respuestas_encuesta',
   CUENTAS: 'cuentas',
+  CONFIGURACION: 'configuracion',
+  NOTIFICACIONES: 'notificaciones',
+};
+
+// Vistas de sólo lectura (GROUP BY ya resuelto en el schema, ver 01_schema.sql).
+export const VISTAS = {
+  RESULTADOS_ENCUESTAS: 'v_resultados_encuestas',
 };
 
 // Buckets públicos de Supabase Storage para las imágenes reales de cada entidad.
 export const BUCKETS = {
   PRODUCTOS: 'productos',
   MESAS: 'mesas',
+  // Fotos de perfil (empleados, clientes registrados y anónimos).
+  PERFILES: 'perfiles',
 };
 
 export const TIPOS_PRODUCTO = {

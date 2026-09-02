@@ -7,3 +7,11 @@ body {
 #app {
   min-height: 100%;
 }
+
+/* Los componentes de Ionic (ion-button, ion-fab, ion-item, etc.) fijan su
+   propio "display" sin condición, así que el atributo nativo [hidden] no
+   alcanza para ocultarlos por sí solo (se pisa su CSS interno). Esta regla
+   global lo fuerza una sola vez en vez de repetirla en cada página. */
+[hidden] {
+  display: none !important;
+}

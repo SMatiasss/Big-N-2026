@@ -6,13 +6,21 @@ import './styles/variables.css';
 import './styles/tipografia.css';
 import './styles/globales.css';
 import { initSupabase } from './services/supabase.client.js';
+import { verificarSesionAnonimaAlArrancar } from './services/sesion-anonima.service.js';
 import { iniciarRouter } from './router.js';
 
 initialize();
 defineCustomElements(window);
 initSupabase();
 //location.hash = '/mesas/alta'
-iniciarRouter(document.querySelector('#app'));
+
+// Si la sesión guardada es de un cliente anónimo cuya estadía ya se cerró (o
+// nunca llegó a tener una), se cierra sola acá antes de mostrar cualquier
+// pantalla -ver sesion-anonima.service.js-. Para cualquier otro rol esto no
+// hace nada: mantienen su sesión persistente normal.
+verificarSesionAnonimaAlArrancar().finally(() => {
+  iniciarRouter(document.querySelector('#app'));
+});
 
 
 // Splash screen con movimiento y sonido custom
@@ -30,8 +38,6 @@ window.addEventListener('load', () => {
     }
     }, 4000); // 3.5 segundos en pantalla
 });
-// location.hash = '/mesas/alta'
-iniciarRouter(document.querySelector('#app'));
 
 // El router cambia de pantalla vía location.hash, lo que apila entradas en el
 // historial del WebView. Por eso el botón "atrás" físico puede resolverse
