@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Outfit:wght@700&display=swap');
+
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+.listado-empleados {
+  --fondo: #606c38;
+  --fondo-card: #4a572c;
+  --acento: #dda15e;
+  --texto-claro: #fefae0;
+  --texto-suave: #c8c8a0;
+  --fuente-geist: 'Geist', sans-serif;
+  --fuente-outfit: 'Outfit', sans-serif;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+}
+
+.listado-empleados ion-content {
+  --background: var(--fondo);
+}
+
+
+/* =========================================================
+   ENCABEZADO FIJO (NAVBAR)
+   ========================================================= */
+
+.listado-empleados__header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: rgba(96, 108, 56, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.listado-empleados__header-contenido {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.listado-empleados__volver {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  background: var(--fondo-card);
+  border: none;
+  border-radius: 50%;
+
+  color: var(--texto-claro);
+  font-size: 20px;
+  font-family: var(--fuente-outfit);
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.1s ease;
+}
+
+.listado-empleados__volver:active {
+  transform: scale(0.95);
+}
+
+.listado-empleados__titulo {
+  margin: 0;
+  color: var(--texto-claro);
+  font-family: var(--fuente-outfit);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-align: center;
+  flex: 1;
+}
+
+.listado-empleados__boton-alta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  background: var(--acento);
+  border: none;
+  border-radius: 50%;
+
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.1s ease;
+}
+
+.listado-empleados__boton-alta:active {
+  transform: scale(0.95);
+}
+
+
+/* =========================================================
+   CONTENIDO PRINCIPAL Y LISTA
+   ========================================================= */
+
+.listado-empleados__contenido {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+.listado-empleados__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+/* =========================================================
+   CARD DE EMPLEADO
+   ========================================================= */
+
+.empleado-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 14px 16px;
+
+  background: var(--fondo-card);
+  border-radius: 16px;
+}
+
+.empleado-card__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 46px;
+  height: 46px;
+
+  background: var(--acento);
+  border-radius: 50%;
+
+  color: #fff;
+  font-family: var(--fuente-outfit);
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.empleado-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.empleado-card__nombre {
+  margin: 0 0 2px;
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.empleado-card__rol {
+  margin: 0;
+  color: var(--acento);
+  font-family: var(--fuente-geist);
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: capitalize;
+}
+
+.empleado-card__estado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+
+  color: var(--texto-suave);
+  font-family: var(--fuente-geist);
+  font-size: 13px;
+}
+
+.empleado-card__estado--activo {
+  color: var(--acento);
+}
+
+.empleado-card__indicador {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   ESTADOS: CARGANDO / ERROR / VACÍO
+   ========================================================= */
+
+.listado-empleados__mensaje {
+  margin: 40px 0 0;
+  text-align: center;
+  color: var(--texto-suave);
+  font-family: var(--fuente-geist);
+  font-size: 15px;
+}
