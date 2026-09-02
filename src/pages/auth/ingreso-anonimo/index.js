@@ -4,7 +4,7 @@
 import './index.css';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorFotoMesa } from '../../../components/selector-foto-mesa/selector-foto-mesa.js';
-import { mostrarToast } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { signInAnonymously } from '../../../services/auth.service.js';
 import { crearClienteAnonimo } from '../../../services/perfiles.service.js';
 import { validarQrIngreso } from '../../../services/qr.service.js';
@@ -125,28 +125,19 @@ export function render(container) {
           try {
             const esValido = await validarQrIngreso(contenido);
             if (!esValido) {
-              mostrarToast({
-                mensaje: 'Ese código no es el de ingreso al local. Probá de nuevo.',
-                tipo: 'error',
-              });
+              mostrarToastError('Ese código no es el de ingreso al local. Probá de nuevo.');
               return;
             }
             navegarA('/lista-espera');
           } catch (error) {
-            mostrarToast({
-              mensaje: `No se pudo validar el código: ${error.message ?? 'error desconocido'}`,
-              tipo: 'error',
-            });
+            mostrarToastError(`No se pudo validar el código: ${error.message ?? 'error desconocido'}`);
           }
         },
       });
       container.querySelector('.ingreso-anonimo__lector-qr').append(lector.elemento);
     } catch (error) {
       console.error('No se pudo completar el ingreso anónimo.', error);
-      mostrarToast({
-        mensaje: `No se pudo completar el ingreso: ${error.message ?? 'error desconocido'}`,
-        tipo: 'error',
-      });
+      mostrarToastError(`No se pudo completar el ingreso: ${error.message ?? 'error desconocido'}`);
       establecerProcesando(false);
     }
   });

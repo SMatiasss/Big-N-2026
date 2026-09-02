@@ -1,7 +1,7 @@
 // Panel del metre: lista de espera en tiempo real + asignación de mesa
 // (puntos 9 y 10).
 import './index.css';
-import { mostrarToast } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { ROLES } from '../../../config/constantes.js';
 import { asignarMesa } from '../../../services/estadias.service.js';
 import { listarEsperando, suscribirseAListaEspera } from '../../../services/lista-espera.service.js';
@@ -116,13 +116,10 @@ export function render(container) {
           } catch (error) {
             boton.disabled = false;
             if (error.code === '23505') {
-              mostrarToast({ mensaje: 'Esa mesa ya fue asignada, elegí otra.', tipo: 'error' });
+              mostrarToastError('Esa mesa ya fue asignada, elegí otra.');
             } else {
               console.error('No se pudo asignar la mesa.', error);
-              mostrarToast({
-                mensaje: `No se pudo asignar la mesa: ${error.message ?? 'error desconocido'}`,
-                tipo: 'error',
-              });
+              mostrarToastError(`No se pudo asignar la mesa: ${error.message ?? 'error desconocido'}`);
             }
           }
         },

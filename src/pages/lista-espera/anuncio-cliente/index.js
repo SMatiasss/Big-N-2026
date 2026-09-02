@@ -2,7 +2,7 @@
 // escanear el QR de ingreso al local, tanto desde el ingreso anónimo como
 // desde "Ingresar al local" para un cliente registrado ya logueado.
 import './index.css';
-import { mostrarToast } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { ESTADOS_ESPERA } from '../../../config/constantes.js';
 import { obtenerMiEstadiaActiva } from '../../../services/estadias.service.js';
 import {
@@ -11,6 +11,7 @@ import {
   obtenerMiEspera,
   suscribirseAMiEspera,
 } from '../../../services/lista-espera.service.js';
+import { vigilarMiEstadiaSiSoyAnonima } from '../../../services/sesion-anonima.service.js';
 
 export function render(container) {
   container.innerHTML = `
@@ -89,6 +90,8 @@ export function render(container) {
       try {
         const estadia = await obtenerMiEstadiaActiva();
         mostrarAsignada(estadia?.mesa?.numero ?? '');
+        // Sin efecto si el rol no es cliente_anonimo (ver sesion-anonima.service.js).
+        if (estadia) vigilarMiEstadiaSiSoyAnonima(estadia);
       } catch (error) {
         console.error('No se pudo obtener la mesa asignada.', error);
       }
@@ -118,10 +121,7 @@ export function render(container) {
     } catch (error) {
       botonIngresar.disabled = false;
       console.error('No se pudo anotar en la lista de espera.', error);
-      mostrarToast({
-        mensaje: `No se pudo anotar en la lista de espera: ${error.message ?? 'error desconocido'}`,
-        tipo: 'error',
-      });
+      mostrarToastError(`No se pudo anotar en la lista de espera: ${error.message ?? 'error desconocido'}`);
     }
   });
 
@@ -138,10 +138,7 @@ export function render(container) {
       mostrarInicial();
     } catch (error) {
       console.error('No se pudo cancelar la espera.', error);
-      mostrarToast({
-        mensaje: `No se pudo cancelar la espera: ${error.message ?? 'error desconocido'}`,
-        tipo: 'error',
-      });
+      mostrarToastError(`No se pudo cancelar la espera: ${error.message ?? 'error desconocido'}`);
     } finally {
       botonCancelar.disabled = false;
     }

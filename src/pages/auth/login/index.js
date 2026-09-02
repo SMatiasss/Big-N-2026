@@ -5,7 +5,7 @@ import {
   signOut,
 } from '../../../services/auth.service.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
-import { mostrarToast } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { ROLES, ROLES_EMPLEADO } from '../../../config/constantes.js';
 import { getSupabase } from '../../../services/supabase.client.js';
 import { validarQrIngreso } from '../../../services/qr.service.js';
@@ -122,18 +122,12 @@ async function renderSesionIniciada(container, session, generacion) {
             try {
               const esValido = await validarQrIngreso(contenido);
               if (!esValido) {
-                mostrarToast({
-                  mensaje: 'Ese código no es el de ingreso al local. Probá de nuevo.',
-                  tipo: 'error',
-                });
+                mostrarToastError('Ese código no es el de ingreso al local. Probá de nuevo.');
                 return;
               }
               navegarA('/lista-espera');
             } catch (error) {
-              mostrarToast({
-                mensaje: `No se pudo validar el código: ${error.message ?? 'error desconocido'}`,
-                tipo: 'error',
-              });
+              mostrarToastError(`No se pudo validar el código: ${error.message ?? 'error desconocido'}`);
             }
           },
         });

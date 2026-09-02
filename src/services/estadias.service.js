@@ -63,3 +63,43 @@ export async function cerrarEstadia(estadiaId) {
   if (error) throw error;
   return data;
 }
+
+// La estadía más reciente del cliente logueado, sin importar su estado (a
+// diferencia de obtenerMiEstadiaActiva, que descarta las cerradas). La usa
+// sesion-anonima.service.js al arrancar la app para decidir si una sesión
+// anónima sigue correspondiendo a una visita en curso o quedó "huérfana" de
+// una anterior ya cerrada.
+export async function obtenerMiUltimaEstadia() {
+  const supabase = getSupabase();
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return null;
+
+  const { data, error } = await supabase
+    .from(TABLAS.ESTADIAS)
+    .select('*')
+    .eq('cliente_id', session.user.id)
+    .order('iniciada_en', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+// Avisa al propio cliente cuando SU fila de estadía cambia (típicamente
+// estado -> 'cerrada', disparado por trg_cerrar_estadia cuando el mozo
+// confirma el pago). Mismo patrón que suscribirseAMiEspera en
+// lista-espera.service.js. Devuelve una función para desuscribirse.
+export function suscribirseAMiEstadia(estadiaId, onCambio) {
+  const canal = getSupabase()
+    .channel(`estadia-cliente-${estadiaId}`)
+    .on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: TABLAS.ESTADIAS, filter: `id=eq.${estadiaId}` },
+      (payload) => onCambio(payload.new),
+    )
+    .subscribe();
+
+  return () => {
+    getSupabase().removeChannel(canal);
+  };
+}

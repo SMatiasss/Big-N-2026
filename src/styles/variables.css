@@ -1,3 +1,8 @@
+/* Usada por toast-error/toast-normal (y por las pantallas de empleados, que
+   ya la traían duplicada). Se centraliza acá para que esté disponible sin
+   importar qué pantalla se haya visitado primero en la sesión. */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Outfit:wght@700&display=swap');
+
 /* Paleta de colores del restaurante (contraste, sin blanco/negro puro). */
 :root {
   --color-fondo: #f4f1ec;
@@ -8,4 +13,5 @@
   --color-secundario: #3e6259;
   --color-error: #b3392c;
   --color-borde: #ddd4c8;
+  --fuente-outfit: 'Outfit', sans-serif;
 }
