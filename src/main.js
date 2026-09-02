@@ -30,8 +30,6 @@ window.addEventListener('load', () => {
     }
     }, 4000); // 3.5 segundos en pantalla
 });
-// location.hash = '/mesas/alta'
-iniciarRouter(document.querySelector('#app'));
 
 // El router cambia de pantalla vía location.hash, lo que apila entradas en el
 // historial del WebView. Por eso el botón "atrás" físico puede resolverse

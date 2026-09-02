@@ -43,6 +43,11 @@ async function obtenerImagenPredeterminada({ origen }) {
 export function crearSelectorFotoMesa({
   onCambio = () => {},
   obtenerImagen = obtenerImagenPredeterminada,
+  tituloEncabezado = 'Foto de la mesa',
+  descripcionEncabezado = 'Sacá una foto que muestre la mesa completa.',
+  etiquetaAria = 'Seleccionar foto de la mesa',
+  textoPlaceholder = 'Foto de la mesa',
+  iconoPlaceholder = '＋',
 } = {}) {
   const elemento = document.createElement('section');
   elemento.className = 'selector-foto-mesa';
@@ -56,11 +61,11 @@ export function crearSelectorFotoMesa({
 
   elemento.innerHTML = `
     <div class="selector-foto-mesa__encabezado">
-      <h2 id="titulo-foto-mesa">Foto de la mesa</h2>
-      <p>Sacá una foto que muestre la mesa completa.</p>
+      <h2 id="titulo-foto-mesa">${tituloEncabezado}</h2>
+      <p>${descripcionEncabezado}</p>
     </div>
     <article class="selector-foto-mesa__posicion">
-      <button class="selector-foto-mesa__contenido" type="button" aria-label="Seleccionar foto de la mesa"></button>
+      <button class="selector-foto-mesa__contenido" type="button" aria-label="${etiquetaAria}"></button>
       <div class="selector-foto-mesa__acciones"></div>
     </article>
     <ion-note class="selector-foto-mesa__error" color="danger" aria-live="polite"></ion-note>
@@ -81,11 +86,11 @@ export function crearSelectorFotoMesa({
   // fuera de esta función para mantener separadas ambas responsabilidades.
   function renderizar() {
     if (urlPreview) {
-      contenido.innerHTML = `<img src="${urlPreview}" alt="Vista previa de la foto de la mesa">`;
+      contenido.innerHTML = `<img src="${urlPreview}" alt="Vista previa: ${textoPlaceholder}">`;
     } else {
       contenido.innerHTML = `
-        <span class="selector-foto-mesa__icono" aria-hidden="true">＋</span>
-        <span>Foto de la mesa</span>
+        <span class="selector-foto-mesa__icono" aria-hidden="true">${iconoPlaceholder}</span>
+        <span>${textoPlaceholder}</span>
       `;
     }
 

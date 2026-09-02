@@ -1,6 +1,6 @@
 // Alta de mesa, disponibilidad, QR (punto 4).
 import { getSupabase } from './supabase.client.js';
-import { BUCKETS, TABLAS } from '../config/constantes.js';
+import { BUCKETS, ESTADOS_MESA, TABLAS } from '../config/constantes.js';
 import { esArchivoImagen } from '../utils/validadores.js';
 
 export async function altaMesa(mesa) {
@@ -64,6 +64,19 @@ export async function listarMesas() {
   // numero es unique en el schema, así que Postgres ya tiene el índice
   // que hace este order by gratis; no hace falta uno aparte.
   const { data, error } = await getSupabase().from(TABLAS.MESAS).select('*').order('numero');
+  if (error) throw error;
+  return data;
+}
+
+// Mesas que el metre puede ofrecer para asignar (punto 10): libres y activas
+// (una mesa dada de baja lógicamente no debe aparecer para asignación nueva).
+export async function listarMesasLibres() {
+  const { data, error } = await getSupabase()
+    .from(TABLAS.MESAS)
+    .select('*')
+    .eq('estado', ESTADOS_MESA.LIBRE)
+    .eq('activa', true)
+    .order('numero');
   if (error) throw error;
   return data;
 }

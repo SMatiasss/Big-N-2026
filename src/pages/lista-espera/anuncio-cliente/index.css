@@ -1,0 +1,70 @@
+.lista-espera-cliente {
+  background: var(--color-fondo);
+}
+
+.lista-espera-cliente__aviso {
+  align-items: center;
+  background: var(--color-secundario);
+  color: var(--color-primario-contraste);
+  display: flex;
+  font-weight: 600;
+  justify-content: space-between;
+  padding: 12px 18px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* La regla de arriba fija "display: flex" sin condición, así que hay que
+   pisarla explícito para [hidden] (misma trampa que ya se vio con el
+   spinner de gestion-mesas y los botones del login). */
+.lista-espera-cliente__aviso[hidden] {
+  display: none;
+}
+
+.lista-espera-cliente__boton-mesa {
+  --color: var(--color-primario-contraste);
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.lista-espera-cliente__contenido {
+  margin: 0 auto;
+  max-width: 640px;
+  padding: 20px 18px 40px;
+}
+
+.lista-espera-cliente__encuestas h2 {
+  color: var(--color-texto);
+  font-size: 1.2rem;
+  margin: 0 0 12px;
+}
+
+.lista-espera-cliente__placeholder-encuestas {
+  align-items: center;
+  background: var(--color-superficie);
+  border: 1px dashed var(--color-borde);
+  border-radius: 16px;
+  color: var(--ion-color-medium, #666);
+  display: flex;
+  justify-content: center;
+  min-height: 160px;
+  padding: 32px 20px;
+  text-align: center;
+}
+
+.lista-espera-cliente__ingresar {
+  margin: 20px 0 0;
+  --background: var(--color-primario);
+  --color: var(--color-primario-contraste);
+}
+
+.lista-espera-cliente__cancelar {
+  margin: 10px 0 0;
+}
+
+@media (max-width: 600px) {
+  .lista-espera-cliente__contenido {
+    padding: 16px 12px 28px;
+  }
+}

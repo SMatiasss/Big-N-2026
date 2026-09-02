@@ -1,0 +1,79 @@
+.ingreso-anonimo {
+  background: var(--color-fondo);
+}
+
+.ingreso-anonimo__contenido {
+  margin: 0 auto;
+  max-width: 480px;
+  padding: 24px 18px 40px;
+}
+
+.ingreso-anonimo__introduccion h1 {
+  color: var(--color-texto);
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  margin: 0 0 6px;
+}
+
+.ingreso-anonimo__introduccion p {
+  color: var(--ion-color-medium, #666);
+  margin: 0 0 20px;
+}
+
+.ingreso-anonimo__formulario {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.campo-formulario {
+  margin-bottom: 16px;
+}
+
+.campo-formulario ion-item {
+  --background: transparent;
+  --border-color: var(--color-borde);
+  --highlight-color-focused: var(--color-secundario);
+  --padding-start: 0;
+}
+
+.campo-formulario ion-note {
+  display: block;
+  min-height: 20px;
+  padding: 5px 4px 0;
+}
+
+.campo-formulario--invalido ion-item {
+  --border-color: var(--color-error);
+  --highlight-color-focused: var(--color-error);
+}
+
+.ingreso-anonimo__submit {
+  margin: 8px 0 0;
+  --background: var(--color-primario);
+  --color: var(--color-primario-contraste);
+}
+
+.ingreso-anonimo__submit ion-spinner {
+  display: none;
+  margin-right: 8px;
+}
+
+.ingreso-anonimo__submit--procesando ion-spinner {
+  display: inline-block;
+}
+
+.ingreso-anonimo__lector-qr {
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .ingreso-anonimo__contenido {
+    padding: 18px 12px 28px;
+  }
+
+  .ingreso-anonimo__formulario {
+    border-radius: 12px;
+    padding: 16px 12px;
+  }
+}
