@@ -1,0 +1,506 @@
+/* Estilos compartidos por el alta de plato y el alta de bebida: los dos
+   formularios son iguales campo por campo, así que las dos páginas usan la
+   misma clase raíz .alta-producto en vez de duplicar la hoja. */
+
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+.alta-producto {
+  --fondo: #606c38;
+  --fondo-campo: #4a572c;
+  --acento: #dda15e;
+  --acento-fuerte: #bc6c25;
+
+  --texto-claro: #fefae0;
+  --texto-suave: #8f956f;
+  --borde: #6e6939;
+
+  --sombra-submit: 0 3px 3px rgb(42 49 19 / 42%);
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-geist);
+  font-weight: 400;
+}
+
+.alta-producto ion-content {
+  --background: var(--fondo);
+}
+
+/* La pantalla se reparte a lo alto: el formulario crece hasta el final y el
+   botón de guardar queda apoyado abajo (mismo criterio que alta-empleado). */
+
+.alta-producto__contenido {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 440px;
+  min-height: 100%;
+
+  margin: 0 auto;
+  padding: 22px 18px 32px;
+}
+
+.alta-producto__formulario {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  width: 100%;
+}
+
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.alta-producto__introduccion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin: 0 0 20px;
+}
+
+.alta-producto__volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+
+  width: 34px;
+  height: 34px;
+
+  margin: 0;
+  padding: 0 0 4px;
+
+  background: var(--fondo-campo);
+  border: 0;
+  border-radius: 50%;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.alta-producto__volver:active {
+  transform: scale(0.95);
+}
+
+.alta-producto__introduccion h1 {
+  margin: 0;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 25px;
+  letter-spacing: -0.02em;
+}
+
+
+/* =========================================================
+   FOTOS
+   ========================================================= */
+
+/* El componente trae su propio encabezado; acá el título ya lo da la pantalla. */
+
+.alta-producto .selector-fotos-producto__encabezado {
+  display: none;
+}
+
+.alta-producto .selector-fotos-producto {
+  display: block;
+  margin: 0 0 22px;
+}
+
+.alta-producto .selector-fotos-producto__grilla {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.alta-producto .selector-fotos-producto__posicion {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+
+/* TARJETA DE CADA FOTO */
+
+.alta-producto .selector-fotos-producto__contenido {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 0;
+
+  background: var(--fondo-campo);
+  border: 1px dashed var(--acento);
+  border-radius: 12px;
+
+  /* El componente escribe "＋ Foto N"; el ícono lo dibuja el CSS de abajo. */
+  color: transparent;
+  font-size: 0;
+
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.alta-producto .selector-fotos-producto__contenido img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* ÍCONO DE CÁMARA (cuerpo y lente), sólo mientras no hay foto cargada */
+
+.alta-producto .selector-fotos-producto__contenido::before {
+  content: '';
+
+  position: absolute;
+  top: calc(50% - 9px);
+  left: calc(50% - 12px);
+
+  box-sizing: border-box;
+
+  width: 24px;
+  height: 18px;
+
+  border: 2px solid var(--texto-claro);
+  border-radius: 5px;
+}
+
+.alta-producto .selector-fotos-producto__contenido::after {
+  content: '';
+
+  position: absolute;
+  top: calc(50% - 4px);
+  left: calc(50% - 4px);
+
+  box-sizing: border-box;
+
+  width: 8px;
+  height: 8px;
+
+  border: 2px solid var(--texto-claro);
+  border-radius: 50%;
+}
+
+.alta-producto .selector-fotos-producto__contenido:has(img) {
+  border-style: solid;
+  border-color: var(--borde);
+}
+
+.alta-producto .selector-fotos-producto__contenido:has(img)::before,
+.alta-producto .selector-fotos-producto__contenido:has(img)::after {
+  content: none;
+}
+
+
+/* BOTÓN + (cámara en el celular, selector de archivo en la web).
+   El botón de galería se oculta porque tocar la tarjeta ya hace eso mismo. */
+
+.alta-producto .selector-fotos-producto__acciones ion-button[data-origen="galeria"] {
+  display: none;
+}
+
+/* El círculo naranja y el "+" los dibuja este contenedor, no el ion-button:
+   el ancho del host de un ion-button lo termina decidiendo Ionic y en el
+   WebView de Android queda más grande que el círculo, así que un ::after
+   sobre el botón se centraba sobre el host y quedaba corrido al costado. */
+
+.alta-producto .selector-fotos-producto__acciones {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+
+  box-sizing: border-box;
+
+  width: 26px;
+  height: 26px;
+
+  margin: 0;
+
+  background: var(--acento-fuerte);
+  border-radius: 50%;
+}
+
+.alta-producto .selector-fotos-producto__acciones::after {
+  content: '+';
+
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--texto-claro);
+
+  font-family: system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+
+  pointer-events: none;
+}
+
+/* El botón queda como capa transparente que cubre todo el círculo. */
+
+.alta-producto .selector-fotos-producto__acciones ion-button {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  margin: 0;
+
+  --background: transparent;
+  --background-hover: transparent;
+  --background-activated: rgb(42 49 19 / 25%);
+  --background-focused: transparent;
+
+  --border-radius: 50%;
+  --box-shadow: none;
+  --color: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+
+  /* El componente los crea con fill="outline": sin esto Ionic les dibuja el
+     borde azul de su color primario alrededor del círculo. */
+  --border-width: 0;
+  --border-color: transparent;
+
+  font-size: 0;
+}
+
+.alta-producto .selector-fotos-producto__acciones ion-button::part(native) {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 100%;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  color: transparent;
+  font-size: 0;
+}
+
+
+/* ERROR DE LAS FOTOS */
+
+.alta-producto .selector-fotos-producto__error {
+  display: block;
+
+  padding: 6px 2px 0;
+
+  font-size: 11px;
+  line-height: 14px;
+}
+
+
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+
+.alta-producto .campo-formulario {
+  width: 100%;
+  margin: 0 0 22px;
+}
+
+.alta-producto .campo-formulario label {
+  display: block;
+
+  margin: 0 0 6px;
+
+  color: var(--texto-claro);
+
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.alta-producto .campo-control {
+  box-sizing: border-box;
+
+  display: block;
+
+  width: 100%;
+
+  margin: 0;
+  padding: 0 12px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: var(--fondo-campo);
+
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-geist);
+  font-size: 14px;
+  font-weight: 400;
+
+  outline: none;
+  box-shadow: none;
+
+  caret-color: var(--texto-claro);
+}
+
+.alta-producto input.campo-control {
+  height: 44px;
+  line-height: 44px;
+}
+
+.alta-producto textarea.campo-control {
+  min-height: 132px;
+
+  padding-top: 12px;
+  padding-bottom: 12px;
+
+  line-height: 19px;
+  resize: vertical;
+}
+
+.alta-producto .campo-control::placeholder {
+  color: var(--texto-suave);
+  opacity: 1;
+}
+
+.alta-producto .campo-control:focus {
+  border-color: var(--acento);
+}
+
+.alta-producto .campo-control:-webkit-autofill,
+.alta-producto .campo-control:-webkit-autofill:hover,
+.alta-producto .campo-control:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--texto-claro);
+  -webkit-box-shadow: 0 0 0 1000px var(--fondo-campo) inset;
+  box-shadow: 0 0 0 1000px var(--fondo-campo) inset;
+
+  caret-color: var(--texto-claro);
+}
+
+
+/* Los spinners del type="number" no aportan nada en pantalla táctil. */
+
+.alta-producto .campo-control::-webkit-outer-spin-button,
+.alta-producto .campo-control::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.alta-producto .campo-control[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+
+/* =========================================================
+   ERRORES
+   ========================================================= */
+
+.alta-producto .campo-formulario ion-note {
+  display: block;
+
+  min-height: 0;
+
+  padding: 3px 2px 0;
+
+  font-size: 10px;
+  line-height: 13px;
+}
+
+.alta-producto .campo-formulario--invalido .campo-control {
+  border-color: #ffd0bf;
+}
+
+
+/* =========================================================
+   BOTÓN GUARDAR
+   ========================================================= */
+
+.alta-producto__submit {
+  width: 100%;
+  height: 50px;
+  min-height: 50px;
+
+  /* auto arriba: empuja el botón al pie del formulario. */
+  margin: auto 0 0;
+
+  --background: var(--acento);
+  --background-hover: var(--acento);
+  --background-activated: var(--acento-fuerte);
+  --background-focused: var(--acento-fuerte);
+
+  --color: var(--texto-claro);
+  --border-radius: 12px;
+  --box-shadow: var(--sombra-submit);
+
+  font-family: var(--fuente-outfit);
+  font-size: 16px;
+  font-weight: 700;
+
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* El spinner sólo aparece mientras se está guardando. */
+
+.alta-producto__submit ion-spinner {
+  display: none;
+
+  width: 18px;
+  height: 18px;
+
+  margin-right: 8px;
+}
+
+.alta-producto__submit--procesando ion-spinner {
+  display: inline-block;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (min-width: 640px) {
+  .alta-producto__contenido {
+    padding-top: 42px;
+  }
+}

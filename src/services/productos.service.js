@@ -24,6 +24,25 @@ export async function listarCarta() {
   return data;
 }
 
+// Igual que listarCarta pero trayendo las fotos en la misma consulta, para que
+// el listado de productos pueda mostrar la miniatura sin una consulta por fila.
+// Devuelve platos y bebidas juntos: la pantalla separa por tipo en sus pestañas
+// sin volver a pedir datos al cambiar de solapa.
+export async function listarCartaConFotos() {
+  const { data, error } = await getSupabase()
+    .from(TABLAS.PRODUCTOS)
+    .select(`*, ${TABLAS.PRODUCTO_FOTOS}(url, orden)`)
+    .order('nombre', { ascending: true });
+  if (error) throw error;
+
+  return data.map((producto) => ({
+    ...producto,
+    // La miniatura es siempre la foto 1; el resto queda para el detalle (HU11).
+    fotoPrincipal: [...(producto[TABLAS.PRODUCTO_FOTOS] ?? [])]
+      .sort((fotoA, fotoB) => fotoA.orden - fotoB.orden)[0]?.url ?? null,
+  }));
+}
+
 // Busca coincidencias de nombre sin distinguir mayúsculas, igual que el índice
 // único de productos. La base seguirá siendo la protección final ante concurrencia.
 export async function existeProductoEnCarta(nombre) {

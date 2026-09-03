@@ -1,124 +1,365 @@
+/* =========================================================
+   BASE
+   ========================================================= */
+
 .panel-metre {
-  background: var(--color-fondo);
+  --fondo: #606c38;
+  --fondo-card: #4a572c;
+  --acento: #dda15e;
+  --acento-fuerte: #bc6c25;
+
+  --texto-claro: #fefae0;
+  --texto-suave: #c8c8a0;
+  --borde: #6e6939;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-geist);
+  font-weight: 400;
+}
+
+.panel-metre ion-content {
+  --background: var(--fondo);
 }
 
 .panel-metre__contenido {
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 480px;
+  min-height: 100%;
+
   margin: 0 auto;
-  max-width: 720px;
-  padding: 20px 18px 40px;
+  padding: 22px 16px 32px;
 }
 
-.panel-metre__estado-carga {
-  align-items: center;
-  color: var(--color-texto);
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.panel-metre__header {
   display: flex;
-  gap: 10px;
-  padding: 16px 0;
+  align-items: center;
+  gap: 12px;
+
+  margin: 0 0 18px;
 }
 
-.panel-metre__estado-carga[hidden] {
-  display: none;
+.panel-metre__volver {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+
+  width: 38px;
+  height: 38px;
+
+  padding: 0 0 4px;
+
+  background: var(--fondo-card);
+  border: none;
+  border-radius: 50%;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+  transition: transform 0.1s ease;
 }
 
-.panel-metre__mensaje {
-  color: var(--ion-color-medium, #666);
-  font-weight: 600;
-  padding: 24px 0;
+.panel-metre__volver:active {
+  transform: scale(0.95);
+}
+
+.panel-metre__titulo {
+  flex: 1;
+
+  margin: 0;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+
+  /* Compensa el ancho del botón para que el título quede ópticamente centrado. */
+  padding-right: 38px;
   text-align: center;
 }
 
+
+/* =========================================================
+   LISTA
+   ========================================================= */
+
 .panel-metre__lista {
-  display: grid;
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
+
+/* =========================================================
+   FILA DE CLIENTE
+   ========================================================= */
+
 .panel-metre__fila {
-  align-items: center;
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: 16px;
   display: grid;
-  gap: 12px;
-  grid-template-columns: 56px 1fr auto auto;
-  padding: 12px;
+  grid-template-columns: 56px 1fr;
+  grid-template-areas:
+    'foto info'
+    'select select'
+    'boton boton';
+  align-items: center;
+  gap: 10px 13px;
+
+  box-sizing: border-box;
+
+  padding: 13px;
+
+  background: var(--fondo-card);
+  border-radius: 16px;
+}
+
+.panel-metre__fila--solo-lectura {
+  grid-template-areas: 'foto info';
 }
 
 .panel-metre__foto {
-  border-radius: 12px;
-  flex: 0 0 auto;
-  height: 56px;
-  overflow: hidden;
+  grid-area: foto;
+
+  box-sizing: border-box;
+
   width: 56px;
+  height: 56px;
+
+  background: rgb(254 250 224 / 8%);
+  border-radius: 12px;
+
+  overflow: hidden;
 }
 
 .panel-metre__foto img {
+  width: 100%;
   height: 100%;
   object-fit: cover;
-  width: 100%;
 }
 
 .panel-metre__foto-vacia {
-  align-items: center;
-  background: var(--color-fondo);
-  color: var(--ion-color-medium, #666);
   display: flex;
-  font-size: 0.65rem;
-  height: 100%;
+  align-items: center;
   justify-content: center;
-  text-align: center;
+
   width: 100%;
+  height: 100%;
+
+  color: var(--texto-suave);
+
+  font-size: 10px;
+  line-height: 12px;
+  text-align: center;
+}
+
+.panel-metre__info {
+  grid-area: info;
+  min-width: 0;
 }
 
 .panel-metre__nombre {
-  align-items: center;
-  color: var(--color-texto);
   display: flex;
-  font-weight: 600;
+  align-items: center;
   gap: 8px;
-  margin: 0 0 4px;
+
+  margin: 0 0 3px;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 19px;
+}
+
+.panel-metre__nombre ion-badge {
+  --background: var(--acento-fuerte);
+  --color: var(--texto-claro);
+  --padding-top: 3px;
+  --padding-bottom: 3px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+
+  border-radius: 999px;
+
+  font-family: var(--fuente-geist);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: none;
 }
 
 .panel-metre__comensales {
-  color: var(--ion-color-medium, #666);
   margin: 0;
+
+  color: var(--texto-suave);
+
+  font-size: 12px;
+  line-height: 15px;
 }
 
+
+/* =========================================================
+   CONTROLES DE ASIGNACIÓN
+
+   Sólo los ve el metre o un jefe (policy estadias_alta); para el resto del
+   staff la fila queda como tarjeta de sólo lectura.
+   ========================================================= */
+
 .panel-metre__select-mesa {
-  --background: var(--color-fondo);
-  border: 1px solid var(--color-borde);
+  grid-area: select;
+
+  box-sizing: border-box;
+
+  width: 100%;
+  min-height: 42px;
+
+  padding: 0 12px;
+
+  background: rgb(42 49 19 / 30%);
+  border: 1px solid var(--borde);
   border-radius: 10px;
-  max-width: 160px;
-  min-width: 130px;
+
+  --background: transparent;
+  --color: var(--texto-claro);
+  --placeholder-color: var(--texto-suave);
+  --placeholder-opacity: 1;
+  --padding-start: 0;
+  --padding-end: 0;
+
+  font-family: var(--fuente-geist);
+  font-size: 13px;
 }
 
 .panel-metre__asignar {
-  --background: var(--color-primario);
-  --color: var(--color-primario-contraste);
+  grid-area: boton;
+
+  width: 100%;
+  height: 42px;
+  min-height: 42px;
+
   margin: 0;
+
+  --background: var(--acento);
+  --background-hover: var(--acento);
+  --background-activated: var(--acento-fuerte);
+  --background-focused: var(--acento-fuerte);
+
+  --color: var(--texto-claro);
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  font-family: var(--fuente-outfit);
+  font-size: 14px;
+  font-weight: 700;
+
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-@media (max-width: 600px) {
-  .panel-metre__contenido {
-    padding: 16px 12px 28px;
-  }
+.panel-metre__asignar[disabled] {
+  --background: rgb(221 161 94 / 40%);
+  --color: rgb(254 250 224 / 55%);
+}
 
-  .panel-metre__fila {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
 
-  .panel-metre__foto {
-    margin: 0 auto;
-  }
+/* =========================================================
+   ESTADOS: CARGANDO / VACÍO / ERROR
+   ========================================================= */
 
-  .panel-metre__nombre {
-    justify-content: center;
-  }
+.panel-metre__estado-carga {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 
-  .panel-metre__select-mesa {
-    max-width: none;
-  }
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+
+.panel-metre__estado-carga ion-spinner {
+  color: var(--acento);
+}
+
+.panel-metre__mensaje {
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+
+  font-size: 15px;
+  line-height: 19px;
+  text-align: center;
+}
+
+
+/* =========================================================
+   POPOVER Y ALERTA
+
+   Ionic los monta fuera de la página (en el body), así que no alcanza con
+   anidarlos bajo .panel-metre: se enganchan por su cssClass.
+   ========================================================= */
+
+.panel-metre-popover {
+  --background: #4a572c;
+  --color: #fefae0;
+}
+
+.panel-metre-popover::part(content) {
+  background: #4a572c;
+  border: 1px solid #6e6939;
+  border-radius: 10px;
+}
+
+.panel-metre-popover ion-select-popover ion-item {
+  --background: #4a572c;
+  --background-hover: #53632f;
+  --background-activated: #53632f;
+  --background-focused: #53632f;
+  --color: #fefae0;
+
+  font-size: 14px;
+}
+
+.panel-metre-alerta {
+  --background: #fefae0;
+  --max-width: 360px;
+}
+
+.panel-metre-alerta .alert-title,
+.panel-metre-alerta .alert-message {
+  color: #283618;
+}
+
+.panel-metre-alerta .alert-title {
+  font-family: var(--fuente-outfit);
+  font-weight: 700;
+}
+
+.panel-metre-alerta .alert-button {
+  min-height: 44px;
+  color: #bc6c25;
+  font-weight: 700;
+  text-transform: none;
 }

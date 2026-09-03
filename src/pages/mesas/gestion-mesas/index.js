@@ -1,6 +1,8 @@
 // Gestión de mesas adaptada al diseño temático de la aplicación:
 // encabezado con botón volver y alta (+), leyenda de estados y cuadrícula de 3 columnas.
 import './index.css';
+import { puedeAltaMesa } from '../../../config/permisos.js';
+import { obtenerPermisos } from '../../../services/auth.service.js';
 import { listarMesas } from '../../../services/mesas.service.js';
 import { navegarA } from '../../../router.js';
 
@@ -25,7 +27,7 @@ export function render(container) {
           <header class="gestion-mesas__header">
             <button class="gestion-mesas__volver" type="button" aria-label="Volver">‹</button>
             <h1 class="gestion-mesas__titulo">Mesas</h1>
-            <button class="gestion-mesas__boton-alta" type="button" aria-label="Agregar mesa">+</button>
+            <button class="gestion-mesas__boton-alta" type="button" aria-label="Agregar mesa" hidden>+</button>
           </header>
 
           <!-- LEYENDA -->
@@ -69,10 +71,16 @@ export function render(container) {
     window.history.back();
   });
 
-  // Agregar mesa (+)
-  container.querySelector('.gestion-mesas__boton-alta').addEventListener('click', () => {
+  // Agregar mesa (+): todo el staff puede ver el listado, pero el alta es de
+  // dueño/supervisor y metre (policy mesas_admin, ver config/permisos.js).
+  const botonAlta = container.querySelector('.gestion-mesas__boton-alta');
+  botonAlta.addEventListener('click', () => {
     navegarA('/mesas/alta');
   });
+
+  obtenerPermisos()
+    .then((permisos) => { botonAlta.hidden = !puedeAltaMesa(permisos); })
+    .catch((error) => console.error('No se pudieron cargar los permisos de mesas.', error));
 
   listarMesas()
     .then((mesas) => {

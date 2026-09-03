@@ -1,9 +1,12 @@
-// Esta página importa su estilo, el selector reutilizable y validadores puros.
-// Los módulos ES permiten mantener cada responsabilidad en un archivo separado.
-import './index.css';
+// Alta de plato (HU02). Los estilos son compartidos con el alta de bebida:
+// los dos formularios tienen los mismos campos, así que viven en alta-producto.css.
+import '../alta-producto.css';
 import { crearSelectorFotosProducto } from '../../../components/selector-fotos-producto/selector-fotos-producto.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { SECTORES, TIPOS_PRODUCTO } from '../../../config/constantes.js';
 import { crearPlatoCompleto } from '../../../services/productos.service.js';
+import { navegarA } from '../../../router.js';
 import {
   esCampoVacio,
   esEnteroPositivo,
@@ -13,6 +16,7 @@ import {
 } from '../../../utils/validadores.js';
 
 const CANTIDAD_FOTOS = 3;
+const CAMPOS = ['nombre', 'descripcion', 'precio', 'tiempo'];
 
 // Valida los datos ingresados antes de aceptar el formulario.
 // Recibe un objeto con los campos y el array de tres imágenes.
@@ -47,8 +51,6 @@ function validarFormulario(datos, imagenes) {
   return errores;
 }
 
-// Lee los valores actuales de los componentes Ionic y elimina espacios
-// innecesarios en los campos de texto.
 function obtenerDatosFormulario(formulario) {
   return {
     nombre: formulario.querySelector('#nombre-plato').value?.trim() ?? '',
@@ -59,11 +61,10 @@ function obtenerDatosFormulario(formulario) {
 }
 
 // Actualiza el mensaje y el aspecto visual de un campo.
-// El DOM es la representación de los elementos HTML disponibles en pantalla.
 function mostrarErrorCampo(formulario, campo, mensaje = '') {
   const item = formulario.querySelector(`[data-campo="${campo}"]`);
   const nota = formulario.querySelector(`[data-error="${campo}"]`);
-  const control = item.querySelector('ion-input, ion-textarea');
+  const control = item.querySelector('input, textarea');
   const hayError = Boolean(mensaje);
 
   nota.textContent = mensaje;
@@ -75,7 +76,7 @@ function mostrarErrorCampo(formulario, campo, mensaje = '') {
 // Presenta todos los errores junto a sus controles y devuelve true
 // cuando el formulario completo es válido.
 function mostrarResultadoValidacion(formulario, selectorFotos, errores) {
-  ['nombre', 'descripcion', 'tiempo', 'precio'].forEach((campo) => {
+  CAMPOS.forEach((campo) => {
     mostrarErrorCampo(formulario, campo, errores[campo] ?? '');
   });
 
@@ -83,62 +84,81 @@ function mostrarResultadoValidacion(formulario, selectorFotos, errores) {
   return Object.keys(errores).length === 0;
 }
 
-// Renderiza la interfaz de HU02 dentro del contenedor que entrega el router.
-// También conecta los eventos y conserva el estado temporal de la pantalla.
 export function render(container) {
   container.innerHTML = `
-    <ion-page class="ion-page alta-plato">
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>Alta de plato</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
+    <ion-page class="alta-producto alta-plato">
       <ion-content>
-        <main class="alta-plato__contenido">
-          <header class="alta-plato__introduccion">
-            <h1>Nuevo plato</h1>
-            <p>Completá los datos y agregá tres fotos para presentar el plato.</p>
+        <main class="alta-producto__contenido">
+          <header class="alta-producto__introduccion">
+            <button class="alta-producto__volver" type="button" aria-label="Volver">‹</button>
+            <h1>Alta Plato</h1>
           </header>
 
-          <form class="alta-plato__formulario" novalidate>
+          <form class="alta-producto__formulario" novalidate>
+            <div class="alta-producto__fotos"></div>
+
             <div class="campo-formulario" data-campo="nombre">
-              <ion-item>
-                <ion-input id="nombre-plato" label="Nombre" label-placement="stacked" type="text" maxlength="80" required></ion-input>
-              </ion-item>
+              <label for="nombre-plato">Nombre del plato</label>
+              <input
+                class="campo-control"
+                id="nombre-plato"
+                name="nombre"
+                type="text"
+                maxlength="80"
+                placeholder="Ej. Tacos al Pastor"
+                required
+              >
               <ion-note color="danger" data-error="nombre" aria-live="polite"></ion-note>
             </div>
 
             <div class="campo-formulario" data-campo="descripcion">
-              <ion-item>
-                <ion-textarea id="descripcion-plato" label="Descripción" label-placement="stacked" maxlength="300" auto-grow="true" required></ion-textarea>
-              </ion-item>
+              <label for="descripcion-plato">Descripción corta</label>
+              <textarea
+                class="campo-control"
+                id="descripcion-plato"
+                name="descripcion"
+                maxlength="300"
+                placeholder="Ej. Tacos de cerdo marinado con piña"
+                required
+              ></textarea>
               <ion-note color="danger" data-error="descripcion" aria-live="polite"></ion-note>
             </div>
 
-            <div class="alta-plato__fila-numerica">
-              <div class="campo-formulario" data-campo="tiempo">
-                <ion-item>
-                  <ion-input id="tiempo-plato" label="Tiempo (minutos)" label-placement="stacked" type="number" inputmode="numeric" min="1" step="1" required></ion-input>
-                </ion-item>
-                <ion-note color="danger" data-error="tiempo" aria-live="polite"></ion-note>
-              </div>
-
-              <div class="campo-formulario" data-campo="precio">
-                <ion-item>
-                  <ion-input id="precio-plato" label="Precio" label-placement="stacked" type="number" inputmode="decimal" min="0.01" step="0.01" required></ion-input>
-                </ion-item>
-                <ion-note color="danger" data-error="precio" aria-live="polite"></ion-note>
-              </div>
+            <div class="campo-formulario" data-campo="precio">
+              <label for="precio-plato">Precio</label>
+              <input
+                class="campo-control"
+                id="precio-plato"
+                name="precio"
+                type="number"
+                inputmode="decimal"
+                min="0.01"
+                step="0.01"
+                placeholder="$ 1.200"
+                required
+              >
+              <ion-note color="danger" data-error="precio" aria-live="polite"></ion-note>
             </div>
 
-            <div class="alta-plato__fotos"></div>
+            <div class="campo-formulario" data-campo="tiempo">
+              <label for="tiempo-plato">Tiempo prep. (min)</label>
+              <input
+                class="campo-control"
+                id="tiempo-plato"
+                name="tiempo"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                step="1"
+                placeholder="15 min"
+                required
+              >
+              <ion-note color="danger" data-error="tiempo" aria-live="polite"></ion-note>
+            </div>
 
-            <div class="alta-plato__resultado" role="status" aria-live="polite" aria-atomic="true"></div>
-
-            <ion-button class="alta-plato__submit" type="submit" expand="block">
+            <ion-button class="alta-producto__submit" type="submit" expand="block">
               <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
-              <span>Registrar plato</span>
+              <span>Guardar Plato</span>
             </ion-button>
           </form>
         </main>
@@ -146,10 +166,9 @@ export function render(container) {
     </ion-page>
   `;
 
-  const formulario = container.querySelector('.alta-plato__formulario');
-  const botonSubmit = formulario.querySelector('.alta-plato__submit');
+  const formulario = container.querySelector('.alta-producto__formulario');
+  const botonSubmit = formulario.querySelector('.alta-producto__submit');
   const textoSubmit = botonSubmit.querySelector('span');
-  const resultado = formulario.querySelector('.alta-plato__resultado');
 
   // Este array es el estado de las imágenes de la página. Sus tres posiciones
   // se mantienen fijas aunque una foto sea reemplazada.
@@ -157,8 +176,12 @@ export function render(container) {
   let enviando = false;
   let validacionMostrada = false;
 
+  container.querySelector('.alta-producto__volver').addEventListener('click', () => {
+    window.history.back();
+  });
+
   // La página recibe archivos mediante onCambio, sin conocer si provienen de
-  // un input local o, en una etapa futura, de Camera/Gallery.
+  // un input local o de Camera/Gallery.
   const selectorFotos = crearSelectorFotosProducto({
     descripcionProducto: 'del plato',
     onCambio(indice, archivo) {
@@ -171,35 +194,29 @@ export function render(container) {
     },
   });
 
-  formulario.querySelector('.alta-plato__fotos').append(selectorFotos.elemento);
+  formulario.querySelector('.alta-producto__fotos').append(selectorFotos.elemento);
 
   // Habilita o bloquea toda acción de envío y selección de fotos.
-  // Así se evita que el usuario dispare dos submits al mismo tiempo.
   function establecerProcesando(valor) {
     enviando = valor;
     botonSubmit.disabled = valor;
-    botonSubmit.classList.toggle('alta-plato__submit--procesando', valor);
-    textoSubmit.textContent = valor ? 'Registrando...' : 'Registrar plato';
+    botonSubmit.classList.toggle('alta-producto__submit--procesando', valor);
+    textoSubmit.textContent = valor ? 'Guardando...' : 'Guardar Plato';
     selectorFotos.establecerBloqueado(valor);
   }
 
   // Después del primer submit, cada cambio vuelve a validar su campo para
   // que el error desaparezca apenas el usuario lo corrija.
-  formulario.querySelectorAll('ion-input, ion-textarea').forEach((control) => {
-    control.addEventListener('ionInput', () => {
+  formulario.querySelectorAll('input, textarea').forEach((control) => {
+    control.addEventListener('input', () => {
       if (!validacionMostrada) return;
 
-      const datos = obtenerDatosFormulario(formulario);
-      const errores = validarFormulario(datos, imagenes);
+      const errores = validarFormulario(obtenerDatosFormulario(formulario), imagenes);
       const campo = control.closest('[data-campo]').dataset.campo;
       mostrarErrorCampo(formulario, campo, errores[campo] ?? '');
-      resultado.textContent = '';
-      resultado.className = 'alta-plato__resultado';
     });
   });
 
-  // submit es el evento del formulario. preventDefault evita que el navegador
-  // recargue la página y permite controlar la validación con JavaScript.
   formulario.addEventListener('submit', async (evento) => {
     evento.preventDefault();
     if (enviando) return;
@@ -207,26 +224,18 @@ export function render(container) {
     validacionMostrada = true;
     const datos = obtenerDatosFormulario(formulario);
     const errores = validarFormulario(datos, imagenes);
-    const esValido = mostrarResultadoValidacion(formulario, selectorFotos, errores);
 
-    if (!esValido) {
-      resultado.textContent = 'Revisá los campos señalados antes de continuar.';
-      resultado.className = 'alta-plato__resultado alta-plato__resultado--error';
+    if (!mostrarResultadoValidacion(formulario, selectorFotos, errores)) {
+      mostrarToastError('Revisá los campos señalados antes de continuar.');
       return;
     }
 
     establecerProcesando(true);
-    resultado.textContent = '';
-    resultado.className = 'alta-plato__resultado';
 
     try {
       // La página sólo arma los datos válidos. El service encapsula el INSERT,
       // Storage, producto_fotos, limpieza y consulta final de verificación.
-      // La validación del perfil cocina todavía depende de las policies existentes;
-      // su comprobación visual queda pendiente porque Auth/Perfiles están fuera de alcance.
-      // Se envían únicamente columnas que existen en el esquema real de productos;
-      // los campos administrados por la base se omiten para usar sus valores por defecto.
-      const platoCreado = await crearPlatoCompleto({
+      await crearPlatoCompleto({
         nombre: datos.nombre,
         descripcion: datos.descripcion,
         tiempo_elaboracion_min: Number(datos.tiempo),
@@ -236,15 +245,11 @@ export function render(container) {
         sector: SECTORES.COCINA,
       }, imagenes);
 
-      resultado.textContent = `Plato registrado correctamente. ID verificado: ${platoCreado.id}`;
-      resultado.className = 'alta-plato__resultado alta-plato__resultado--exito';
+      mostrarToastNormal('Plato guardado correctamente.');
+      setTimeout(() => navegarA('/productos'), 2000);
     } catch (error) {
       console.error('No se pudo completar el alta del plato.', error);
-      resultado.textContent = `No se pudo registrar el plato: ${error.message ?? 'error desconocido'}`;
-      resultado.className = 'alta-plato__resultado alta-plato__resultado--error';
-    } finally {
-      // finally se ejecuta tanto en éxito como en error y garantiza que la
-      // interfaz vuelva a habilitarse después de la operación asincrónica.
+      mostrarToastError(`No se pudo guardar el plato: ${error.message ?? 'error desconocido'}`);
       establecerProcesando(false);
     }
   });

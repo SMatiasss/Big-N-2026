@@ -1,8 +1,12 @@
-// HU03 reutiliza el selector de imágenes, los validadores y la persistencia común.
-import './index.css';
+// Alta de bebida (HU03). Comparte estilos con el alta de plato: los dos
+// formularios tienen los mismos campos y viven en alta-producto.css.
+import '../alta-producto.css';
 import { crearSelectorFotosProducto } from '../../../components/selector-fotos-producto/selector-fotos-producto.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { SECTORES, TIPOS_PRODUCTO } from '../../../config/constantes.js';
 import { crearBebidaCompleta } from '../../../services/productos.service.js';
+import { navegarA } from '../../../router.js';
 import {
   esCampoVacio,
   esEnteroPositivo,
@@ -12,6 +16,7 @@ import {
 } from '../../../utils/validadores.js';
 
 const CANTIDAD_FOTOS = 3;
+const CAMPOS = ['nombre', 'descripcion', 'precio', 'tiempo'];
 
 function validarFormulario(datos, imagenes) {
   const errores = {};
@@ -42,8 +47,9 @@ function obtenerDatosFormulario(formulario) {
 function mostrarErrorCampo(formulario, campo, mensaje = '') {
   const item = formulario.querySelector(`[data-campo="${campo}"]`);
   const nota = formulario.querySelector(`[data-error="${campo}"]`);
-  const control = item.querySelector('ion-input, ion-textarea');
+  const control = item.querySelector('input, textarea');
   const hayError = Boolean(mensaje);
+
   nota.textContent = mensaje;
   item.classList.toggle('campo-formulario--invalido', hayError);
   item.classList.toggle('campo-formulario--valido', !hayError && !esCampoVacio(control.value));
@@ -51,60 +57,105 @@ function mostrarErrorCampo(formulario, campo, mensaje = '') {
 }
 
 function mostrarResultadoValidacion(formulario, selectorFotos, errores) {
-  ['nombre', 'descripcion', 'tiempo', 'precio'].forEach((campo) => {
+  CAMPOS.forEach((campo) => {
     mostrarErrorCampo(formulario, campo, errores[campo] ?? '');
   });
   selectorFotos.mostrarError(errores.imagenes ?? '');
   return Object.keys(errores).length === 0;
 }
 
-// Renderiza HU03 y conserva localmente las tres posiciones de imágenes.
 export function render(container) {
   container.innerHTML = `
-    <ion-page class="ion-page alta-bebida">
-      <ion-header><ion-toolbar color="primary"><ion-title>Alta de bebida</ion-title></ion-toolbar></ion-header>
+    <ion-page class="alta-producto alta-bebida">
       <ion-content>
-        <main class="alta-bebida__contenido">
-          <header class="alta-bebida__introduccion">
-            <h1>Nueva bebida</h1>
-            <p>Completá los datos y agregá tres fotos para presentar la bebida.</p>
+        <main class="alta-producto__contenido">
+          <header class="alta-producto__introduccion">
+            <button class="alta-producto__volver" type="button" aria-label="Volver">‹</button>
+            <h1>Alta Bebida</h1>
           </header>
-          <form class="alta-bebida__formulario" novalidate>
+
+          <form class="alta-producto__formulario" novalidate>
+            <div class="alta-producto__fotos"></div>
+
             <div class="campo-formulario" data-campo="nombre">
-              <ion-item><ion-input id="nombre-bebida" label="Nombre" label-placement="stacked" type="text" maxlength="80" required></ion-input></ion-item>
+              <label for="nombre-bebida">Nombre de la bebida</label>
+              <input
+                class="campo-control"
+                id="nombre-bebida"
+                name="nombre"
+                type="text"
+                maxlength="80"
+                placeholder="Ej. Margarita Rosaria"
+                required
+              >
               <ion-note color="danger" data-error="nombre" aria-live="polite"></ion-note>
             </div>
+
             <div class="campo-formulario" data-campo="descripcion">
-              <ion-item><ion-textarea id="descripcion-bebida" label="Descripción" label-placement="stacked" maxlength="300" auto-grow="true" required></ion-textarea></ion-item>
+              <label for="descripcion-bebida">Descripción</label>
+              <textarea
+                class="campo-control"
+                id="descripcion-bebida"
+                name="descripcion"
+                maxlength="300"
+                placeholder="Ej. Tequila, jugo de limón y sal"
+                required
+              ></textarea>
               <ion-note color="danger" data-error="descripcion" aria-live="polite"></ion-note>
             </div>
-            <div class="alta-bebida__fila-numerica">
-              <div class="campo-formulario" data-campo="tiempo">
-                <ion-item><ion-input id="tiempo-bebida" label="Tiempo (minutos)" label-placement="stacked" type="number" inputmode="numeric" min="1" step="1" required></ion-input></ion-item>
-                <ion-note color="danger" data-error="tiempo" aria-live="polite"></ion-note>
-              </div>
-              <div class="campo-formulario" data-campo="precio">
-                <ion-item><ion-input id="precio-bebida" label="Precio" label-placement="stacked" type="number" inputmode="decimal" min="0.01" step="0.01" required></ion-input></ion-item>
-                <ion-note color="danger" data-error="precio" aria-live="polite"></ion-note>
-              </div>
+
+            <div class="campo-formulario" data-campo="precio">
+              <label for="precio-bebida">Precio</label>
+              <input
+                class="campo-control"
+                id="precio-bebida"
+                name="precio"
+                type="number"
+                inputmode="decimal"
+                min="0.01"
+                step="0.01"
+                placeholder="$ 950"
+                required
+              >
+              <ion-note color="danger" data-error="precio" aria-live="polite"></ion-note>
             </div>
-            <div class="alta-bebida__fotos"></div>
-            <div class="alta-bebida__resultado" role="status" aria-live="polite" aria-atomic="true"></div>
-            <ion-button class="alta-bebida__submit" type="submit" expand="block">
-              <ion-spinner name="crescent" aria-hidden="true"></ion-spinner><span>Registrar bebida</span>
+
+            <div class="campo-formulario" data-campo="tiempo">
+              <label for="tiempo-bebida">Tiempo prep. (min)</label>
+              <input
+                class="campo-control"
+                id="tiempo-bebida"
+                name="tiempo"
+                type="number"
+                inputmode="numeric"
+                min="1"
+                step="1"
+                placeholder="5 min"
+                required
+              >
+              <ion-note color="danger" data-error="tiempo" aria-live="polite"></ion-note>
+            </div>
+
+            <ion-button class="alta-producto__submit" type="submit" expand="block">
+              <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
+              <span>Guardar Bebida</span>
             </ion-button>
           </form>
         </main>
       </ion-content>
-    </ion-page>`;
+    </ion-page>
+  `;
 
-  const formulario = container.querySelector('.alta-bebida__formulario');
-  const botonSubmit = formulario.querySelector('.alta-bebida__submit');
+  const formulario = container.querySelector('.alta-producto__formulario');
+  const botonSubmit = formulario.querySelector('.alta-producto__submit');
   const textoSubmit = botonSubmit.querySelector('span');
-  const resultado = formulario.querySelector('.alta-bebida__resultado');
   const imagenes = Array(CANTIDAD_FOTOS).fill(null);
   let enviando = false;
   let validacionMostrada = false;
+
+  container.querySelector('.alta-producto__volver').addEventListener('click', () => {
+    window.history.back();
+  });
 
   const selectorFotos = crearSelectorFotosProducto({
     descripcionProducto: 'de la bebida',
@@ -116,24 +167,22 @@ export function render(container) {
       }
     },
   });
-  formulario.querySelector('.alta-bebida__fotos').append(selectorFotos.elemento);
+  formulario.querySelector('.alta-producto__fotos').append(selectorFotos.elemento);
 
   function establecerProcesando(valor) {
     enviando = valor;
     botonSubmit.disabled = valor;
-    botonSubmit.classList.toggle('alta-bebida__submit--procesando', valor);
-    textoSubmit.textContent = valor ? 'Registrando...' : 'Registrar bebida';
+    botonSubmit.classList.toggle('alta-producto__submit--procesando', valor);
+    textoSubmit.textContent = valor ? 'Guardando...' : 'Guardar Bebida';
     selectorFotos.establecerBloqueado(valor);
   }
 
-  formulario.querySelectorAll('ion-input, ion-textarea').forEach((control) => {
-    control.addEventListener('ionInput', () => {
+  formulario.querySelectorAll('input, textarea').forEach((control) => {
+    control.addEventListener('input', () => {
       if (!validacionMostrada) return;
       const errores = validarFormulario(obtenerDatosFormulario(formulario), imagenes);
       const campo = control.closest('[data-campo]').dataset.campo;
       mostrarErrorCampo(formulario, campo, errores[campo] ?? '');
-      resultado.textContent = '';
-      resultado.className = 'alta-bebida__resultado';
     });
   });
 
@@ -145,18 +194,16 @@ export function render(container) {
     const errores = validarFormulario(datos, imagenes);
 
     if (!mostrarResultadoValidacion(formulario, selectorFotos, errores)) {
-      resultado.textContent = 'Revisá los campos señalados antes de continuar.';
-      resultado.className = 'alta-bebida__resultado alta-bebida__resultado--error';
+      mostrarToastError('Revisá los campos señalados antes de continuar.');
       return;
     }
 
     establecerProcesando(true);
-    resultado.textContent = '';
-    resultado.className = 'alta-bebida__resultado';
+
     try {
       // El service verifica la carta, crea la bebida, sube las fotos y consulta
       // el resultado final. El rol autorizado por RLS es cantinero.
-      const bebidaCreada = await crearBebidaCompleta({
+      await crearBebidaCompleta({
         nombre: datos.nombre,
         descripcion: datos.descripcion,
         tiempo_elaboracion_min: Number(datos.tiempo),
@@ -164,13 +211,12 @@ export function render(container) {
         tipo: TIPOS_PRODUCTO.BEBIDA,
         sector: SECTORES.BAR,
       }, imagenes);
-      resultado.textContent = `Bebida registrada correctamente. ID verificado: ${bebidaCreada.id}`;
-      resultado.className = 'alta-bebida__resultado alta-bebida__resultado--exito';
+
+      mostrarToastNormal('Bebida guardada correctamente.');
+      setTimeout(() => navegarA('/productos'), 2000);
     } catch (error) {
       console.error('No se pudo completar el alta de la bebida.', error);
-      resultado.textContent = `No se pudo registrar la bebida: ${error.message ?? 'error desconocido'}`;
-      resultado.className = 'alta-bebida__resultado alta-bebida__resultado--error';
-    } finally {
+      mostrarToastError(`No se pudo guardar la bebida: ${error.message ?? 'error desconocido'}`);
       establecerProcesando(false);
     }
   });

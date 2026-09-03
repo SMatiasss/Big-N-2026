@@ -62,8 +62,10 @@ export async function signOut() {
   if (error) throw error;
 }
 
-// Consulta las mismas funciones que usan las policies para decidir las acciones visibles.
-export async function obtenerPermisosProductos() {
+// Consulta las mismas funciones que usan las policies para decidir las acciones
+// visibles. Las reglas de "quién puede dar de alta qué" viven en
+// config/permisos.js; acá sólo se traen el rol y la jefatura del perfil actual.
+export async function obtenerPermisos() {
   const supabase = getSupabase();
   const [resultadoRol, resultadoJefe] = await Promise.all([
     supabase.rpc('mi_rol'),

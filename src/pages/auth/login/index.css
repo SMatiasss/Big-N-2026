@@ -1,0 +1,526 @@
+/* =========================================================
+   BASE
+   ========================================================= */
+
+.login {
+  --fondo-login: #606c38;
+  --fondo-card-login: #4a572c;
+  --acento-login: #dda15e;
+  --acento-fuerte-login: #bc6c25;
+
+  --texto-claro-login: #fefae0;
+  --texto-suave-login: #c8c8a0;
+  --texto-placeholder-login: #8f956f;
+
+  --sombra-submit-login: 0 3px 3px rgb(42 49 19 / 42%);
+
+  background: var(--fondo-login);
+  color: var(--texto-claro-login);
+
+  font-family: var(--fuente-geist);
+  font-weight: 400;
+}
+
+.login ion-content {
+  --background: var(--fondo-login);
+}
+
+.login__contenido {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 440px;
+  min-height: 100%;
+
+  margin: 0 auto;
+  padding: 34px 22px 32px;
+}
+
+
+/* =========================================================
+   MARCA
+   ========================================================= */
+
+.login__marca {
+  margin: 0 0 26px;
+  text-align: center;
+}
+
+.login__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  width: 92px;
+  height: 92px;
+
+  margin: 0 auto 10px;
+  padding: 14px;
+
+  /* El SVG del logo está dibujado en el mismo verde del fondo, así que
+     necesita el disco claro atrás para poder leerse. */
+  background: var(--texto-claro-login);
+  border-radius: 50%;
+}
+
+.login__logo img {
+  width: 100%;
+  height: 100%;
+}
+
+.login__marca-nombre {
+  margin: 0;
+
+  color: var(--texto-claro-login);
+
+  font-family: var(--fuente-outfit);
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 32px;
+  letter-spacing: -0.02em;
+}
+
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.login__titulo {
+  margin: 0 0 3px;
+
+  color: var(--texto-claro-login);
+
+  font-family: var(--fuente-outfit);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 35px;
+  letter-spacing: -0.02em;
+}
+
+.login__subtitulo {
+  margin: 0 0 22px;
+
+  color: var(--texto-suave-login);
+
+  font-size: 14px;
+  line-height: 17px;
+}
+
+
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+
+.login .campo-formulario {
+  width: 100%;
+  margin: 0 0 14px;
+}
+
+.login .campo-formulario label {
+  display: block;
+
+  margin: 0 0 6px;
+
+  color: var(--texto-claro-login);
+
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.login__campo {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+}
+
+.login .campo-control {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 48px;
+
+  margin: 0;
+  padding: 0 14px 0 44px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: transparent;
+
+  border: 1px solid var(--acento-login);
+  border-radius: 12px;
+
+  color: var(--texto-claro-login);
+
+  font-family: var(--fuente-geist);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 48px;
+
+  outline: none;
+  box-shadow: none;
+
+  caret-color: var(--texto-claro-login);
+}
+
+.login .campo-control--con-accion {
+  padding-right: 46px;
+}
+
+.login .campo-control::placeholder {
+  color: var(--texto-placeholder-login);
+  opacity: 1;
+}
+
+.login .campo-control:focus {
+  border-color: var(--texto-claro-login);
+  outline: none;
+  box-shadow: none;
+}
+
+
+/* Autofill: Chrome pinta fondo blanco y texto oscuro si no se lo frena. */
+
+.login .campo-control:-webkit-autofill,
+.login .campo-control:-webkit-autofill:hover,
+.login .campo-control:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--texto-claro-login);
+  -webkit-box-shadow: 0 0 0 1000px var(--fondo-login) inset;
+  box-shadow: 0 0 0 1000px var(--fondo-login) inset;
+
+  caret-color: var(--texto-claro-login);
+}
+
+
+/* =========================================================
+   ÍCONOS DEL FORMULARIO
+   ========================================================= */
+
+.login__icono {
+  position: absolute;
+  left: 14px;
+
+  width: 20px;
+  height: 20px;
+
+  color: var(--acento-login);
+
+  pointer-events: none;
+}
+
+.login__ver-password {
+  position: absolute;
+  right: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+
+  background: none;
+  border: 0;
+  border-radius: 50%;
+
+  color: var(--acento-login);
+
+  cursor: pointer;
+}
+
+.login__icono-ojo {
+  width: 21px;
+  height: 21px;
+}
+
+
+/* La barra tachada sólo aparece cuando la contraseña está a la vista. */
+
+.login__icono-ojo-barra {
+  opacity: 0;
+}
+
+.login__ver-password--activo .login__icono-ojo-barra {
+  opacity: 1;
+}
+
+
+/* =========================================================
+   REGISTRO
+   ========================================================= */
+
+.login__registro {
+  margin: 0 0 18px;
+
+  color: var(--texto-suave-login);
+
+  font-size: 12.5px;
+  line-height: 15px;
+  text-align: right;
+}
+
+.login__enlace {
+  padding: 0;
+
+  background: none;
+  border: 0;
+
+  color: var(--acento-login);
+
+  font-family: var(--fuente-geist);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 15px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   BOTONES PRINCIPALES
+   ========================================================= */
+
+.login__submit,
+.login__anonimo,
+.login__accion {
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+
+  margin: 0;
+
+  --background: var(--acento-login);
+  --background-hover: var(--acento-login);
+  --background-activated: var(--acento-fuerte-login);
+  --background-focused: var(--acento-fuerte-login);
+
+  --color: var(--texto-claro-login);
+  --border-radius: 12px;
+  --box-shadow: var(--sombra-submit-login);
+
+  font-family: var(--fuente-outfit);
+  font-size: 16px;
+  font-weight: 700;
+
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.login__accion {
+  height: 45px;
+  min-height: 45px;
+}
+
+
+/* =========================================================
+   SEPARADOR
+   ========================================================= */
+
+.login__separador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin: 26px 0 14px;
+}
+
+.login__separador::before,
+.login__separador::after {
+  content: '';
+
+  flex: 1;
+  height: 1px;
+
+  background: rgb(254 250 224 / 22%);
+}
+
+.login__separador span {
+  color: var(--texto-suave-login);
+
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   ACCESO RÁPIDO
+   ========================================================= */
+
+/* Los márgenes negativos dejan que las tarjetas lleguen hasta el borde de la
+   pantalla al scrollear, sin sacarle el padding al resto del contenido. */
+
+.login__cuentas {
+  display: flex;
+  gap: 10px;
+
+  margin: 0 -22px 22px;
+  padding: 4px 22px 10px;
+
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.login__cuentas::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.login__error {
+  min-height: 16px;
+
+  margin: 14px 0 0;
+
+  color: #ffd0bf;
+
+  font-size: 13px;
+  line-height: 16px;
+  text-align: center;
+}
+
+
+/* =========================================================
+   SESIÓN INICIADA
+   ========================================================= */
+
+.login__sesion {
+  margin: 0 0 6px;
+}
+
+.login__sesion-email {
+  margin: 6px 0 0;
+
+  color: var(--texto-claro-login);
+
+  font-size: 15px;
+  line-height: 18px;
+}
+
+.login__sesion-rol {
+  margin: 2px 0 0;
+
+  color: var(--acento-login);
+
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.login__acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login__cerrar {
+  width: 100%;
+  height: 46px;
+  min-height: 46px;
+
+  margin: auto 0 0;
+
+  --background: transparent;
+  --background-hover: rgb(254 250 224 / 8%);
+  --background-activated: rgb(254 250 224 / 12%);
+
+  --color: var(--texto-suave-login);
+  --border-radius: 12px;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgb(254 250 224 / 25%);
+  --box-shadow: none;
+
+  font-family: var(--fuente-outfit);
+  font-size: 15px;
+  font-weight: 700;
+
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+
+/* =========================================================
+   LECTOR QR (INGRESO AL LOCAL)
+   ========================================================= */
+
+.login .lector-qr {
+  box-sizing: border-box;
+
+  width: 100%;
+
+  margin: 12px 0 0;
+  padding: 14px;
+
+  background: var(--fondo-card-login);
+  border: 1px solid var(--acento-fuerte-login);
+  border-radius: 14px;
+}
+
+.login .lector-qr h2 {
+  margin: 0 0 3px;
+
+  color: var(--texto-claro-login);
+
+  font-family: var(--fuente-outfit);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.login .lector-qr p {
+  margin: 0 0 10px;
+
+  color: var(--texto-suave-login);
+
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.login .lector-qr ion-button {
+  --background: var(--acento-fuerte-login);
+  --background-hover: var(--acento-fuerte-login);
+  --background-activated: var(--acento-fuerte-login);
+
+  --color: var(--texto-claro-login);
+  --border-radius: 10px;
+  --box-shadow: none;
+
+  font-family: var(--fuente-outfit);
+  font-size: 14px;
+  font-weight: 700;
+
+  text-transform: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (min-width: 640px) {
+  .login__contenido {
+    padding-top: 48px;
+  }
+}

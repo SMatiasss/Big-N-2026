@@ -11,6 +11,7 @@ const rutas = {
 
   '/productos/alta-plato': () => import('./pages/productos/alta-plato/index.js'),
   '/productos/alta-bebida': () => import('./pages/productos/alta-bebida/index.js'),
+  '/productos': () => import('./pages/productos/gestion-productos/index.js'),
   '/carta': () => import('./pages/productos/carta/index.js'),
 
   '/mesas/alta': () => import('./pages/mesas/alta-mesa/index.js'),

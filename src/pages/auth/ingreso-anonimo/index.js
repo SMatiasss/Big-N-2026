@@ -20,30 +20,46 @@ function validarFormulario(nombre, foto) {
 
 export function render(container) {
   container.innerHTML = `
-    <ion-page class="ion-page ingreso-anonimo">
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>Ingreso como invitado</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
+    <ion-page class="ingreso-anonimo">
       <ion-content>
         <main class="ingreso-anonimo__contenido">
+          <header class="ingreso-anonimo__encabezado">
+            <button class="ingreso-anonimo__volver" type="button" aria-label="Volver">‹</button>
+            <h1>Ingreso como invitado</h1>
+          </header>
+
+          <!-- Dos pasos: datos y QR. El indicador deja claro cuánto falta. -->
+          <ol class="ingreso-anonimo__progreso">
+            <li class="ingreso-anonimo__progreso-item ingreso-anonimo__progreso-item--activo" data-progreso="datos">
+              <span class="ingreso-anonimo__progreso-numero">1</span>
+              Tus datos
+            </li>
+            <li class="ingreso-anonimo__progreso-item" data-progreso="qr">
+              <span class="ingreso-anonimo__progreso-numero">2</span>
+              QR de entrada
+            </li>
+          </ol>
+
           <section class="ingreso-anonimo__paso" data-paso="datos">
-            <header class="ingreso-anonimo__introduccion">
-              <h1>Contanos quién sos</h1>
-              <p>Con tu nombre y una foto alcanza para entrar como invitado.</p>
-            </header>
+            <p class="ingreso-anonimo__ayuda">Con tu nombre y una foto alcanza para entrar.</p>
 
             <form class="ingreso-anonimo__formulario" novalidate>
+              <div class="ingreso-anonimo__foto"></div>
+
               <div class="campo-formulario" data-campo="nombre">
-                <ion-item>
-                  <ion-input id="nombre-anonimo" label="Nombre" label-placement="stacked" maxlength="80" required></ion-input>
-                </ion-item>
+                <label for="nombre-anonimo">Tu nombre</label>
+                <input
+                  class="campo-control"
+                  id="nombre-anonimo"
+                  name="nombre"
+                  type="text"
+                  maxlength="80"
+                  autocomplete="given-name"
+                  placeholder="Ej. Juan"
+                  required
+                >
                 <ion-note color="danger" data-error="nombre" aria-live="polite"></ion-note>
               </div>
-
-              <div class="ingreso-anonimo__foto"></div>
 
               <ion-button class="ingreso-anonimo__submit" type="submit" expand="block">
                 <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
@@ -70,18 +86,40 @@ export function render(container) {
 
   let foto = null;
   let enviando = false;
+  let validacionMostrada = false;
+
+  // Después del primer intento, cada cambio vuelve a validar para que el error
+  // desaparezca apenas se corrige (mismo criterio que las altas de producto).
+  function revalidar() {
+    if (!validacionMostrada) return;
+
+    const nombre = formulario.querySelector('#nombre-anonimo').value?.trim() ?? '';
+    const errores = validarFormulario(nombre, foto);
+
+    notaNombre.textContent = errores.nombre ?? '';
+    itemNombre.classList.toggle('campo-formulario--invalido', Boolean(errores.nombre));
+    selectorFoto.mostrarError(errores.foto ?? '');
+  }
 
   const selectorFoto = crearSelectorFotoMesa({
-    tituloEncabezado: 'Tu foto',
-    descripcionEncabezado: 'Sacate una foto para identificarte.',
-    etiquetaAria: 'Seleccionar foto personal',
-    textoPlaceholder: 'Foto personal',
-    iconoPlaceholder: '🙂',
     onCambio(archivo) {
       foto = archivo;
+      revalidar();
     },
   });
+  // El componente nació para la foto de la mesa y su etiqueta accesible lo
+  // dice; acá la foto es de la persona. El botón no se recrea al cambiar de
+  // foto (sólo su contenido), así que alcanza con corregirla una vez.
+  selectorFoto.elemento
+    .querySelector('.selector-foto-mesa__contenido')
+    .setAttribute('aria-label', 'Tomar o subir tu foto');
+
   formulario.querySelector('.ingreso-anonimo__foto').append(selectorFoto.elemento);
+
+  const botonVolver = container.querySelector('.ingreso-anonimo__volver');
+  botonVolver.addEventListener('click', () => window.history.back());
+
+  formulario.querySelector('#nombre-anonimo').addEventListener('input', revalidar);
 
   function establecerProcesando(valor) {
     enviando = valor;
@@ -95,12 +133,10 @@ export function render(container) {
     evento.preventDefault();
     if (enviando) return;
 
+    validacionMostrada = true;
     const nombre = formulario.querySelector('#nombre-anonimo').value?.trim() ?? '';
     const errores = validarFormulario(nombre, foto);
-
-    notaNombre.textContent = errores.nombre ?? '';
-    itemNombre.classList.toggle('campo-formulario--invalido', Boolean(errores.nombre));
-    selectorFoto.mostrarError(errores.foto ?? '');
+    revalidar();
 
     if (Object.keys(errores).length > 0) return;
 
@@ -112,9 +148,18 @@ export function render(container) {
       await crearClienteAnonimo({ nombre, foto });
 
       // Sin pantalla intermedia: apenas queda creada la sesión y el perfil,
-      // se abre directo el lector del QR de ingreso al local.
+      // se abre directo el lector del QR de ingreso al local. La sesión anónima
+      // ya existe, así que volver atrás desde acá no tendría sentido.
       pasoDatos.hidden = true;
       pasoQr.hidden = false;
+      botonVolver.hidden = true;
+
+      container.querySelectorAll('[data-progreso]').forEach((item) => {
+        item.classList.toggle(
+          'ingreso-anonimo__progreso-item--activo',
+          item.dataset.progreso === 'qr',
+        );
+      });
 
       const lector = crearLectorQr({
         titulo: 'Escaneá el QR de la entrada',
