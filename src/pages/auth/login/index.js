@@ -106,6 +106,7 @@ async function renderSesionIniciada(container, session, generacion) {
     if (puedeDarAltaEmpleados) agregarBotonAccion('btn-clientes-pendientes', 'Clientes pendientes', '/clientes/aprobacion');
     if (puedeVerMesas) agregarBotonAccion('btn-mesas', 'Mesas', '/mesas');
     if (puedeVerListaEspera) agregarBotonAccion('btn-lista-espera', 'Lista de espera', '/lista-espera/metre');
+    if (rol === ROLES.METRE) agregarBotonAccion('btn-alta-cliente', 'Alta de cliente', '/clientes/alta');
 
     if (puedeIngresarAlLocal) {
       const contenedorQr = container.querySelector('#ingreso-local-qr');
@@ -168,6 +169,7 @@ function renderFormularioLogin(container) {
         <ion-button type="submit">Ingresar</ion-button>
       </form>
       <ion-button id="btn-ingreso-anonimo" fill="clear">Ingresar como invitado</ion-button>
+      <ion-button id="btn-crear-cuenta" fill="clear">Crear cuenta</ion-button>
       <div id="mensaje-error"></div>
     </ion-content>
   `;
@@ -218,5 +220,9 @@ function renderFormularioLogin(container) {
 
   container.querySelector('#btn-ingreso-anonimo').addEventListener('click', () => {
     navegarA('/ingreso-anonimo');
+  });
+
+  container.querySelector('#btn-crear-cuenta').addEventListener('click', () => {
+    navegarA('/clientes/alta');
   });
 }
