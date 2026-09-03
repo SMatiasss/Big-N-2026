@@ -1,5 +1,6 @@
 // Router casero: cada ruta apunta a un módulo de pages/ que expone render(container).
 // Se importa con import() dinámico para que cada pantalla se cargue solo cuando se visita.
+import { verificarAccesoSesion } from './services/auth.service.js';
 
 const rutas = {
   '/login': () => import('./pages/auth/login/index.js'),
@@ -40,6 +41,7 @@ const rutas = {
 };
 
 const RUTA_POR_DEFECTO = '/login';
+let generacionNavegacion = 0;
 
 export async function iniciarRouter(container) {
   window.addEventListener('hashchange', () => navegar(container));
@@ -47,15 +49,39 @@ export async function iniciarRouter(container) {
 }
 
 async function navegar(container) {
+  const generacion = ++generacionNavegacion;
   const ruta = location.hash.replace('#', '') || RUTA_POR_DEFECTO;
   const cargarPagina = rutas[ruta];
 
+  // Revisar enlaces directos y sesiones restauradas: ocultar botones no impide
+  // que un cliente pendiente escriba una ruta manualmente. RLS sigue siendo necesaria.
+  if (!['/login', '/ingreso-anonimo', '/clientes/alta'].includes(ruta)) {
+    container.textContent = 'Verificando acceso…';
+    try {
+      const session = await verificarAccesoSesion();
+      if (generacion !== generacionNavegacion) return;
+      if (!session) { navegarA('/login'); return; }
+    } catch (error) {
+      if (generacion !== generacionNavegacion) return;
+      container.replaceChildren();
+      const mensaje = document.createElement('p');
+      mensaje.setAttribute('role', 'alert');
+      mensaje.textContent = error.message;
+      const volver = document.createElement('button');
+      volver.textContent = 'Volver al login';
+      volver.addEventListener('click', () => navegarA('/login'));
+      container.append(mensaje, volver);
+      return;
+    }
+  }
+
   if (!cargarPagina) {
-    container.innerHTML = `<p>Página no encontrada: ${ruta}</p>`;
+    container.textContent = `Página no encontrada: ${ruta}`;
     return;
   }
 
   const modulo = await cargarPagina();
+  if (generacion !== generacionNavegacion) return;
   container.innerHTML = '';
   modulo.render(container);
 }

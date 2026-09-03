@@ -3,11 +3,11 @@ import {
   obtenerPermisosProductos,
   signIn,
   signOut,
+  verificarAccesoSesion,
 } from '../../../services/auth.service.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { ROLES, ROLES_EMPLEADO } from '../../../config/constantes.js';
-import { getSupabase } from '../../../services/supabase.client.js';
 import { validarQrIngreso } from '../../../services/qr.service.js';
 import { esEmailValido, esCampoVacio } from '../../../utils/validadores.js';
 import { vibrarError } from '../../../utils/vibracion.js';
@@ -23,9 +23,15 @@ let generacionRender = 0;
 
 export async function render(container) {
   const generacion = ++generacionRender;
-  const {
-    data: { session },
-  } = await getSupabase().auth.getSession();
+  let session;
+  try {
+    session = await verificarAccesoSesion();
+  } catch (error) {
+    if (generacion !== generacionRender) return;
+    renderFormularioLogin(container);
+    container.querySelector('#mensaje-error').textContent = error.message;
+    return;
+  }
 
   if (generacion !== generacionRender) return;
 
@@ -97,6 +103,7 @@ async function renderSesionIniciada(container, session, generacion) {
     if (puedeCargarPlatos) agregarBotonAccion('btn-alta-plato', 'Alta de plato', '/productos/alta-plato');
     if (puedeCargarBebidas) agregarBotonAccion('btn-alta-bebida', 'Alta de bebida', '/productos/alta-bebida');
     if (puedeDarAltaEmpleados) agregarBotonAccion('btn-empleados', 'Empleados', '/empleados');
+    if (puedeDarAltaEmpleados) agregarBotonAccion('btn-clientes-pendientes', 'Clientes pendientes', '/clientes/aprobacion');
     if (puedeVerMesas) agregarBotonAccion('btn-mesas', 'Mesas', '/mesas');
     if (puedeVerListaEspera) agregarBotonAccion('btn-lista-espera', 'Lista de espera', '/lista-espera/metre');
 
