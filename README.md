@@ -23,14 +23,14 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 
 | Nº | Módulo (objetivo)                                 | Responsable  | Inicio | Finalización | Branch | Estado |
 | -: | ------------------------------------------------- | ------------ | --------------- | --------------------- | --------- | --------- |
-| 01 | Agregar un empleado                               | Soria        | 28/08 | 02/09 | - | Completado |
-| 02 | Agregar un nuevo plato                            | Cespedes     | 26/08 | 28/08 | feat(hu02): implementar interfaz de alta de plato + demo-alta-movil | Finalizada |
-| 03 | Agregar una nueva bebida                          | Cespedes     | 28/08 | 28/08 |feat(hu03): implementar interfaz de alta de bebida + demo-alta-movil| Finalizada |
+| 01 | Agregar un empleado                               | Soria        | 28/08 | 02/09 | - | Finalizado |
+| 02 | Agregar un nuevo plato                            | Cespedes     | 26/08 | 28/08 | feat(hu02): implementar interfaz de alta de plato + demo-alta-movil | Finalizado |
+| 03 | Agregar una nueva bebida                          | Cespedes     | 28/08 | 28/08 |feat(hu03): implementar interfaz de alta de bebida + demo-alta-movil| Finalizado |
 | 04 | Agregar una nueva mesa                            | Terenghi Goy | - | - | - | Pendiente |
 | 05 | Crear un cliente registrado                       | Terenghi Goy | - | - | - | Pendiente |
 | 06 | Verificar ingreso del cliente registrado          | Cespedes     | - | - | - | Pendiente |
 | 07 | Rechazar a un cliente registrado                  | Romero       | - | - | - | Pendiente |
-| 08 | Aceptar a un cliente registrado                   | Soria        | - | - | - | Pendiente |
+| 08 | Aceptar a un cliente registrado                   | Soria        | 03/09 | - | - | En curso |
 | 09 | Ingresar al local como cliente anónimo            | Terenghi Goy | - | - | - | Pendiente |
 | 10 | Asignar una mesa a un cliente registrado          | Terenghi Goy | - | - | - | Pendiente |
 | 11 | Visualizar productos y realizar consultas al mozo | Cespedes     | - | - | - | Pendiente |

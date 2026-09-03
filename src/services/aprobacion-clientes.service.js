@@ -68,9 +68,9 @@ export async function resolverClientePendiente(clienteId, estado) {
   let emailEnviado = false;
   try {
     const enviar = estado === ESTADOS_PERFIL.APROBADO ? enviarEmailAprobacion : enviarEmailRechazo;
-    const resultado = await enviar({ id: data.id });
+    const resultado = await enviar(data.id);
     // Un placeholder que devuelve {ok:true} NO demuestra que haya enviado correo.
-    emailEnviado = resultado?.enviado === true;
+    emailEnviado = resultado?.ok === true;
   } catch {
     // Se devuelve el resultado parcial para mostrarlo sin ocultar el cambio de estado.
   }

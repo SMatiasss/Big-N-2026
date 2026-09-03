@@ -18,7 +18,7 @@ export async function render(container) {
         </div>
         <p class="aprobacion-clientes__resultado" role="status" aria-live="polite" data-decision></p>
         <section class="aprobacion-clientes__lista" aria-label="Clientes pendientes"></section>
-        <p class="aprobacion-clientes__aviso">Los correos y las notificaciones aún no están habilitados.</p>
+        <p class="aprobacion-clientes__aviso">Al aprobar o rechazar, se intentará enviar un correo al cliente.</p>
       </main>
     </ion-content>`;
   const raiz = container.firstElementChild;
