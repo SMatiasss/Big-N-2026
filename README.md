@@ -30,7 +30,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 05 | Crear un cliente registrado                       | Terenghi Goy | - | - | - | Pendiente |
 | 06 | Verificar ingreso del cliente registrado          | Cespedes     | - | - | - | Pendiente |
 | 07 | Rechazar a un cliente registrado                  | Romero       | - | - | - | Pendiente |
-| 08 | Aceptar a un cliente registrado                   | Soria        | 03/09 | - | - | En curso |
+| 08 | Aceptar a un cliente registrado                   | Soria        | 03/09 | 03/09 | - | Finalizado |
 | 09 | Ingresar al local como cliente anónimo            | Terenghi Goy | - | - | - | Pendiente |
 | 10 | Asignar una mesa a un cliente registrado          | Terenghi Goy | - | - | - | Pendiente |
 | 11 | Visualizar productos y realizar consultas al mozo | Cespedes     | - | - | - | Pendiente |
