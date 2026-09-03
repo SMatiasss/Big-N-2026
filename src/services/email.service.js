@@ -16,3 +16,9 @@ export async function enviarEmailRechazo(perfilId) {
   if (error) throw error;
   return data;
 }
+
+export async function enviarEmailPendiente(perfil) {
+  const { data, error } = await getSupabase().functions.invoke('enviar-email-pendiente', { body: perfil });
+  if (error) throw error;
+  return data;
+}
