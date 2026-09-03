@@ -105,6 +105,7 @@ async function renderSesionIniciada(container, session, generacion) {
     if (puedeDarAltaEmpleados) agregarBotonAccion('btn-empleados', 'Empleados', '/empleados');
     if (puedeDarAltaEmpleados) agregarBotonAccion('btn-clientes-pendientes', 'Clientes pendientes', '/clientes/aprobacion');
     if (puedeVerMesas) agregarBotonAccion('btn-mesas', 'Mesas', '/mesas');
+    if (rol === ROLES.MOZO) agregarBotonAccion('btn-consultas', 'Consultas de clientes', '/pedidos/consulta');
     if (puedeVerListaEspera) agregarBotonAccion('btn-lista-espera', 'Lista de espera', '/lista-espera/metre');
 
     if (puedeIngresarAlLocal) {

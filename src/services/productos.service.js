@@ -24,6 +24,17 @@ export async function listarCarta() {
   return data;
 }
 
+// La carta operativa y una futura carta general pueden compartir esta lectura.
+// La validación de mesa se realiza antes de abrir la vista operativa, no se cambia
+// la policy pública de productos que también necesitan otros requisitos.
+export async function listarCartaConFotos() {
+  const { data, error } = await getSupabase().from(TABLAS.PRODUCTOS)
+    .select('id, nombre, descripcion, precio, tiempo_elaboracion_min, tipo, producto_fotos(id, url, orden)')
+    .eq('activo', true).order('nombre');
+  if (error) throw error;
+  return data;
+}
+
 // Busca coincidencias de nombre sin distinguir mayúsculas, igual que el índice
 // único de productos. La base seguirá siendo la protección final ante concurrencia.
 export async function existeProductoEnCarta(nombre) {

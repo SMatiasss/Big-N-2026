@@ -2,6 +2,7 @@
 // escanear el QR de ingreso al local, tanto desde el ingreso anónimo como
 // desde "Ingresar al local" para un cliente registrado ya logueado.
 import './index.css';
+import { navegarA } from '../../../router.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { ESTADOS_ESPERA } from '../../../config/constantes.js';
 import { obtenerMiEstadiaActiva } from '../../../services/estadias.service.js';
@@ -47,9 +48,9 @@ export function render(container) {
 
   const aviso = container.querySelector('.lista-espera-cliente__aviso');
   const avisoTexto = container.querySelector('.lista-espera-cliente__aviso-texto');
-  // Sólo se deja lista para conectar el escaneo de la mesa (HU11); no se
-  // implementa el escaneo en sí acá.
+  // HU11 continúa desde la asignación existente, sin crear otra estadía.
   const botonMesa = container.querySelector('.lista-espera-cliente__boton-mesa');
+  botonMesa.addEventListener('click', () => navegarA('/mesa/escanear'));
   const seccionEncuestas = container.querySelector('.lista-espera-cliente__encuestas');
   const botonIngresar = container.querySelector('.lista-espera-cliente__ingresar');
   const botonCancelar = container.querySelector('.lista-espera-cliente__cancelar');
@@ -75,6 +76,8 @@ export function render(container) {
   }
 
   function mostrarAsignada(numeroMesa) {
+    aviso.hidden = false;
+    botonIngresar.disabled = true;
     avisoTexto.textContent = `Solicitud aceptada para la mesa ${numeroMesa}`;
     botonCancelar.hidden = true;
     botonMesa.hidden = false;
@@ -89,6 +92,7 @@ export function render(container) {
 
       try {
         const estadia = await obtenerMiEstadiaActiva();
+        if (!aviso.isConnected || !estadia) return;
         mostrarAsignada(estadia?.mesa?.numero ?? '');
         // Sin efecto si el rol no es cliente_anonimo (ver sesion-anonima.service.js).
         if (estadia) vigilarMiEstadiaSiSoyAnonima(estadia);
@@ -101,13 +105,29 @@ export function render(container) {
   // Si el cliente recarga la pantalla mientras espera, reconstruir el estado
   // en vez de dejarlo volver al botón inicial (uq_espera_activa garantiza que
   // esta consulta encuentre, como mucho, una sola fila).
-  obtenerMiEspera()
+  botonIngresar.disabled = true;
+  obtenerMiEstadiaActiva().then(async (estadia) => {
+      if (!aviso.isConnected) return null;
+      if (estadia) {
+        mostrarAsignada(estadia.mesa.numero);
+        vigilarMiEstadiaSiSoyAnonima(estadia);
+        return null;
+      }
+      const entrada = await obtenerMiEspera();
+      if (aviso.isConnected && !entrada) mostrarInicial();
+      return entrada;
+    })
     .then((entrada) => {
-      if (!entrada) return;
+      if (!entrada || !aviso.isConnected) return;
       mostrarEsperando();
       suscribirse(entrada);
     })
-    .catch((error) => console.error('No se pudo verificar si ya estabas en la lista de espera.', error));
+    .catch(() => {
+      if (aviso.isConnected) {
+        aviso.hidden = false;
+        avisoTexto.textContent = 'No pudimos recuperar tu espera o mesa. Volvé a ingresar a esta pantalla.';
+      }
+    });
 
   botonIngresar.addEventListener('click', async () => {
     botonIngresar.disabled = true;

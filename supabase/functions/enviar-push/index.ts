@@ -1,11 +1,6 @@
-// Edge Function (Deno): envía una notificación push a los tokens registrados.
-
-Deno.serve(async (req) => {
-  const { perfilId, titulo, mensaje } = await req.json();
-
-  // TODO: buscar el/los push_token del perfil y disparar la notificación (FCM/Expo/etc.)
-
-  return new Response(JSON.stringify({ ok: true, perfilId, titulo, mensaje }), {
-    headers: { 'Content-Type': 'application/json' },
-  });
-});
+// Pendiente de proveedor/credenciales y worker autorizado. Una fila en la BD
+// NO demuestra entrega al dispositivo. Nunca aceptar destinatarios del navegador
+// ni devolver éxito hasta implementar el envío y sus comprobaciones server-side.
+Deno.serve(() => new Response(JSON.stringify({
+  ok: false, enviado: false, error: 'PUSH_NO_CONFIGURADO',
+}), { status: 503, headers: { 'Content-Type': 'application/json' } }));

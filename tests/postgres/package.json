@@ -1,0 +1,7 @@
+{
+  "name": "hu11-postgres-tests",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --test hu11-postgres.test.js" },
+  "devDependencies": { "@electric-sql/pglite": "0.5.8" }
+}

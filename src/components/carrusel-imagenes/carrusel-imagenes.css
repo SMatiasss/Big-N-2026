@@ -1,2 +1,4 @@
-.carrusel-imagenes {
-}
+.carrusel-imagenes__foto { height: 240px; display: flex; align-items: center; justify-content: center; background: #eee9d7; overflow: hidden; border-radius: 12px; }
+.carrusel-imagenes__foto img { height: 100%; width: 100%; object-fit: contain; object-position: center; }
+.carrusel-imagenes nav { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 10px; }
+.carrusel-imagenes button { min-width: 44px; min-height: 44px; font-size: 1.5rem; }
