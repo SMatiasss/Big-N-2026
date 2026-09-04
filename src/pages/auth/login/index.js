@@ -11,6 +11,7 @@ import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { ETIQUETAS_ROL, ROLES } from '../../../config/constantes.js';
 import { esEmpleado } from '../../../config/permisos.js';
+import { puedeResolverClientes } from '../../../utils/acceso-perfil.js';
 import { CUENTAS_DEMO, PASSWORD_DEMO } from '../../../config/cuentas-demo.js';
 import { getSupabase } from '../../../services/supabase.client.js';
 import { validarQrIngreso } from '../../../services/qr.service.js';
@@ -174,6 +175,12 @@ async function renderSesionIniciada(container, session, generacion) {
       agregarBotonAccion('btn-empleados', 'Empleados', '/empleados');
       agregarBotonAccion('btn-mesas', 'Mesas', '/mesas');
       agregarBotonAccion('btn-lista-espera', 'Lista de espera', '/lista-espera/metre');
+    }
+
+    // La gestión de clientes no es una acción general del staff: sólo el dueño
+    // o un supervisor activo y aprobado pueden aceptar o rechazar solicitudes.
+    if (puedeResolverClientes(perfil)) {
+      agregarBotonAccion('btn-clientes', 'Clientes', '/clientes/aprobacion');
     }
 
     if (puedeIngresarAlLocal) {
