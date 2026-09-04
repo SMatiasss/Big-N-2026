@@ -6,6 +6,7 @@ import { ROLES, ESTADOS_PERFIL } from '../../../config/constantes.js';
 import { signUp } from '../../../services/auth.service.js';
 import { altaPerfil, subirFotoPerfil } from '../../../services/perfiles.service.js';
 import { enviarEmailPendiente } from '../../../services/email.service.js';
+import { avisarNuevoClientePendiente } from '../../../services/notificaciones.service.js';
 import { esCampoVacio, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
@@ -702,6 +703,14 @@ export function render(container) {
           rol: ROLES.CLIENTE_REGISTRADO,
           estado: ESTADOS_PERFIL.PENDIENTE,
         });
+
+        // El backend obtiene la identidad desde el JWT y decide los destinatarios.
+        // El cliente nunca envía IDs de empleados ni tokens de dispositivos.
+        try {
+          await avisarNuevoClientePendiente();
+        } catch (errorPush) {
+          console.error('El cliente se guardó, pero no se pudo confirmar el aviso push.', errorPush);
+        }
 
         try {
           await enviarEmailPendiente({ id: user.id });
