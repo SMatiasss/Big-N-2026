@@ -35,7 +35,7 @@ beforeEach(() => {
   perfil = { ...base, rol: 'dueno' };
   sesion = { user: { id: 'actor' } };
   resultado = { data: { id: 'cliente', estado: 'aprobado' }, error: null };
-  correo = { data: { enviado: true }, error: null };
+  correo = { data: { ok: true }, error: null };
   consultas = []; cierres = 0; llamadasEmail = 0;
 });
 
@@ -115,7 +115,7 @@ test('error RLS no envía correo', async () => {
   assert.equal(llamadasEmail, 0);
 });
 test('correo fallido o placeholder no finge envío ni revierte decisión', async () => {
-  for (const respuesta of [{ data: null, error: new Error('sin despliegue') }, { data: { ok: true }, error: null }]) {
+  for (const respuesta of [{ data: null, error: new Error('sin despliegue') }, { data: { enviado: true }, error: null }]) {
     correo = respuesta;
     const res = await servicio.resolverClientePendiente('cliente', 'rechazado');
     assert.equal(res.emailEnviado, false);

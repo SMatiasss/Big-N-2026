@@ -2,6 +2,7 @@
 import './index.css';
 import {
   obtenerPermisos,
+  obtenerPerfilActual,
   signIn,
   signOut,
 } from '../../../services/auth.service.js';
@@ -16,6 +17,7 @@ import { validarQrIngreso } from '../../../services/qr.service.js';
 import { esEmailValido, esCampoVacio } from '../../../utils/validadores.js';
 import { vibrarError } from '../../../utils/vibracion.js';
 import { navegarA } from '../../../router.js';
+import { iniciarPushAdministracion, borrarTokenActual } from '../../../services/notificaciones.service.js';
 
 // El proyecto no usa librería de íconos (ver package.json): los tres del
 // formulario van como SVG inline, así heredan el color del CSS de la pantalla.
@@ -117,7 +119,22 @@ async function renderSesionIniciada(container, session, generacion) {
   container.querySelector('#email-sesion').textContent = session.user.email ?? 'Cliente anónimo';
 
   try {
-    const { rol } = await obtenerPermisos();
+    let permisos;
+    let perfil;
+
+    // En un arranque en frío la red y la sesión nativa pueden terminar de
+    // estabilizarse unos instantes después de que aparece el WebView.
+    for (let intento = 0; intento < 3; intento += 1) {
+      try {
+        [permisos, perfil] = await Promise.all([obtenerPermisos(), obtenerPerfilActual()]);
+        break;
+      } catch (error) {
+        if (intento === 2) throw error;
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+    }
+
+    const { rol } = permisos;
     if (generacion !== generacionRender) return;
 
     // Todo el staff ve todas las pantallas de gestión: las policies de lectura
@@ -150,6 +167,7 @@ async function renderSesionIniciada(container, session, generacion) {
       container.querySelector('#acciones-demo-productos').hidden = false;
       container.querySelector('#perfil-sesion').textContent = ETIQUETAS_ROL[rol] ?? rol;
     }
+    void iniciarPushAdministracion(perfil).catch(() => {});
 
     if (esStaff) {
       agregarBotonAccion('btn-productos', 'Productos', '/productos');
@@ -201,6 +219,7 @@ async function renderSesionIniciada(container, session, generacion) {
 
   container.querySelector('#btn-cerrar-sesion').addEventListener('click', async () => {
     try {
+      await borrarTokenActual().catch(() => {});
       await signOut();
       render(container);
     } catch (error) {
