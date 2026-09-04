@@ -53,17 +53,25 @@ async function navegar(container) {
   const generacion = ++generacionNavegacion;
   const ruta = location.hash.replace('#', '') || RUTA_POR_DEFECTO;
   const cargarPagina = rutas[ruta];
+  container.removeAttribute('aria-busy');
 
   // Revisar enlaces directos y sesiones restauradas: ocultar botones no impide
   // que un cliente pendiente escriba una ruta manualmente. RLS sigue siendo necesaria.
   if (!['/login', '/ingreso-anonimo', '/clientes/alta'].includes(ruta)) {
-    container.textContent = 'Verificando acceso…';
+    // Se mantiene visible la pantalla actual mientras se consulta la sesión.
+    // Así la validación no produce una pantalla blanca intermedia con texto plano.
+    container.setAttribute('aria-busy', 'true');
     try {
       const session = await verificarAccesoSesion();
       if (generacion !== generacionNavegacion) return;
-      if (!session) { navegarA('/login'); return; }
+      if (!session) {
+        container.removeAttribute('aria-busy');
+        navegarA('/login');
+        return;
+      }
     } catch (error) {
       if (generacion !== generacionNavegacion) return;
+      container.removeAttribute('aria-busy');
       container.replaceChildren();
       const mensaje = document.createElement('p');
       mensaje.setAttribute('role', 'alert');
@@ -77,12 +85,14 @@ async function navegar(container) {
   }
 
   if (!cargarPagina) {
+    container.removeAttribute('aria-busy');
     container.textContent = `Página no encontrada: ${ruta}`;
     return;
   }
 
   const modulo = await cargarPagina();
   if (generacion !== generacionNavegacion) return;
+  container.removeAttribute('aria-busy');
   container.innerHTML = '';
   modulo.render(container);
 }
