@@ -188,9 +188,9 @@ export async function enviarEmailPerfil(req: Request, tipo: TipoCorreo) {
       text: mensajeTexto,
       attachments: [
         {
-          filename: 'Icono_Big_N.png',
-          path: `${supabaseUrl}/storage/v1/object/public/Logo/Icono_Big_N.png`,
-          cid: 'logo_bign_inline', // Vincula con src="cid:logo_bign_inline"
+          filename: 'Icono_Big_N_2_1.png',
+          path: `${supabaseUrl}/storage/v1/object/public/Logo/Icono_Big_N_2_1.png`,
+          cid: 'logo_bign_inline', // Se mantiene igual para vincular con el HTML
         },
       ],
     });
