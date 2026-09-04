@@ -8,7 +8,7 @@ import { obtenerPermisos } from '../../../services/auth.service.js';
 import { asignarMesa } from '../../../services/estadias.service.js';
 import { listarEsperando, suscribirseAListaEspera } from '../../../services/lista-espera.service.js';
 import { listarMesasLibres } from '../../../services/mesas.service.js';
-import { enviarNotificacion } from '../../../services/notificaciones.service.js';
+import { avisarMesaAsignada } from '../../../services/notificaciones.service.js';
 
 const ETIQUETAS_TIPO_MESA = {
   estandar: 'Estándar',
@@ -99,24 +99,20 @@ export function render(container) {
           boton.disabled = true;
 
           try {
-            await asignarMesa({
+            const estadia = await asignarMesa({
               clienteId: entrada.cliente_id,
               mesaId: mesa.id,
               listaEsperaId: entrada.id,
             });
 
             try {
-              // Cubre el caso de que el cliente tenga la app en segundo plano
-              // y el realtime no le llegue en el momento. La asignación real
-              // (mesa ocupada + lista_espera 'asignado') ya la hizo el trigger.
-              await enviarNotificacion({
-                destinatario_id: entrada.cliente_id,
-                titulo: 'Mesa asignada',
-                cuerpo: `Te asignamos la mesa ${mesa.numero}.`,
-                tipo: 'mesa_asignada',
-              });
+              // HU10: cubre el caso de que el cliente tenga la app en segundo
+              // plano y el realtime no le llegue en el momento. La asignación
+              // real (mesa ocupada + lista_espera 'asignado') ya la hizo el
+              // trigger; esto es sólo el aviso push.
+              await avisarMesaAsignada(estadia.id);
             } catch (errorNotif) {
-              console.error('No se pudo registrar la notificación de mesa asignada.', errorNotif);
+              console.error('No se pudo enviar el aviso push de mesa asignada.', errorNotif);
             }
             // La fila desaparece sola por la suscripción realtime.
           } catch (error) {

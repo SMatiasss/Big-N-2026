@@ -8,21 +8,34 @@ let tokenActual = null;
 let inicializado = false;
 let accionesEscuchadas = false;
 
+// HU09/10: banderas propias para no interferir con iniciarPushAdministracion.
+// Nunca coinciden en la misma sesión porque dueño/supervisor, metre y
+// cliente_(anonimo|registrado) son roles mutuamente excluyentes; comparten
+// tokenActual y borrarTokenActual porque sólo hace falta borrar el token que
+// esa sesión efectivamente haya registrado, sea cual sea.
+let inicializadoListaEspera = false;
+let inicializadoCliente = false;
+
+// Rutas a las que puede llevar un toque sobre la notificación (o el botón
+// "Ver" mientras la app está en primer plano). Cada HU agrega la suya acá.
+const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera'];
+
 function mostrarAvisoEnPrimerPlano(notification) {
   const toast = document.createElement('ion-toast');
   toast.header = notification.title || 'Nuevo aviso';
   toast.message = notification.body || 'Tenés una nueva notificación.';
   toast.duration = 5000;
   toast.position = 'top';
-  toast.buttons = notification.data?.ruta === '/clientes/aprobacion'
-    ? [{ text: 'Ver', handler: () => navegarA('/clientes/aprobacion') }]
+  const ruta = notification.data?.ruta;
+  toast.buttons = RUTAS_NOTIFICACION.includes(ruta)
+    ? [{ text: 'Ver', handler: () => navegarA(ruta) }]
     : [];
   document.body.appendChild(toast);
   toast.present();
 }
 
 async function abrirRutaDeNotificacion(ruta) {
-  if (ruta !== '/clientes/aprobacion') return;
+  if (!RUTAS_NOTIFICACION.includes(ruta)) return;
 
   // Al arrancar desde la bandeja, getSession() puede encontrar primero los
   // datos locales mientras Auth todavía no está listo para getUser(). La ruta
@@ -134,6 +147,93 @@ export async function iniciarPushAdministracion(perfil) {
 
 export async function avisarNuevoClientePendiente() {
   const { data, error } = await getSupabase().functions.invoke('enviar-push', { body: {} });
+  if (error) throw error;
+  return data;
+}
+
+// HU09: el metre necesita recibir un push cuando un cliente se anota en la
+// lista de espera. Función independiente de iniciarPushAdministracion (que
+// sigue siendo sólo para dueño/supervisor) para no acoplar ambos flujos:
+// mismo patrón, canal y destinatario distintos.
+export async function iniciarPushListaEspera(perfil) {
+  const autorizado = perfil?.rol === ROLES.METRE && perfil.activo && perfil.estado === 'aprobado';
+  if (!autorizado || inicializadoListaEspera || Capacitor.getPlatform() !== 'android') return false;
+  inicializadoListaEspera = true;
+  await escucharAccionesPush();
+  await PushNotifications.addListener('registration', async ({ value }) => {
+    tokenActual = value;
+    try { await guardarPushToken(perfil.id, value, 'android'); }
+    catch (error) { console.error('No se pudo registrar este dispositivo para avisos de lista de espera.', error); }
+  });
+  await PushNotifications.addListener('registrationError', error => {
+    console.error('Android no pudo registrar las notificaciones.', error);
+  });
+  await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
+  const permiso = await PushNotifications.checkPermissions();
+  const estado = permiso.receive === 'prompt'
+    ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
+  if (estado !== 'granted') return false;
+  await PushNotifications.createChannel({
+    id: 'lista-espera-metre',
+    name: 'Lista de espera',
+    description: 'Avisos de nuevos clientes esperando mesa.',
+    importance: 5,
+    visibility: 1,
+    vibration: true,
+  });
+  await PushNotifications.register();
+  return true;
+}
+
+// HU10: el cliente (anónimo o registrado) necesita recibir un push cuando el
+// metre le asigna una mesa. A diferencia de iniciarPushAdministracion/
+// iniciarPushListaEspera, acá no se exige estado 'aprobado': un cliente
+// anónimo siempre lo tiene por default (ver crearClienteAnonimo), pero no
+// tiene sentido pedirle "estar aprobado" a un rol que nunca pasa por HU06-08.
+export async function iniciarPushCliente(perfil) {
+  const autorizado = [ROLES.CLIENTE_ANONIMO, ROLES.CLIENTE_REGISTRADO].includes(perfil?.rol)
+    && perfil.activo;
+  if (!autorizado || inicializadoCliente || Capacitor.getPlatform() !== 'android') return false;
+  inicializadoCliente = true;
+  await escucharAccionesPush();
+  await PushNotifications.addListener('registration', async ({ value }) => {
+    tokenActual = value;
+    try { await guardarPushToken(perfil.id, value, 'android'); }
+    catch (error) { console.error('No se pudo registrar este dispositivo para avisos de mesa asignada.', error); }
+  });
+  await PushNotifications.addListener('registrationError', error => {
+    console.error('Android no pudo registrar las notificaciones.', error);
+  });
+  await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
+  const permiso = await PushNotifications.checkPermissions();
+  const estado = permiso.receive === 'prompt'
+    ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
+  if (estado !== 'granted') return false;
+  await PushNotifications.createChannel({
+    id: 'mesa-asignada',
+    name: 'Mesa asignada',
+    description: 'Aviso de que el metre te asignó una mesa.',
+    importance: 5,
+    visibility: 1,
+    vibration: true,
+  });
+  await PushNotifications.register();
+  return true;
+}
+
+// HU09: dispara el aviso al anotarse en la lista de espera. El backend valida
+// que quien llama tenga de verdad una entrada activa antes de avisar al metre.
+export async function avisarNuevaEspera() {
+  const { data, error } = await getSupabase().functions.invoke('avisar-lista-espera', { body: {} });
+  if (error) throw error;
+  return data;
+}
+
+// HU10: dispara el aviso al cliente cuando se le asigna una mesa. El backend
+// resuelve destinatario y número de mesa a partir de estadiaId, no confía en
+// datos sueltos del formulario.
+export async function avisarMesaAsignada(estadiaId) {
+  const { data, error } = await getSupabase().functions.invoke('avisar-mesa-asignada', { body: { estadiaId } });
   if (error) throw error;
   return data;
 }

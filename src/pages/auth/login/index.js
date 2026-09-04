@@ -18,7 +18,12 @@ import { validarQrIngreso } from '../../../services/qr.service.js';
 import { esEmailValido, esCampoVacio } from '../../../utils/validadores.js';
 import { vibrarError } from '../../../utils/vibracion.js';
 import { navegarA } from '../../../router.js';
-import { iniciarPushAdministracion, borrarTokenActual } from '../../../services/notificaciones.service.js';
+import {
+  iniciarPushAdministracion,
+  iniciarPushListaEspera,
+  iniciarPushCliente,
+  borrarTokenActual,
+} from '../../../services/notificaciones.service.js';
 
 // El proyecto no usa librería de íconos (ver package.json): los tres del
 // formulario van como SVG inline, así heredan el color del CSS de la pantalla.
@@ -169,6 +174,13 @@ async function renderSesionIniciada(container, session, generacion) {
       container.querySelector('#perfil-sesion').textContent = ETIQUETAS_ROL[rol] ?? rol;
     }
     void iniciarPushAdministracion(perfil).catch(() => {});
+    // HU09: el metre necesita el push de "nuevo cliente en espera".
+    void iniciarPushListaEspera(perfil).catch(() => {});
+    // HU10: un cliente registrado que vuelve a loguearse (por ejemplo tras
+    // cerrar la app) también necesita poder recibir el push de mesa asignada.
+    // El cliente anónimo se registra aparte, en ingreso-anonimo, porque nunca
+    // pasa por esta pantalla con sesión ya iniciada.
+    void iniciarPushCliente(perfil).catch(() => {});
 
     if (esStaff) {
       agregarBotonAccion('btn-productos', 'Productos', '/productos');

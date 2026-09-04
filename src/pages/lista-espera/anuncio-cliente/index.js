@@ -3,6 +3,7 @@
 // desde "Ingresar al local" para un cliente registrado ya logueado.
 import './index.css';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { avisarNuevaEspera } from '../../../services/notificaciones.service.js';
 import { ESTADOS_ESPERA } from '../../../config/constantes.js';
 import { obtenerMiEstadiaActiva } from '../../../services/estadias.service.js';
 import {
@@ -138,6 +139,14 @@ export function render(container) {
       const entrada = await anotarse({ comensales: 1 });
       mostrarEsperando();
       suscribirse(entrada);
+
+      // HU09: el aviso es best-effort. Si el push falla, el cliente ya quedó
+      // anotado igual (el metre lo va a ver por Realtime al abrir el panel).
+      try {
+        await avisarNuevaEspera();
+      } catch (errorPush) {
+        console.error('No se pudo enviar el aviso push al metre.', errorPush);
+      }
     } catch (error) {
       botonIngresar.disabled = false;
       console.error('No se pudo anotar en la lista de espera.', error);

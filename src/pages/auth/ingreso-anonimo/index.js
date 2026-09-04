@@ -5,6 +5,7 @@ import './index.css';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorFotoMesa } from '../../../components/selector-foto-mesa/selector-foto-mesa.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { iniciarPushCliente } from '../../../services/notificaciones.service.js';
 import { signInAnonymously } from '../../../services/auth.service.js';
 import { crearClienteAnonimo } from '../../../services/perfiles.service.js';
 import { validarQrIngreso } from '../../../services/qr.service.js';
@@ -145,7 +146,11 @@ export function render(container) {
     try {
       // Sesión anónima y perfil, una acción después de la otra.
       await signInAnonymously();
-      await crearClienteAnonimo({ nombre, foto });
+      const perfilCreado = await crearClienteAnonimo({ nombre, foto });
+
+      // HU10: este cliente va a esperar el push de "mesa asignada". Nunca
+      // pasa por login.js con sesión ya iniciada, así que se registra acá.
+      void iniciarPushCliente(perfilCreado).catch(() => {});
 
       // Sin pantalla intermedia: apenas queda creada la sesión y el perfil,
       // se abre directo el lector del QR de ingreso al local. La sesión anónima
