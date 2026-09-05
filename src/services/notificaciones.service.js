@@ -84,6 +84,8 @@ export async function borrarTokenActual() {
   const tokenAEliminar = tokenActual;
   tokenActual = null;
   inicializado = false;
+  inicializadoListaEspera = false;
+  inicializadoCliente = false;
   if (Capacitor.getPlatform() === 'android') {
     await PushNotifications.removeAllListeners();
     accionesEscuchadas = false;
@@ -123,16 +125,23 @@ export async function iniciarPushAdministracion(perfil) {
   await PushNotifications.addListener('registration', async ({ value }) => {
     tokenActual = value;
     try { await guardarPushToken(perfil.id, value, 'android'); }
-    catch (error) { console.error('No se pudo registrar este dispositivo para avisos.', error); }
+    catch (error) {
+      inicializado = false;
+      console.error('No se pudo registrar este dispositivo para avisos.', error);
+    }
   });
   await PushNotifications.addListener('registrationError', error => {
+    inicializado = false;
     console.error('Android no pudo registrar las notificaciones.', error);
   });
   await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
   const permiso = await PushNotifications.checkPermissions();
   const estado = permiso.receive === 'prompt'
     ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
-  if (estado !== 'granted') return false;
+  if (estado !== 'granted') {
+    inicializado = false;
+    return false;
+  }
   await PushNotifications.createChannel({
     id: 'clientes-pendientes',
     name: 'Clientes pendientes',
@@ -163,16 +172,23 @@ export async function iniciarPushListaEspera(perfil) {
   await PushNotifications.addListener('registration', async ({ value }) => {
     tokenActual = value;
     try { await guardarPushToken(perfil.id, value, 'android'); }
-    catch (error) { console.error('No se pudo registrar este dispositivo para avisos de lista de espera.', error); }
+    catch (error) {
+      inicializadoListaEspera = false;
+      console.error('No se pudo registrar este dispositivo para avisos de lista de espera.', error);
+    }
   });
   await PushNotifications.addListener('registrationError', error => {
+    inicializadoListaEspera = false;
     console.error('Android no pudo registrar las notificaciones.', error);
   });
   await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
   const permiso = await PushNotifications.checkPermissions();
   const estado = permiso.receive === 'prompt'
     ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
-  if (estado !== 'granted') return false;
+  if (estado !== 'granted') {
+    inicializadoListaEspera = false;
+    return false;
+  }
   await PushNotifications.createChannel({
     id: 'lista-espera-metre',
     name: 'Lista de espera',
@@ -199,16 +215,23 @@ export async function iniciarPushCliente(perfil) {
   await PushNotifications.addListener('registration', async ({ value }) => {
     tokenActual = value;
     try { await guardarPushToken(perfil.id, value, 'android'); }
-    catch (error) { console.error('No se pudo registrar este dispositivo para avisos de mesa asignada.', error); }
+    catch (error) {
+      inicializadoCliente = false;
+      console.error('No se pudo registrar este dispositivo para avisos de mesa asignada.', error);
+    }
   });
   await PushNotifications.addListener('registrationError', error => {
+    inicializadoCliente = false;
     console.error('Android no pudo registrar las notificaciones.', error);
   });
   await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
   const permiso = await PushNotifications.checkPermissions();
   const estado = permiso.receive === 'prompt'
     ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
-  if (estado !== 'granted') return false;
+  if (estado !== 'granted') {
+    inicializadoCliente = false;
+    return false;
+  }
   await PushNotifications.createChannel({
     id: 'mesa-asignada',
     name: 'Mesa asignada',
