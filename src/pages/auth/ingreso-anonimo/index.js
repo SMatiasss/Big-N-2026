@@ -150,7 +150,9 @@ export function render(container) {
 
       // HU10: este cliente va a esperar el push de "mesa asignada". Nunca
       // pasa por login.js con sesión ya iniciada, así que se registra acá.
-      void iniciarPushCliente(perfilCreado).catch(() => {});
+      void iniciarPushCliente(perfilCreado).catch((error) => {
+        console.error('No se pudieron iniciar los avisos de mesa asignada.', error);
+      });
 
       // Sin pantalla intermedia: apenas queda creada la sesión y el perfil,
       // se abre directo el lector del QR de ingreso al local. La sesión anónima
