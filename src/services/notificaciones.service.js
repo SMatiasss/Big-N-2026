@@ -7,6 +7,7 @@ import { navegarA } from '../router.js';
 let tokenActual = null;
 let inicializado = false;
 let accionesEscuchadas = false;
+const CLAVE_TOKEN_PUSH = 'big-n.push-token-actual';
 
 // HU09/10: banderas propias para no interferir con iniciarPushAdministracion.
 // Nunca coinciden en la misma sesión porque dueño/supervisor, metre y
@@ -15,6 +16,46 @@ let accionesEscuchadas = false;
 // esa sesión efectivamente haya registrado, sea cual sea.
 let inicializadoListaEspera = false;
 let inicializadoCliente = false;
+
+// El token se conserva también en el almacenamiento local. La variable en
+// memoria se pierde cuando Android cierra el proceso; sin esta copia, al salir
+// después de volver a abrir la app no sabríamos qué fila borrar en Supabase.
+function leerTokenLocal() {
+  try {
+    const valor = globalThis.localStorage?.getItem(CLAVE_TOKEN_PUSH);
+    if (!valor) return null;
+    const registro = JSON.parse(valor);
+    return registro?.token && registro?.usuarioId ? registro : null;
+  } catch {
+    return null;
+  }
+}
+
+function guardarTokenLocal(usuarioId, token) {
+  globalThis.localStorage?.setItem(CLAVE_TOKEN_PUSH, JSON.stringify({ usuarioId, token }));
+}
+
+function borrarTokenLocal() {
+  globalThis.localStorage?.removeItem(CLAVE_TOKEN_PUSH);
+}
+
+function reiniciarEstadoPush() {
+  tokenActual = null;
+  inicializado = false;
+  inicializadoListaEspera = false;
+  inicializadoCliente = false;
+}
+
+async function prepararDispositivoParaPerfil(usuarioId) {
+  const anterior = leerTokenLocal();
+  if (!anterior || anterior.usuarioId === usuarioId || Capacitor.getPlatform() !== 'android') return;
+
+  // Si una instalación quedó vinculada localmente a otra sesión, invalidamos
+  // su registro nativo antes de pedir uno nuevo para el usuario actual.
+  await PushNotifications.unregister();
+  borrarTokenLocal();
+  tokenActual = null;
+}
 
 // Rutas a las que puede llevar un toque sobre la notificación (o el botón
 // "Ver" mientras la app está en primer plano). Cada HU agrega la suya acá.
@@ -73,26 +114,47 @@ export async function guardarPushToken(usuarioId, token, plataforma = 'android')
   const { data: { user }, error: errorUsuario } = await getSupabase().auth.getUser();
   if (errorUsuario) throw errorUsuario;
   if (user?.id !== usuarioId) throw new Error('Sólo podés registrar tu propio dispositivo.');
+
+  const anterior = leerTokenLocal();
+  if (anterior?.usuarioId === usuarioId && anterior.token !== token) {
+    const { error: errorAnterior } = await getSupabase().from('push_tokens')
+      .delete().eq('token', anterior.token).eq('usuario_id', usuarioId);
+    if (errorAnterior) throw errorAnterior;
+  }
+
   const { data, error } = await getSupabase().from('push_tokens')
     .upsert({ usuario_id: usuarioId, token, plataforma }, { onConflict: 'token' })
     .select('id, usuario_id, plataforma, creado_en').single();
   if (error) throw error;
+  guardarTokenLocal(usuarioId, token);
   return data;
 }
 
 export async function borrarTokenActual() {
-  const tokenAEliminar = tokenActual;
-  tokenActual = null;
-  inicializado = false;
-  inicializadoListaEspera = false;
-  inicializadoCliente = false;
+  const registroLocal = leerTokenLocal();
+  const tokenAEliminar = tokenActual ?? registroLocal?.token ?? null;
+  const { data: { session }, error: errorSesion } = await getSupabase().auth.getSession();
+  if (errorSesion) throw errorSesion;
+
+  // Primero se elimina la asociación mientras la sesión todavía puede pasar
+  // RLS. Sólo se toca el token de esta instalación y del usuario autenticado;
+  // las demás sesiones del mismo usuario continúan recibiendo notificaciones.
+  if (tokenAEliminar && session?.user?.id) {
+    const { error } = await getSupabase().from('push_tokens').delete()
+      .eq('token', tokenAEliminar).eq('usuario_id', session.user.id);
+    if (error) throw error;
+  }
+
   if (Capacitor.getPlatform() === 'android') {
+    // Firebase invalida el token nativo. El próximo login ejecutará register()
+    // y obtendrá un token limpio para la nueva sesión del dispositivo.
+    await PushNotifications.unregister();
     await PushNotifications.removeAllListeners();
     accionesEscuchadas = false;
   }
-  if (!tokenAEliminar) return;
-  const { error } = await getSupabase().from('push_tokens').delete().eq('token', tokenAEliminar);
-  if (error) throw error;
+
+  borrarTokenLocal();
+  reiniciarEstadoPush();
 }
 
 export async function listarNotificaciones(usuarioId) {
@@ -120,6 +182,7 @@ export async function iniciarPushAdministracion(perfil) {
   const autorizado = [ROLES.DUENO, ROLES.SUPERVISOR].includes(perfil?.rol)
     && perfil.activo && perfil.estado === 'aprobado';
   if (!autorizado || inicializado || Capacitor.getPlatform() !== 'android') return false;
+  await prepararDispositivoParaPerfil(perfil.id);
   inicializado = true;
   await escucharAccionesPush();
   await PushNotifications.addListener('registration', async ({ value }) => {
@@ -167,6 +230,7 @@ export async function avisarNuevoClientePendiente() {
 export async function iniciarPushListaEspera(perfil) {
   const autorizado = perfil?.rol === ROLES.METRE && perfil.activo && perfil.estado === 'aprobado';
   if (!autorizado || inicializadoListaEspera || Capacitor.getPlatform() !== 'android') return false;
+  await prepararDispositivoParaPerfil(perfil.id);
   inicializadoListaEspera = true;
   await escucharAccionesPush();
   await PushNotifications.addListener('registration', async ({ value }) => {
@@ -210,6 +274,7 @@ export async function iniciarPushCliente(perfil) {
   const autorizado = [ROLES.CLIENTE_ANONIMO, ROLES.CLIENTE_REGISTRADO].includes(perfil?.rol)
     && perfil.activo;
   if (!autorizado || inicializadoCliente || Capacitor.getPlatform() !== 'android') return false;
+  await prepararDispositivoParaPerfil(perfil.id);
   inicializadoCliente = true;
   await escucharAccionesPush();
   await PushNotifications.addListener('registration', async ({ value }) => {
