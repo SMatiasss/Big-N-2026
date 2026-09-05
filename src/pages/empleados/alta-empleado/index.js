@@ -3,7 +3,7 @@ import { navegarA } from '../../../router.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
 import { ROLES, ROLES_EMPLEADO, ESTADOS_PERFIL } from '../../../config/constantes.js';
-import { signUp } from '../../../services/auth.service.js';
+import { registrarUsuarioSinIniciarSesion } from '../../../services/auth.service.js';
 import { altaPerfil } from '../../../services/perfiles.service.js';
 import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
@@ -843,7 +843,10 @@ export function render(container) {
 
       try {
         const datos = datosFormulario(formulario);
-        const { user } = await signUp(datos.email, datos.password);
+        // No se usa signUp(): ése inicia sesión con el usuario recién creado y
+        // dejaría al dueño logueado como el empleado nuevo, con el INSERT del
+        // perfil rebotando por RLS (el nuevo usuario todavía no tiene rol).
+        const { user } = await registrarUsuarioSinIniciarSesion(datos.email, datos.password);
 
         if (!user) {
           throw new Error('No se pudo obtener el usuario creado en Supabase Auth.');
