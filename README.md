@@ -28,7 +28,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 03 | Agregar una nueva bebida                          | Cespedes     | 28/08 | 28/08 |feat(hu03): implementar interfaz de alta de bebida + demo-alta-movil| Finalizado |
 | 04 | Agregar una nueva mesa                            | Terenghi Goy | - | - | - | Pendiente |
 | 05 | Crear un cliente registrado                       | Terenghi Goy | - | - | - | Pendiente |
-| 06 | Verificar ingreso del cliente registrado          | Cespedes     | 03/09 | 03/09 | feature/hu06-acceso-listado-clientes | Pendiente |
+| 06 | Verificar ingreso del cliente registrado          | Cespedes     | 03/09 | 03/09 | feature/hu06-acceso-listado-clientes | Finalizado |
 | 07 | Rechazar a un cliente registrado                  | Romero       | - | - | - | Pendiente |
 | 08 | Aceptar a un cliente registrado                   | Soria        | 03/09 | 03/09 | - | Finalizado |
 | 09 | Ingresar al local como cliente anónimo            | Terenghi Goy | - | - | - | Pendiente |
