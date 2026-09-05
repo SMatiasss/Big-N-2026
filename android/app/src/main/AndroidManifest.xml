@@ -35,4 +35,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Desde Android 13 (API 33) mostrar notificaciones requiere este permiso
+         declarado acá además de pedirlo en runtime. El plugin de Capacitor no
+         lo aporta por merge: su manifest sólo declara el MessagingService. Sin
+         esta línea, requestPermissions() devuelve denegado sin mostrar diálogo
+         y el push llega al dispositivo pero nunca se ve. El proyecto apunta a
+         targetSdkVersion 36, así que aplica siempre. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

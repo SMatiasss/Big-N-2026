@@ -114,7 +114,7 @@ async function renderSesionIniciada(container, session, generacion) {
             <div id="ingreso-local-qr"></div>
           </section>
 
-          <ion-button class="login__cerrar" id="btn-cerrar-sesion" expand="block" fill="clear">Cerrar sesión</ion-button>
+          <ion-button class="login__cerrar" id="btn-cerrar-sesion" expand="block">Cerrar sesión</ion-button>
           <p class="login__error" id="mensaje-error" role="alert" aria-live="polite"></p>
         </main>
       </ion-content>
