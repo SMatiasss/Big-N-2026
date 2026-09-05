@@ -68,47 +68,47 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 
 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px;">
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Inicio de sesión</figcaption>
+    <h3>Inicio de sesión</h3>
     <img src="assets/screens/login-ss.png" alt="Inicio de sesión" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Alta de empleado</figcaption>
+    <h3>Alta de empleado</h3>
     <img src="assets/screens/alta-empleado-ss.png" alt="Alta de empleado" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Listado de empleados</figcaption>
+    <h3>Listado de empleados</h3>
     <img src="assets/screens/lista-empleados-ss.png" alt="Listado de empleados" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Alta de plato</figcaption>
+    <h3>Alta de plato</h3>
     <img src="assets/screens/alta-plato-ss.png" alt="Alta de plato" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Alta de bebida</figcaption>
+    <h3>Alta de bebida</h3>
     <img src="assets/screens/alta-bebida-ss.png" alt="Alta de bebida" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Productos: platos</figcaption>
+    <h3>Productos: platos</h3>
     <img src="assets/screens/productos-platos-ss.png" alt="Productos: platos" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Productos: bebidas</figcaption>
+    <h3>Productos: bebidas</h3>
     <img src="assets/screens/productos-bebidas-ss.png" alt="Productos: bebidas" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Alta de mesa</figcaption>
+    <h3>Alta de mesa</h3>
     <img src="assets/screens/alta-mesa-ss.png" alt="Alta de mesa" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Listado de mesas</figcaption>
+    <h3>Listado de mesas</h3>
     <img src="assets/screens/lista-mesas-ss.png" alt="Listado de mesas" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Clientes pendientes</figcaption>
+    <h3>Clientes pendientes</h3>
     <img src="assets/screens/lista-clientes-pendientes-ss.png" alt="Clientes pendientes" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <figcaption>Listado de clientes</figcaption>
+    <h3>Listado de clientes</h3>
     <img src="assets/screens/lista-clientes-todos-ss.png" alt="Listado de clientes" width="240">
   </figure>
 </div>
