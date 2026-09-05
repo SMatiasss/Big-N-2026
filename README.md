@@ -5,8 +5,9 @@
 - [Integrantes y responsabilidades](#integrantes-y-responsabilidades)
 - [Módulos asignados](#módulos-asignados)
 - [Cambios y reasignaciones](#cambios-y-reasignaciones)
-- [Índice de imágenes](#índice-de-imágenes)
 - [Códigos QR](#códigos-qr)
+- [Pantallas](#pantallas)
+- [Logo](#logo)
 
 ## Integrantes y responsabilidades
 
@@ -28,7 +29,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 03 | Agregar una nueva bebida                          | Cespedes     | 28/08 | 28/08 |feat(hu03): implementar interfaz de alta de bebida + demo-alta-movil| Finalizado |
 | 04 | Agregar una nueva mesa                            | Terenghi Goy | - | - | - | Pendiente |
 | 05 | Crear un cliente registrado                       | Terenghi Goy | - | - | - | Pendiente |
-| 06 | Verificar ingreso del cliente registrado          | Cespedes     | - | - | - | Pendiente |
+| 06 | Verificar ingreso del cliente registrado          | Cespedes     | 03/09 | 03/09 | feature/hu06-acceso-listado-clientes | Finalizado |
 | 07 | Rechazar a un cliente registrado                  | Romero       | - | - | - | Pendiente |
 | 08 | Aceptar a un cliente registrado                   | Soria        | 03/09 | 03/09 | - | Finalizado |
 | 09 | Ingresar al local como cliente anónimo            | Terenghi Goy | - | - | - | Pendiente |
@@ -53,14 +54,6 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 |---|---:|---|---|---|---|
 | — | — | — | — | — | — |
 
-## Índice de imágenes
-
-| Nº | Imagen | Ubicación |
-|---:|---|---|
-| 1 | - | - |
-| 2 | - | - |
-| 3 | - | - |
-
 ## Códigos QR
 
 - **QR de ingreso al local**
@@ -70,3 +63,56 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 - **QR de propina — Bueno — 10 %**
 - **QR de propina — Regular — 5 %**
 - **QR de propina — Malo — 0 %**
+
+## Pantallas
+
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px;">
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Inicio de sesión</figcaption>
+    <img src="assets/screens/login-ss.png" alt="Inicio de sesión" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Alta de empleado</figcaption>
+    <img src="assets/screens/alta-empleado-ss.png" alt="Alta de empleado" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Listado de empleados</figcaption>
+    <img src="assets/screens/lista-empleados-ss.png" alt="Listado de empleados" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Alta de plato</figcaption>
+    <img src="assets/screens/alta-plato-ss.png" alt="Alta de plato" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Alta de bebida</figcaption>
+    <img src="assets/screens/alta-bebida-ss.png" alt="Alta de bebida" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Productos: platos</figcaption>
+    <img src="assets/screens/productos-platos-ss.png" alt="Productos: platos" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Productos: bebidas</figcaption>
+    <img src="assets/screens/productos-bebidas-ss.png" alt="Productos: bebidas" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Alta de mesa</figcaption>
+    <img src="assets/screens/alta-mesa-ss.png" alt="Alta de mesa" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Listado de mesas</figcaption>
+    <img src="assets/screens/lista-mesas-ss.png" alt="Listado de mesas" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Clientes pendientes</figcaption>
+    <img src="assets/screens/lista-clientes-pendientes-ss.png" alt="Clientes pendientes" width="100%">
+  </figure>
+  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
+    <figcaption>Listado de clientes</figcaption>
+    <img src="assets/screens/lista-clientes-todos-ss.png" alt="Listado de clientes" width="100%">
+  </figure>
+</div>
+
+## Logo
+
+![Texto alternativo](public/assets/logo/Icono%20Big%20N.svg)

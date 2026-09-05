@@ -95,7 +95,7 @@
   border: 0;
   border-radius: 50%;
 
-  background: var(--fondo-hover-empleado);
+  background: var(--fondo-campo-empleado);
   color: var(--texto-claro-empleado);
 
   cursor: pointer;

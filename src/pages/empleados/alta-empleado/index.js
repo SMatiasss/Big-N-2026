@@ -289,7 +289,7 @@ export function render(container) {
               ‹
             </button>
 
-            <h1>Alta Empleado</h1>
+            <h1>Agregar un empleado</h1>
 
           </header>
 

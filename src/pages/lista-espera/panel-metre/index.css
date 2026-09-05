@@ -246,6 +246,8 @@
   --placeholder-opacity: 1;
   --padding-start: 0;
   --padding-end: 0;
+  --highlight-color-focused: var(--acento-fuerte);
+  --highlight-color-valid: var(--acento-fuerte);
 
   font-family: var(--fuente-geist);
   font-size: 13px;

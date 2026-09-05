@@ -215,7 +215,7 @@ export function render(container) {
               ‹
             </button>
 
-            <h1>Alta Cliente</h1>
+            <h1>Registrar un cliente nuevo</h1>
 
           </header>
 

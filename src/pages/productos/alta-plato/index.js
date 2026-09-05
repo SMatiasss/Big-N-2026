@@ -91,7 +91,7 @@ export function render(container) {
         <main class="alta-producto__contenido">
           <header class="alta-producto__introduccion">
             <button class="alta-producto__volver" type="button" aria-label="Volver">‹</button>
-            <h1>Alta Plato</h1>
+            <h1>Agregar un plato</h1>
           </header>
 
           <form class="alta-producto__formulario" novalidate>

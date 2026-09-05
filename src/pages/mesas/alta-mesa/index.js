@@ -81,7 +81,7 @@ export function render(container) {
         <main class="alta-mesa__contenido">
           <header class="alta-mesa__header">
             <button class="alta-mesa__volver" type="button" aria-label="Volver">‹</button>
-            <h1 class="alta-mesa__titulo">Alta Mesa</h1>
+            <h1 class="alta-mesa__titulo">Agregar una mesa</h1>
           </header>
 
           <form class="alta-mesa__formulario" novalidate>
