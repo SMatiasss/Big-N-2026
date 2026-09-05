@@ -244,7 +244,9 @@ async function renderSesionIniciada(container, session, generacion) {
 
   container.querySelector('#btn-cerrar-sesion').addEventListener('click', async () => {
     try {
-      await borrarTokenActual().catch(() => {});
+      // La asociación push se elimina antes de cerrar Auth porque RLS necesita
+      // la sesión vigente para borrar exclusivamente el token de este equipo.
+      await borrarTokenActual();
       await signOut();
       render(container);
     } catch (error) {
