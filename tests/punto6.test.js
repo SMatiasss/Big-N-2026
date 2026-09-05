@@ -27,7 +27,12 @@ const cliente = {
   },
   functions: { invoke: async () => { llamadasEmail++; return correo; } },
 };
-mock.module('../src/services/supabase.client.js', { namedExports: { getSupabase: () => cliente } });
+mock.module('../src/services/supabase.client.js', {
+  namedExports: {
+    getSupabase: () => cliente,
+    getSupabaseAislado: () => cliente,
+  },
+});
 const auth = await import('../src/services/auth.service.js');
 const servicio = await import('../src/services/aprobacion-clientes.service.js');
 

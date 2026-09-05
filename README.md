@@ -72,7 +72,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
     <img src="assets/screens/login-ss.png" alt="Inicio de sesión" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Alta de empleado</h3>
+    <h3>Agreagr empleado</h3>
     <img src="assets/screens/alta-empleado-ss.png" alt="Alta de empleado" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
@@ -80,11 +80,11 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
     <img src="assets/screens/lista-empleados-ss.png" alt="Listado de empleados" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Alta de plato</h3>
+    <h3>Agregar un plato</h3>
     <img src="assets/screens/alta-plato-ss.png" alt="Alta de plato" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Alta de bebida</h3>
+    <h3>Agregar una bebida</h3>
     <img src="assets/screens/alta-bebida-ss.png" alt="Alta de bebida" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
@@ -96,7 +96,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
     <img src="assets/screens/productos-bebidas-ss.png" alt="Productos: bebidas" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Alta de mesa</h3>
+    <h3>Agregar una mesa</h3>
     <img src="assets/screens/alta-mesa-ss.png" alt="Alta de mesa" width="240">
   </figure>
   <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">

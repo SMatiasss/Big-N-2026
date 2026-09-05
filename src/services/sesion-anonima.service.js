@@ -9,6 +9,7 @@
 import { getSupabase } from './supabase.client.js';
 import { ESTADOS_ESTADIA, ROLES } from '../config/constantes.js';
 import { signOut } from './auth.service.js';
+import { borrarTokenActual } from './notificaciones.service.js';
 import { navegarA } from '../router.js';
 import { obtenerMiUltimaEstadia, suscribirseAMiEstadia } from './estadias.service.js';
 
@@ -37,6 +38,9 @@ function vigilarCierre(estadiaId) {
     if (filaActualizada.estado !== ESTADOS_ESTADIA.CERRADA) return;
     cancelarVigilancia?.();
     cancelarVigilancia = null;
+    await borrarTokenActual().catch((error) => {
+      console.error('No se pudo borrar el token push de la visita finalizada.', error);
+    });
     await signOut();
     navegarA('/login');
   });
@@ -66,6 +70,9 @@ export async function verificarSesionAnonimaAlArrancar() {
 
   const ultimaEstadia = await obtenerMiUltimaEstadia();
   if (!ultimaEstadia || ultimaEstadia.estado === ESTADOS_ESTADIA.CERRADA) {
+    await borrarTokenActual().catch((error) => {
+      console.error('No se pudo borrar el token push de la visita anterior.', error);
+    });
     await signOut();
     return;
   }
