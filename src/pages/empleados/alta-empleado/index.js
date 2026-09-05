@@ -2,7 +2,7 @@ import './index.css';
 import { navegarA } from '../../../router.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
-import { ROLES, ROLES_EMPLEADO, ESTADOS_PERFIL,} from '../../../config/constantes.js';
+import { ROLES, ROLES_EMPLEADO, ESTADOS_PERFIL } from '../../../config/constantes.js';
 import { signUp } from '../../../services/auth.service.js';
 import { altaPerfil } from '../../../services/perfiles.service.js';
 import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
@@ -867,7 +867,23 @@ export function render(container) {
 
       } catch (error) {
 
-        mostrarToastError(error.message ?? 'No se pudo crear el empleado.');
+        let mensaje = 'No se pudo crear el empleado.';
+
+        if (error.code === '23505') {
+          mensaje = 'DNI o CUIL ya registrado.';
+        } else if (error.code === '22P02') {
+          mensaje = 'Rol o estado inválido.';
+        } else if (error.code === '42501') {
+          mensaje = 'Sin permisos (RLS).';
+        } else if (error.message?.includes('already registered')) {
+          mensaje = 'El correo ya está registrado.';
+        } else if (error.message?.includes('rate limit')) {
+          mensaje = 'Demasiados intentos. Aguardá.';
+        } else if (error.message) {
+          mensaje = error.message;
+        }
+
+        mostrarToastError(mensaje);
 
       } finally {
         enviandoAlta = false;
