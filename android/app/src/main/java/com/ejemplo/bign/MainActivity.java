@@ -1,15 +1,14 @@
-package com.ejemplo.pruebas;
+package com.ejemplo.bign;
 
 import android.os.Bundle;
-import android.webkit.WebSettings;
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Le decimos a Android que permita el Autoplay sin tocar la pantalla
+
+        // Mantiene el audio de la aplicación habilitado sin exigir un toque previo.
         bridge.getWebView().getSettings().setMediaPlaybackRequiresUserGesture(false);
     }
 }

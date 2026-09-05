@@ -1,7 +1,9 @@
 import './index.css';
 import { navegarA } from '../../../router.js';
 import { listarEmpleados } from '../../../services/perfiles.service.js';
+import { obtenerPermisos } from '../../../services/auth.service.js';
 import { ROLES, ESTADOS_PERFIL } from '../../../config/constantes.js';
+import { puedeAltaEmpleado } from '../../../config/permisos.js';
 
 
 /* =========================================================
@@ -44,6 +46,7 @@ export function render(container) {
               class="listado-empleados__boton-alta"
               type="button"
               aria-label="Agregar empleado"
+              hidden
             >
               +
             </button>
@@ -77,9 +80,14 @@ export function render(container) {
     .querySelector('.listado-empleados__volver')
     .addEventListener('click', () => window.history.back());
 
-  container
-    .querySelector('.listado-empleados__boton-alta')
-    .addEventListener('click', () => navegarA('/empleados/alta-empleado'));
+  // Todo el staff puede ver el listado (perfiles_staff_lee usa es_empleado()),
+  // pero el alta de empleados es de dueño/supervisor (ver config/permisos.js).
+  const botonAlta = container.querySelector('.listado-empleados__boton-alta');
+  botonAlta.addEventListener('click', () => navegarA('/empleados/alta-empleado'));
+
+  obtenerPermisos()
+    .then((permisos) => { botonAlta.hidden = !puedeAltaEmpleado(permisos); })
+    .catch((error) => console.error('No se pudieron cargar los permisos de empleados.', error));
 
 
   /* =========================================================

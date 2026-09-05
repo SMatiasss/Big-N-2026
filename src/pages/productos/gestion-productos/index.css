@@ -1,0 +1,323 @@
+/* =========================================================
+   BASE
+   ========================================================= */
+
+.gestion-productos {
+  --fondo: #606c38;
+  --fondo-card: #4a572c;
+  --acento: #dda15e;
+  --acento-fuerte: #bc6c25;
+  --texto-claro: #fefae0;
+  --texto-suave: #c8c8a0;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+}
+
+.gestion-productos ion-content {
+  --background: var(--fondo);
+}
+
+.gestion-productos__contenido {
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 480px;
+  min-height: 100%;
+
+  margin: 0 auto;
+  padding: 22px 16px 32px;
+}
+
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.gestion-productos__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin: 0 0 4px;
+}
+
+.gestion-productos__volver,
+.gestion-productos__boton-alta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+
+  width: 38px;
+  height: 38px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.gestion-productos__volver:active,
+.gestion-productos__boton-alta:active {
+  transform: scale(0.95);
+}
+
+.gestion-productos__volver {
+  background: var(--fondo-card);
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+
+  /* El carácter ‹ se apoya en la línea base y queda bajo del centro óptico. */
+  padding-bottom: 4px;
+}
+
+.gestion-productos__boton-alta {
+  background: var(--acento);
+  color: var(--texto-claro);
+
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+
+  padding-bottom: 3px;
+}
+
+.gestion-productos__titulo {
+  flex: 1;
+
+  margin: 0;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+
+/* =========================================================
+   PESTAÑAS
+   ========================================================= */
+
+.gestion-productos__pestanas {
+  display: flex;
+
+  margin: 18px 0 16px;
+
+  border-bottom: 1px solid rgb(254 250 224 / 15%);
+}
+
+.gestion-productos__pestanas button {
+  position: relative;
+  flex: 1;
+
+  min-height: 42px;
+
+  padding: 10px 8px;
+
+  background: transparent;
+  border: 0;
+
+  color: var(--texto-suave);
+
+  font-family: var(--fuente-outfit);
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.gestion-productos__pestanas button[aria-pressed="true"] {
+  color: var(--acento);
+}
+
+.gestion-productos__pestanas button[aria-pressed="true"]::after {
+  content: '';
+
+  position: absolute;
+  right: 22%;
+  bottom: -1px;
+  left: 22%;
+
+  height: 3px;
+
+  background: var(--acento);
+  border-radius: 2px;
+}
+
+.gestion-productos__pestanas button:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: -4px;
+}
+
+
+/* =========================================================
+   LISTA
+   ========================================================= */
+
+.gestion-productos__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* =========================================================
+   TARJETA DE PRODUCTO
+   ========================================================= */
+
+.producto-card {
+  position: relative;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+
+  box-sizing: border-box;
+
+  padding: 13px;
+
+  background: var(--fondo-card);
+  border-radius: 16px;
+}
+
+.producto-card__foto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+
+  width: 62px;
+  height: 62px;
+
+  background: rgb(254 250 224 / 8%);
+  border-radius: 12px;
+
+  font-size: 24px;
+
+  overflow: hidden;
+}
+
+.producto-card__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.producto-card__info {
+  flex: 1;
+  min-width: 0;
+
+  /* Deja libre la esquina donde se apoya el badge de tiempo. */
+  padding-right: 58px;
+}
+
+.producto-card__nombre {
+  margin: 0;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 19px;
+}
+
+.producto-card__precio {
+  margin: 2px 0 5px;
+
+  color: var(--acento);
+
+  font-family: var(--fuente-outfit);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.producto-card__descripcion {
+  margin: 0;
+
+  color: var(--texto-suave);
+
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15px;
+
+  /* Dos líneas como mucho: las descripciones largas no deben empujar la lista. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   BADGE DE TIEMPO
+   ========================================================= */
+
+.producto-card__badge {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+
+  padding: 4px 10px;
+
+  background: var(--acento);
+  border-radius: 999px;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-geist);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 13px;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   ESTADOS: CARGANDO / VACÍO / ERROR
+   ========================================================= */
+
+.gestion-productos__estado-carga {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+
+.gestion-productos__estado-carga ion-spinner {
+  color: var(--acento);
+}
+
+.gestion-productos__mensaje {
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+
+  font-size: 15px;
+  line-height: 19px;
+  text-align: center;
+}

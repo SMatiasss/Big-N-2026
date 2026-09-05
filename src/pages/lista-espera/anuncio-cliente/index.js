@@ -4,6 +4,7 @@
 import './index.css';
 import { navegarA } from '../../../router.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { avisarNuevaEspera } from '../../../services/notificaciones.service.js';
 import { ESTADOS_ESPERA } from '../../../config/constantes.js';
 import { obtenerMiEstadiaActiva } from '../../../services/estadias.service.js';
 import {
@@ -16,20 +17,26 @@ import { vigilarMiEstadiaSiSoyAnonima } from '../../../services/sesion-anonima.s
 
 export function render(container) {
   container.innerHTML = `
-    <ion-page class="ion-page lista-espera-cliente">
-      <ion-header>
-        <ion-toolbar color="primary">
-          <ion-title>Lista de espera</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
+    <ion-page class="lista-espera-cliente">
       <ion-content>
-        <div class="lista-espera-cliente__aviso" role="status" aria-live="polite" hidden>
-          <span class="lista-espera-cliente__aviso-texto"></span>
-          <ion-button class="lista-espera-cliente__boton-mesa" fill="clear" hidden aria-label="Escanear el QR de la mesa">📷</ion-button>
-        </div>
-
         <main class="lista-espera-cliente__contenido">
+          <header class="lista-espera-cliente__marca">
+            <div class="lista-espera-cliente__logo">
+              <img src="/assets/logo/Icono Big N.svg" alt="" aria-hidden="true">
+            </div>
+            <h1>Lista de espera</h1>
+          </header>
+
+          <section class="lista-espera-cliente__aviso" role="status" aria-live="polite" hidden>
+            <ion-spinner class="lista-espera-cliente__aviso-spinner" name="crescent" aria-hidden="true"></ion-spinner>
+            <span class="lista-espera-cliente__aviso-texto"></span>
+            <ion-button class="lista-espera-cliente__boton-mesa" fill="clear" hidden aria-label="Escanear el QR de la mesa">📷</ion-button>
+          </section>
+
+          <p class="lista-espera-cliente__indicacion" hidden>
+            Buscá el código QR que está en tu mesa y escanealo con el botón de arriba.
+          </p>
+
           <section class="lista-espera-cliente__encuestas">
             <h2>Encuestas anteriores</h2>
             <!-- Placeholder: el componente real de gráficos es tarea de HU20
@@ -39,8 +46,10 @@ export function render(container) {
             </div>
           </section>
 
-          <ion-button class="lista-espera-cliente__ingresar" expand="block">Ingresar a la lista de espera</ion-button>
-          <ion-button class="lista-espera-cliente__cancelar" expand="block" fill="outline" color="danger" hidden>Cancelar espera</ion-button>
+          <div class="lista-espera-cliente__acciones">
+            <ion-button class="lista-espera-cliente__ingresar" expand="block">Ingresar a la lista de espera</ion-button>
+            <ion-button class="lista-espera-cliente__cancelar" expand="block" fill="outline" hidden>Cancelar espera</ion-button>
+          </div>
         </main>
       </ion-content>
     </ion-page>
@@ -48,10 +57,13 @@ export function render(container) {
 
   const aviso = container.querySelector('.lista-espera-cliente__aviso');
   const avisoTexto = container.querySelector('.lista-espera-cliente__aviso-texto');
+  // El spinner sólo acompaña a la espera; cuando llega la mesa se apaga.
+  const avisoSpinner = container.querySelector('.lista-espera-cliente__aviso-spinner');
   // HU11 continúa desde la asignación existente, sin crear otra estadía.
   const botonMesa = container.querySelector('.lista-espera-cliente__boton-mesa');
   botonMesa.addEventListener('click', () => navegarA('/mesa/escanear'));
   const seccionEncuestas = container.querySelector('.lista-espera-cliente__encuestas');
+  const indicacion = container.querySelector('.lista-espera-cliente__indicacion');
   const botonIngresar = container.querySelector('.lista-espera-cliente__ingresar');
   const botonCancelar = container.querySelector('.lista-espera-cliente__cancelar');
 
@@ -60,18 +72,23 @@ export function render(container) {
 
   // ---- Estado de espera ----
   function mostrarEsperando() {
-    botonIngresar.disabled = true;
+    botonIngresar.hidden = true;
     botonCancelar.hidden = false;
     botonMesa.hidden = true;
     aviso.hidden = false;
+    avisoSpinner.hidden = false;
+    indicacion.hidden = true;
+    aviso.classList.remove('lista-espera-cliente__aviso--asignada');
     avisoTexto.textContent = 'Esperando la confirmación del metre';
   }
 
   function mostrarInicial() {
+    botonIngresar.hidden = false;
     botonIngresar.disabled = false;
     botonCancelar.hidden = true;
     botonMesa.hidden = true;
     aviso.hidden = true;
+    indicacion.hidden = true;
     seccionEncuestas.hidden = false;
   }
 
@@ -79,8 +96,12 @@ export function render(container) {
     aviso.hidden = false;
     botonIngresar.disabled = true;
     avisoTexto.textContent = `Solicitud aceptada para la mesa ${numeroMesa}`;
+    avisoSpinner.hidden = true;
+    aviso.classList.add('lista-espera-cliente__aviso--asignada');
+    botonIngresar.hidden = true;
     botonCancelar.hidden = true;
     botonMesa.hidden = false;
+    indicacion.hidden = false;
     // Las encuestas se ocultan en este punto (el paso siguiente es HU11).
     seccionEncuestas.hidden = true;
   }
@@ -138,6 +159,14 @@ export function render(container) {
       const entrada = await anotarse({ comensales: 1 });
       mostrarEsperando();
       suscribirse(entrada);
+
+      // HU09: el aviso es best-effort. Si el push falla, el cliente ya quedó
+      // anotado igual (el metre lo va a ver por Realtime al abrir el panel).
+      try {
+        await avisarNuevaEspera();
+      } catch (errorPush) {
+        console.error('No se pudo enviar el aviso push al metre.', errorPush);
+      }
     } catch (error) {
       botonIngresar.disabled = false;
       console.error('No se pudo anotar en la lista de espera.', error);

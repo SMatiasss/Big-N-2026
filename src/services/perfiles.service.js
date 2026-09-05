@@ -15,6 +15,19 @@ function obtenerExtensionImagen(archivo) {
   return 'jpg';
 }
 
+export async function subirFotoPerfil(foto) {
+  if (!foto) return null;
+  const supabase = getSupabase();
+  const extension = obtenerExtensionImagen(foto);
+  const path = `perfiles/${crypto.randomUUID()}.${extension}`;
+  const { data: subida, error: errorSubida } = await supabase.storage
+    .from(BUCKETS.PERFILES)
+    .upload(path, foto, { contentType: foto.type, upsert: false });
+  if (errorSubida) throw errorSubida;
+  const { data: urlPublica } = supabase.storage.from(BUCKETS.PERFILES).getPublicUrl(subida.path);
+  return urlPublica.publicUrl;
+}
+
 // Crea el perfil del cliente anónimo (punto 9): sube primero la foto y recién
 // después inserta la fila, mismo orden y mismo motivo que crearMesaCompleta en
 // mesas.service.js — perfiles también bloquea el DELETE físico (trigger

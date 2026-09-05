@@ -1,4 +1,4 @@
-package com.getcapacitor.myapp;
+package com.ejemplo.bign;
 
 import static org.junit.Assert.*;
 

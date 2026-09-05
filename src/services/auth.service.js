@@ -1,8 +1,25 @@
-import { getSupabase } from './supabase.client.js';
+import { getSupabase, getSupabaseAislado } from './supabase.client.js';
 import { obtenerMotivoBloqueo, puedeResolverClientes } from '../utils/acceso-perfil.js';
 
+// Alta propia: el usuario que se registra queda logueado como él mismo, que es
+// lo que necesita el alta de cliente (su Edge Function de aviso exige que
+// quien llama sea el cliente pendiente recién creado).
 export async function signUp(email, password) {
   const { data, error } = await getSupabase().auth.signUp({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+// Alta administrativa: crea el usuario en Auth sin tocar la sesión de quien lo
+// está dando de alta. Lo usa el alta de empleado, donde el dueño/supervisor
+// tiene que seguir siendo el usuario activo para que el INSERT del perfil pase
+// la policy perfiles_alta por la rama es_jefe().
+export async function registrarUsuarioSinIniciarSesion(email, password) {
+  const aislado = getSupabaseAislado();
+  const { data, error } = await aislado.auth.signUp({ email, password });
+  // La sesión del usuario nuevo sólo vive en memoria de este cliente; se
+  // descarta enseguida para no dejarla colgada entre altas.
+  await aislado.auth.signOut({ scope: 'local' }).catch(() => {});
   if (error) throw error;
   return data;
 }
@@ -62,8 +79,10 @@ export async function signOut() {
   if (error) throw error;
 }
 
-// Consulta las mismas funciones que usan las policies para decidir las acciones visibles.
-export async function obtenerPermisosProductos() {
+// Consulta las mismas funciones que usan las policies para decidir las acciones
+// visibles. Las reglas de "quién puede dar de alta qué" viven en
+// config/permisos.js; acá sólo se traen el rol y la jefatura del perfil actual.
+export async function obtenerPermisos() {
   const supabase = getSupabase();
   const [resultadoRol, resultadoJefe] = await Promise.all([
     supabase.rpc('mi_rol'),

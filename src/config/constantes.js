@@ -20,6 +20,19 @@ export const ROLES = {
   CLIENTE_ANONIMO: 'cliente_anonimo',
 };
 
+// Cómo se muestra cada rol en pantalla: los valores de la base vienen en
+// snake_case ('cliente_registrado') y no se pueden mostrar tal cual.
+export const ETIQUETAS_ROL = {
+  [ROLES.DUENO]: 'Dueño',
+  [ROLES.SUPERVISOR]: 'Supervisor',
+  [ROLES.METRE]: 'Metre',
+  [ROLES.MOZO]: 'Mozo',
+  [ROLES.COCINERO]: 'Cocinero',
+  [ROLES.CANTINERO]: 'Cantinero',
+  [ROLES.CLIENTE_REGISTRADO]: 'Cliente registrado',
+  [ROLES.CLIENTE_ANONIMO]: 'Cliente anónimo',
+};
+
 // Roles asignables desde el alta de empleado: excluye ADMIN/COCINA/BAR/CLIENTE,
 // que no son valores válidos de la columna perfiles.rol en la base (ver rol_usuario en 01_schema.sql).
 export const ROLES_EMPLEADO = [

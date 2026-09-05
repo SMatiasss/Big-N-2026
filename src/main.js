@@ -8,10 +8,14 @@ import './styles/globales.css';
 import { initSupabase } from './services/supabase.client.js';
 import { verificarSesionAnonimaAlArrancar } from './services/sesion-anonima.service.js';
 import { iniciarRouter } from './router.js';
+import { escucharAccionesPush } from './services/notificaciones.service.js';
 
 initialize();
 defineCustomElements(window);
 initSupabase();
+// Debe instalarse antes de cargar sesión y perfil: al abrir la aplicación desde
+// una notificación Android puede entregar la acción durante el arranque en frío.
+void escucharAccionesPush();
 //location.hash = '/mesas/alta'
 
 // Si la sesión guardada es de un cliente anónimo cuya estadía ya se cerró (o

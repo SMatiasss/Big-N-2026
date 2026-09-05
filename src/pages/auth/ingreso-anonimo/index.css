@@ -1,79 +1,565 @@
+/* =========================================================
+   BASE
+
+   Criterio de esta pantalla: ocupar todo el alto sin dejar un hueco muerto.
+   En vez de empujar el botón al pie con un margen automático, el espacio
+   sobrante lo absorbe el bloque de la foto (flex: 1), y los tamaños se
+   escalan con el viewport para que en pantallas altas se vea completa.
+   ========================================================= */
+
 .ingreso-anonimo {
-  background: var(--color-fondo);
+  --fondo: #606c38;
+  --fondo-card: #4a572c;
+  --acento: #dda15e;
+  --acento-fuerte: #bc6c25;
+
+  --texto-claro: #fefae0;
+  --texto-suave: #c8c8a0;
+  --texto-placeholder: #8f956f;
+  --borde: #6e6939;
+
+  --sombra-submit: 0 3px 3px rgb(42 49 19 / 42%);
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-geist);
+  font-weight: 400;
+}
+
+.ingreso-anonimo ion-content {
+  --background: var(--fondo);
 }
 
 .ingreso-anonimo__contenido {
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 440px;
+  min-height: 100%;
+
   margin: 0 auto;
-  max-width: 480px;
-  padding: 24px 18px 40px;
+  padding: 24px 20px 28px;
 }
 
-.ingreso-anonimo__introduccion h1 {
-  color: var(--color-texto);
-  font-size: clamp(1.5rem, 5vw, 2rem);
-  margin: 0 0 6px;
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.ingreso-anonimo__encabezado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin: 0 0 18px;
 }
 
-.ingreso-anonimo__introduccion p {
-  color: var(--ion-color-medium, #666);
+.ingreso-anonimo__volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+
+  width: 40px;
+  height: 40px;
+
+  margin: 0;
+  padding: 0 0 5px;
+
+  background: var(--fondo-card);
+  border: 0;
+  border-radius: 50%;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.ingreso-anonimo__volver:active {
+  transform: scale(0.95);
+}
+
+.ingreso-anonimo__encabezado h1 {
+  margin: 0;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: clamp(22px, 6.6vw, 28px);
+  font-weight: 700;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+}
+
+
+/* =========================================================
+   INDICADOR DE PASOS
+   ========================================================= */
+
+.ingreso-anonimo__progreso {
+  display: flex;
+  gap: 10px;
+
   margin: 0 0 20px;
+  padding: 0;
+
+  list-style: none;
+}
+
+.ingreso-anonimo__progreso-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+
+  box-sizing: border-box;
+
+  padding: 10px 12px;
+
+  background: rgb(74 87 44 / 55%);
+  border: 1px solid transparent;
+  border-radius: 999px;
+
+  color: var(--texto-suave);
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 15px;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.ingreso-anonimo__progreso-numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 21px;
+  height: 21px;
+
+  background: rgb(254 250 224 / 16%);
+  border-radius: 50%;
+
+  color: var(--texto-suave);
+
+  font-family: var(--fuente-outfit);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ingreso-anonimo__progreso-item--activo {
+  background: var(--fondo-card);
+  border-color: var(--acento);
+
+  color: var(--texto-claro);
+}
+
+.ingreso-anonimo__progreso-item--activo .ingreso-anonimo__progreso-numero {
+  background: var(--acento);
+  color: var(--texto-claro);
+}
+
+
+/* =========================================================
+   PASOS
+   ========================================================= */
+
+.ingreso-anonimo__paso {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ingreso-anonimo__ayuda {
+  margin: 0 0 6px;
+
+  color: var(--texto-suave);
+
+  font-size: clamp(14px, 4.2vw, 17px);
+  line-height: 1.35;
 }
 
 .ingreso-anonimo__formulario {
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: 16px;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  width: 100%;
 }
 
-.campo-formulario {
-  margin-bottom: 16px;
+
+/* =========================================================
+   FOTO PERSONAL
+
+   El componente es el mismo del alta de mesa (un rectángulo grande); acá la
+   foto es de una persona, así que se lo lleva a un avatar redondo. Este
+   bloque es el que absorbe el espacio libre de la pantalla.
+   ========================================================= */
+
+.ingreso-anonimo__foto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+
+  min-height: 0;
+
+  padding: 12px 0;
 }
 
-.campo-formulario ion-item {
-  --background: transparent;
-  --border-color: var(--color-borde);
-  --highlight-color-focused: var(--color-secundario);
-  --padding-start: 0;
+/* El avatar se mide contra el ancho Y el alto: en un celular alto crece para
+   llenar el espacio libre, y en uno bajo se achica en vez de desbordar. */
+
+.ingreso-anonimo .selector-foto-mesa {
+  width: min(70vw, 33vh, 270px);
+  margin: 0;
 }
 
-.campo-formulario ion-note {
+.ingreso-anonimo .selector-foto-mesa__contenido {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 1;
+
+  margin: 0;
+
+  background: var(--fondo-card);
+  border: 2px dashed var(--acento);
+  border-radius: 50%;
+}
+
+.ingreso-anonimo .selector-foto-mesa__placeholder {
+  gap: 10px;
+  padding: 0 18px;
+}
+
+.ingreso-anonimo .selector-foto-mesa__icono {
+  width: 46px;
+  height: 46px;
+}
+
+.ingreso-anonimo .selector-foto-mesa__texto {
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+}
+
+
+/* VISTA PREVIA */
+
+.ingreso-anonimo .selector-foto-mesa__preview-wrap {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.ingreso-anonimo .selector-foto-mesa__preview-wrap img {
+  min-height: 0;
+  max-height: none;
+  border-radius: 50%;
+}
+
+.ingreso-anonimo .selector-foto-mesa__cambiar-badge {
+  bottom: 18px;
+
+  padding: 5px 13px;
+
+  font-size: 11px;
+  line-height: 13px;
+}
+
+
+/* CÁMARA / GALERÍA (sólo aparecen en el celular) */
+
+.ingreso-anonimo .selector-foto-mesa__acciones {
+  margin-top: 16px;
+}
+
+.ingreso-anonimo .selector-foto-mesa__boton-fuente {
+  background: var(--fondo-card);
+  border: 1px solid var(--acento);
+  border-radius: 999px;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-geist);
+  font-size: 14px;
+  font-weight: 600;
+
+  padding: 9px 20px;
+}
+
+
+/* =========================================================
+   CAMPO NOMBRE
+   ========================================================= */
+
+.ingreso-anonimo .campo-formulario {
+  width: 100%;
+  margin: 0 0 18px;
+}
+
+.ingreso-anonimo .campo-formulario label {
   display: block;
-  min-height: 20px;
-  padding: 5px 4px 0;
+
+  margin: 0 0 8px;
+
+  color: var(--texto-claro);
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.campo-formulario--invalido ion-item {
-  --border-color: var(--color-error);
-  --highlight-color-focused: var(--color-error);
+.ingreso-anonimo .campo-control {
+  box-sizing: border-box;
+
+  display: block;
+
+  width: 100%;
+  height: 56px;
+
+  margin: 0;
+  padding: 0 16px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: var(--fondo-card);
+
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-geist);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 56px;
+
+  outline: none;
+  box-shadow: none;
+
+  caret-color: var(--texto-claro);
 }
+
+.ingreso-anonimo .campo-control::placeholder {
+  color: var(--texto-placeholder);
+  opacity: 1;
+}
+
+.ingreso-anonimo .campo-control:focus {
+  border-color: var(--acento);
+}
+
+/* El rojo por defecto de Ionic desentona con la paleta; se usa el mismo tono
+   de error que el resto de las pantallas. */
+
+.ingreso-anonimo .campo-formulario ion-note,
+.ingreso-anonimo .selector-foto-mesa__error {
+  display: block;
+
+  min-height: 0;
+
+  padding: 4px 2px 0;
+
+  color: #ffd0bf;
+
+  font-family: var(--fuente-geist);
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.ingreso-anonimo .selector-foto-mesa__error {
+  text-align: center;
+}
+
+.ingreso-anonimo .campo-formulario--invalido .campo-control {
+  border-color: #ffd0bf;
+}
+
+
+/* =========================================================
+   BOTÓN INGRESAR
+   ========================================================= */
 
 .ingreso-anonimo__submit {
-  margin: 8px 0 0;
-  --background: var(--color-primario);
-  --color: var(--color-primario-contraste);
+  width: 100%;
+  height: 58px;
+  min-height: 58px;
+
+  margin: 0;
+
+  --background: var(--acento);
+  --background-hover: var(--acento);
+  --background-activated: var(--acento-fuerte);
+  --background-focused: var(--acento-fuerte);
+
+  --color: var(--texto-claro);
+  --border-radius: 14px;
+  --box-shadow: var(--sombra-submit);
+
+  font-family: var(--fuente-outfit);
+  font-size: 18px;
+  font-weight: 700;
+
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .ingreso-anonimo__submit ion-spinner {
   display: none;
-  margin-right: 8px;
+
+  width: 20px;
+  height: 20px;
+
+  margin-right: 9px;
 }
 
 .ingreso-anonimo__submit--procesando ion-spinner {
   display: inline-block;
 }
 
+
+/* =========================================================
+   PASO DEL QR
+
+   La tarjeta crece hasta el pie y centra su contenido, así este paso también
+   ocupa la pantalla en vez de quedar como un recuadro arriba de todo.
+   ========================================================= */
+
 .ingreso-anonimo__lector-qr {
-  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  margin: 6px 0 0;
 }
 
-@media (max-width: 600px) {
-  .ingreso-anonimo__contenido {
-    padding: 18px 12px 28px;
-  }
+.ingreso-anonimo .lector-qr {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
 
-  .ingreso-anonimo__formulario {
-    border-radius: 12px;
-    padding: 16px 12px;
+  box-sizing: border-box;
+
+  width: 100%;
+
+  margin: 0;
+  padding: 32px 22px;
+
+  background: var(--fondo-card);
+  border: 1px solid var(--acento-fuerte);
+  border-radius: 20px;
+
+  text-align: center;
+}
+
+/* Marco de visor: los tramos punteados dejan las esquinas marcadas. */
+
+.ingreso-anonimo .lector-qr::before {
+  content: '';
+
+  display: block;
+
+  box-sizing: border-box;
+
+  /* Igual que el avatar: se mide contra el ancho y el alto disponibles. */
+  width: min(54vw, 25vh, 200px);
+  height: min(54vw, 25vh, 200px);
+
+  margin: 0 auto 26px;
+
+  border: 5px solid var(--acento);
+  border-radius: 22px;
+  border-style: solid dashed;
+}
+
+.ingreso-anonimo .lector-qr h2 {
+  margin: 0 0 8px;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: clamp(19px, 5.6vw, 23px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ingreso-anonimo .lector-qr p {
+  margin: 0 auto 26px;
+  max-width: 280px;
+
+  color: var(--texto-suave);
+
+  font-size: clamp(14px, 4vw, 16px);
+  line-height: 1.35;
+}
+
+.ingreso-anonimo .lector-qr ion-button {
+  width: 100%;
+  height: 56px;
+  min-height: 56px;
+
+  margin: 0;
+
+  --background: var(--acento);
+  --background-hover: var(--acento);
+  --background-activated: var(--acento-fuerte);
+  --background-focused: var(--acento-fuerte);
+
+  --color: var(--texto-claro);
+  --border-radius: 14px;
+  --border-width: 0;
+  --border-color: transparent;
+  --box-shadow: var(--sombra-submit);
+
+  font-family: var(--fuente-outfit);
+  font-size: 17px;
+  font-weight: 700;
+
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ingreso-anonimo .lector-qr ion-note {
+  display: block;
+
+  padding: 14px 2px 0;
+
+  color: #ffd0bf;
+
+  font-size: 13px;
+  line-height: 16px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (min-width: 640px) {
+  .ingreso-anonimo__contenido {
+    padding-top: 40px;
   }
 }

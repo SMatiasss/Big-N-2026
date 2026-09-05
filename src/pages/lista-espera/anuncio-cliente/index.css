@@ -1,70 +1,291 @@
+/* =========================================================
+   BASE
+   ========================================================= */
+
 .lista-espera-cliente {
-  background: var(--color-fondo);
+  --fondo: #606c38;
+  --fondo-card: #4a572c;
+  --acento: #dda15e;
+  --acento-fuerte: #bc6c25;
+
+  --texto-claro: #fefae0;
+  --texto-suave: #c8c8a0;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-geist);
+  font-weight: 400;
 }
 
-.lista-espera-cliente__aviso {
-  align-items: center;
-  background: var(--color-secundario);
-  color: var(--color-primario-contraste);
-  display: flex;
-  font-weight: 600;
-  justify-content: space-between;
-  padding: 12px 18px;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
-
-/* La regla de arriba fija "display: flex" sin condición, así que hay que
-   pisarla explícito para [hidden] (misma trampa que ya se vio con el
-   spinner de gestion-mesas y los botones del login). */
-.lista-espera-cliente__aviso[hidden] {
-  display: none;
-}
-
-.lista-espera-cliente__boton-mesa {
-  --color: var(--color-primario-contraste);
-  font-size: 1.4rem;
-  margin: 0;
+.lista-espera-cliente ion-content {
+  --background: var(--fondo);
 }
 
 .lista-espera-cliente__contenido {
-  margin: 0 auto;
-  max-width: 640px;
-  padding: 20px 18px 40px;
-}
+  box-sizing: border-box;
 
-.lista-espera-cliente__encuestas h2 {
-  color: var(--color-texto);
-  font-size: 1.2rem;
-  margin: 0 0 12px;
-}
-
-.lista-espera-cliente__placeholder-encuestas {
-  align-items: center;
-  background: var(--color-superficie);
-  border: 1px dashed var(--color-borde);
-  border-radius: 16px;
-  color: var(--ion-color-medium, #666);
   display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 440px;
+  min-height: 100%;
+
+  margin: 0 auto;
+  padding: 26px 18px 32px;
+}
+
+
+/* =========================================================
+   MARCA
+
+   Esta pantalla es del cliente y no tiene navegación hacia atrás (viene de
+   escanear el QR de la puerta), así que el encabezado lo da la marca.
+   ========================================================= */
+
+.lista-espera-cliente__marca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin: 0 0 24px;
+}
+
+.lista-espera-cliente__logo {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  min-height: 160px;
-  padding: 32px 20px;
+
+  box-sizing: border-box;
+
+  width: 64px;
+  height: 64px;
+
+  margin: 0 0 10px;
+  padding: 10px;
+
+  /* El SVG del logo está dibujado en el mismo verde del fondo. */
+  background: var(--texto-claro);
+  border-radius: 50%;
+}
+
+.lista-espera-cliente__logo img {
+  width: 100%;
+  height: 100%;
+}
+
+.lista-espera-cliente__marca h1 {
+  margin: 0;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+}
+
+
+/* =========================================================
+   AVISO DE ESTADO
+   ========================================================= */
+
+.lista-espera-cliente__aviso {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  box-sizing: border-box;
+
+  margin: 0 0 22px;
+  padding: 16px 16px 16px 18px;
+
+  background: var(--fondo-card);
+  border: 1px solid var(--acento);
+  border-radius: 16px;
+}
+
+.lista-espera-cliente__aviso-spinner {
+  flex-shrink: 0;
+
+  width: 20px;
+  height: 20px;
+
+  color: var(--acento);
+}
+
+.lista-espera-cliente__aviso-texto {
+  flex: 1;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 19px;
+}
+
+
+/* Mesa ya asignada: el aviso pasa a ser la buena noticia de la pantalla. */
+
+.lista-espera-cliente__aviso--asignada {
+  background: var(--acento);
+  border-color: var(--acento-fuerte);
+}
+
+.lista-espera-cliente__aviso--asignada .lista-espera-cliente__aviso-texto {
+  color: var(--texto-claro);
+}
+
+.lista-espera-cliente__boton-mesa {
+  flex-shrink: 0;
+
+  width: 42px;
+  height: 42px;
+
+  margin: 0;
+
+  --background: rgb(42 49 19 / 22%);
+  --background-hover: rgb(42 49 19 / 28%);
+  --background-activated: rgb(42 49 19 / 34%);
+
+  --border-radius: 50%;
+  --box-shadow: none;
+  --padding-start: 0;
+  --padding-end: 0;
+
+  font-size: 19px;
+}
+
+
+/* Indicación del paso siguiente, sólo con la mesa ya asignada. */
+
+.lista-espera-cliente__indicacion {
+  margin: -8px 0 22px;
+  padding: 0 4px;
+
+  color: var(--texto-suave);
+
+  font-size: 13px;
+  line-height: 18px;
   text-align: center;
 }
 
+
+/* =========================================================
+   ENCUESTAS (placeholder de HU20)
+   ========================================================= */
+
+.lista-espera-cliente__encuestas {
+  margin: 0 0 24px;
+}
+
+.lista-espera-cliente__encuestas h2 {
+  margin: 0 0 12px;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 21px;
+}
+
+.lista-espera-cliente__placeholder-encuestas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  min-height: 168px;
+
+  padding: 28px 22px;
+
+  background: rgb(74 87 44 / 55%);
+  border: 1px dashed var(--acento);
+  border-radius: 16px;
+
+  color: var(--texto-suave);
+
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+}
+
+
+/* =========================================================
+   ACCIONES
+   ========================================================= */
+
+.lista-espera-cliente__acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  /* auto arriba: los botones quedan apoyados al pie de la pantalla. */
+  margin: auto 0 0;
+}
+
 .lista-espera-cliente__ingresar {
-  margin: 20px 0 0;
-  --background: var(--color-primario);
-  --color: var(--color-primario-contraste);
+  width: 100%;
+  height: 50px;
+  min-height: 50px;
+
+  margin: 0;
+
+  --background: var(--acento);
+  --background-hover: var(--acento);
+  --background-activated: var(--acento-fuerte);
+  --background-focused: var(--acento-fuerte);
+
+  --color: var(--texto-claro);
+  --border-radius: 12px;
+  --box-shadow: 0 3px 3px rgb(42 49 19 / 42%);
+
+  font-family: var(--fuente-outfit);
+  font-size: 16px;
+  font-weight: 700;
+
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .lista-espera-cliente__cancelar {
-  margin: 10px 0 0;
+  width: 100%;
+  height: 46px;
+  min-height: 46px;
+
+  margin: 0;
+
+  --background: transparent;
+  --background-hover: rgb(254 250 224 / 8%);
+  --background-activated: rgb(254 250 224 / 12%);
+
+  --color: var(--texto-suave);
+  --border-radius: 12px;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgb(254 250 224 / 25%);
+  --box-shadow: none;
+
+  font-family: var(--fuente-outfit);
+  font-size: 15px;
+  font-weight: 700;
+
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-@media (max-width: 600px) {
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (min-width: 640px) {
   .lista-espera-cliente__contenido {
-    padding: 16px 12px 28px;
+    padding-top: 44px;
   }
 }
