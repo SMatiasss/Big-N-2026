@@ -441,16 +441,14 @@
 
   margin: auto 0 0;
 
-  --background: transparent;
-  --background-hover: rgb(254 250 224 / 8%);
-  --background-activated: rgb(254 250 224 / 12%);
+  --background: #b3392c;
+  --background-hover: #a13327;
+  --background-activated: #8f2d22;
 
-  --color: var(--texto-suave-login);
+  --color: var(--texto-claro-login);
   --border-radius: 12px;
-  --border-width: 1px;
-  --border-style: solid;
-  --border-color: rgb(254 250 224 / 25%);
-  --box-shadow: none;
+  --border-width: 0;
+  --box-shadow: 0 3px 3px rgb(42 49 19 / 42%);
 
   font-family: var(--fuente-outfit);
   font-size: 15px;
