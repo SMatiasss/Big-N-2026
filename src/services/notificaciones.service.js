@@ -16,6 +16,8 @@ const CLAVE_TOKEN_PUSH = 'big-n.push-token-actual';
 // esa sesión efectivamente haya registrado, sea cual sea.
 let inicializadoListaEspera = false;
 let inicializadoCliente = false;
+let inicializadoConsultasMozo = false;
+const CLAVE_ESTADIA_PUSH = 'big-n.push-estadia-hu11';
 
 // El token se conserva también en el almacenamiento local. La variable en
 // memoria se pierde cuando Android cierra el proceso; sin esta copia, al salir
@@ -44,6 +46,7 @@ function reiniciarEstadoPush() {
   inicializado = false;
   inicializadoListaEspera = false;
   inicializadoCliente = false;
+  inicializadoConsultasMozo = false;
 }
 
 async function prepararDispositivoParaPerfil(usuarioId) {
@@ -59,7 +62,20 @@ async function prepararDispositivoParaPerfil(usuarioId) {
 
 // Rutas a las que puede llevar un toque sobre la notificación (o el botón
 // "Ver" mientras la app está en primer plano). Cada HU agrega la suya acá.
-const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera'];
+const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta'];
+
+function guardarContextoNotificacion(notification) {
+  const estadiaId = notification?.data?.estadia_id;
+  if (notification?.data?.ruta === '/pedidos/consulta' && estadiaId) {
+    globalThis.sessionStorage?.setItem(CLAVE_ESTADIA_PUSH, estadiaId);
+  }
+}
+
+export function consumirEstadiaPushHu11() {
+  const id = globalThis.sessionStorage?.getItem(CLAVE_ESTADIA_PUSH) ?? null;
+  globalThis.sessionStorage?.removeItem(CLAVE_ESTADIA_PUSH);
+  return id;
+}
 
 function mostrarAvisoEnPrimerPlano(notification) {
   const toast = document.createElement('ion-toast');
@@ -69,14 +85,16 @@ function mostrarAvisoEnPrimerPlano(notification) {
   toast.position = 'top';
   const ruta = notification.data?.ruta;
   toast.buttons = RUTAS_NOTIFICACION.includes(ruta)
-    ? [{ text: 'Ver', handler: () => navegarA(ruta) }]
+    ? [{ text: 'Ver', handler: () => { guardarContextoNotificacion(notification); navegarA(ruta); } }]
     : [];
   document.body.appendChild(toast);
   toast.present();
 }
 
-async function abrirRutaDeNotificacion(ruta) {
+async function abrirRutaDeNotificacion(notification) {
+  const ruta = notification?.data?.ruta;
   if (!RUTAS_NOTIFICACION.includes(ruta)) return;
+  guardarContextoNotificacion(notification);
 
   // Al arrancar desde la bandeja, getSession() puede encontrar primero los
   // datos locales mientras Auth todavía no está listo para getUser(). La ruta
@@ -103,7 +121,7 @@ async function abrirRutaDeNotificacion(ruta) {
 export async function escucharAccionesPush() {
   if (accionesEscuchadas || Capacitor.getPlatform() !== 'android') return false;
   await PushNotifications.addListener('pushNotificationActionPerformed', ({ notification }) => {
-    void abrirRutaDeNotificacion(notification.data?.ruta);
+    void abrirRutaDeNotificacion(notification);
   });
   accionesEscuchadas = true;
   return true;
@@ -305,8 +323,47 @@ export async function iniciarPushCliente(perfil) {
     visibility: 1,
     vibration: true,
   });
+  await PushNotifications.createChannel({
+    id: 'consultas-mozo', name: 'Consultas al mozo',
+    description: 'Mensajes de la conversación de tu mesa.', importance: 5,
+    visibility: 1, vibration: true,
+  });
   await PushNotifications.register();
   return true;
+}
+
+export async function iniciarPushConsultasMozo(perfil) {
+  const autorizado = perfil?.rol === ROLES.MOZO && perfil.activo && perfil.estado === 'aprobado';
+  if (!autorizado || inicializadoConsultasMozo || Capacitor.getPlatform() !== 'android') return false;
+  await prepararDispositivoParaPerfil(perfil.id);
+  inicializadoConsultasMozo = true;
+  await escucharAccionesPush();
+  await PushNotifications.addListener('registration', async ({ value }) => {
+    tokenActual = value;
+    try { await guardarPushToken(perfil.id, value, 'android'); }
+    catch (error) { inicializadoConsultasMozo = false; console.error('No se pudo registrar el dispositivo del mozo.', error); }
+  });
+  await PushNotifications.addListener('registrationError', error => {
+    inicializadoConsultasMozo = false;
+    console.error('Android no pudo registrar las notificaciones del chat.', error);
+  });
+  await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
+  const permiso = await PushNotifications.checkPermissions();
+  const estado = permiso.receive === 'prompt' ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
+  if (estado !== 'granted') { inicializadoConsultasMozo = false; return false; }
+  await PushNotifications.createChannel({
+    id: 'consultas-mozo', name: 'Consultas al mozo',
+    description: 'Mensajes de clientes con mesa asignada.', importance: 5,
+    visibility: 1, vibration: true,
+  });
+  await PushNotifications.register();
+  return true;
+}
+
+export async function avisarMensajeHu11(mensajeId) {
+  const { data, error } = await getSupabase().functions.invoke('avisar-mensaje-hu11', { body: { mensajeId } });
+  if (error) throw error;
+  return data;
 }
 
 // HU09: dispara el aviso al anotarse en la lista de espera. El backend valida

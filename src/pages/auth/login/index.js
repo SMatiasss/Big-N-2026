@@ -22,6 +22,7 @@ import {
   iniciarPushAdministracion,
   iniciarPushListaEspera,
   iniciarPushCliente,
+  iniciarPushConsultasMozo,
   borrarTokenActual,
 } from '../../../services/notificaciones.service.js';
 
@@ -187,6 +188,9 @@ async function renderSesionIniciada(container, session, generacion) {
     void iniciarPushCliente(perfil).catch((error) => {
       console.error('No se pudieron iniciar los avisos de mesa asignada.', error);
     });
+    void iniciarPushConsultasMozo(perfil).catch((error) => {
+      console.error('No se pudieron iniciar los avisos de consultas al mozo.', error);
+    });
 
     if (esStaff) {
       agregarBotonAccion('btn-productos', 'Productos', '/productos');
@@ -199,6 +203,11 @@ async function renderSesionIniciada(container, session, generacion) {
     // o un supervisor activo y aprobado pueden aceptar o rechazar solicitudes.
     if (puedeResolverClientes(perfil)) {
       agregarBotonAccion('btn-clientes', 'Clientes', '/clientes/aprobacion');
+    }
+
+    // HU11: el mozo accede al canal de consultas desde el mismo menú de staff.
+    if (rol === ROLES.MOZO) {
+      agregarBotonAccion('btn-consultas', 'Consultas de clientes', '/pedidos/consulta');
     }
 
     if (puedeIngresarAlLocal) {

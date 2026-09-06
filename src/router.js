@@ -13,6 +13,8 @@ const rutas = {
   '/productos/alta-bebida': () => import('./pages/productos/alta-bebida/index.js'),
   '/productos': () => import('./pages/productos/gestion-productos/index.js'),
   '/carta': () => import('./pages/productos/carta/index.js'),
+  '/mesa/escanear': () => import('./pages/mesas/escanear-mesa/index.js'),
+  '/mesa/carta': () => import('./pages/productos/carta/index.js'),
 
   '/mesas/alta': () => import('./pages/mesas/alta-mesa/index.js'),
   '/mesas': () => import('./pages/mesas/gestion-mesas/index.js'),

@@ -1,0 +1,28 @@
+.hu11 { --background: #606c38; --color: #fefae0; }
+.hu11 main { max-width: 1050px; margin: auto; padding: 24px 16px 48px; }
+.hu11 button { min-height: 44px; padding: 10px 16px; border: 0; border-radius: 10px; background: #dda15e; color: #283618; font: inherit; cursor: pointer; }
+.hu11 button:disabled { opacity: .5; cursor: wait; }
+.hu11 button:focus-visible, .hu11 input:focus-visible, .hu11 textarea:focus-visible, .hu11 select:focus-visible { outline: 3px solid #fefae0; outline-offset: 2px; }
+.hu11 input, .hu11 textarea, .hu11 select { display: block; width: 100%; padding: 12px; margin: 12px 0; border-radius: 8px; border: 1px solid #dda15e; background: #fefae0; color: #283618; font: inherit; }
+.hu11__grupo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 12px; }
+/* Sólo la carta: no cambia las burbujas del chat ni otros usos del carrusel. */
+.hu11 .hu11-producto { display: grid; grid-template-columns: 132px minmax(0, 1fr); align-items: center; gap: 16px; background: #4a572c; color: #fefae0; border-radius: 16px; padding: 12px; overflow-wrap: anywhere; }
+.hu11-producto__datos { min-width: 0; }
+.hu11-producto h3 { margin: 0 0 6px; font-size: 1.05rem; line-height: 1.3; }
+.hu11-producto__descripcion { margin: 0 0 10px; color: #e5e4c9; font-size: .875rem; line-height: 1.4; }
+.hu11-producto__precio { display: block; color: #dda15e; font-size: 1rem; line-height: 1.4; }
+.hu11-producto__tiempo { margin: 5px 0 0; color: #e5e4c9; font-size: .8rem; line-height: 1.4; }
+.hu11-producto .carrusel-imagenes { min-width: 0; }
+.hu11-producto .carrusel-imagenes__foto { height: 120px; border-radius: 10px; }
+.hu11-producto .carrusel-imagenes nav { gap: 2px; margin-top: 4px; }
+.hu11-producto .carrusel-imagenes nav span { min-width: 36px; text-align: center; font-size: .75rem; white-space: nowrap; }
+.hu11-producto .carrusel-imagenes button { padding: 0; width: 44px; min-height: 44px; background: transparent; color: #dda15e; }
+@media (max-width: 360px) {
+  .hu11 .hu11-producto { grid-template-columns: 120px minmax(0, 1fr); gap: 10px; padding: 10px; }
+  .hu11-producto .carrusel-imagenes nav span { min-width: 28px; }
+}
+.hu11__chat { display: flex; flex-direction: column; gap: 12px; max-height: 55vh; min-height: 180px; overflow: auto; padding: 14px 4px; }
+.hu11__form { display: flex; gap: 12px; align-items: end; }
+.hu11__form label { flex: 1; }
+.hu11__form textarea { resize: vertical; min-height: 65px; }
+.hu11 [hidden] { display: none !important; }

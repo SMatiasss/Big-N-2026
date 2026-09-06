@@ -1,2 +1,4 @@
-.burbuja-chat {
-}
+.burbuja-chat { max-width: 85%; align-self: flex-start; padding: 14px; border-radius: 14px 14px 14px 2px; background: #fefae0; color: #283618; overflow-wrap: anywhere; }
+.burbuja-chat--propia { align-self: flex-end; background: #d9e5b8; border-radius: 14px 14px 2px 14px; }
+.burbuja-chat p { white-space: pre-wrap; margin: 8px 0; }
+.burbuja-chat time { display: block; text-align: right; font-size: .75rem; }
