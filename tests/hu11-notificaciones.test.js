@@ -45,3 +45,11 @@ test('Edge Function resuelve destinatarios en backend y usa Firebase privado', a
   assert.match(codigo,/rol=in\.\(dueno,supervisor\)/);
   assert.doesNotMatch(codigo,/destinatarios?\s*=\s*body/i);
 });
+test('push HU11 sólo recibe mensajeId y resuelve autor, destinatarios y tokens en backend', async()=>{
+  const codigo=await readFile(new URL('../supabase/functions/avisar-mensaje-hu11/index.ts',import.meta.url),'utf8');
+  assert.match(codigo,/FIREBASE_SERVICE_ACCOUNT/);
+  assert.match(codigo,/body\.mensajeId/);
+  assert.match(codigo,/rol=eq\.mozo/);
+  assert.match(codigo,/push_tokens/);
+  assert.doesNotMatch(codigo,/body\.(?:token|destinatario|usuarioId)/);
+});

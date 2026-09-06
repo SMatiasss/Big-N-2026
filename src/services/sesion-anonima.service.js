@@ -12,6 +12,7 @@ import { signOut } from './auth.service.js';
 import { borrarTokenActual } from './notificaciones.service.js';
 import { navegarA } from '../router.js';
 import { obtenerMiUltimaEstadia, suscribirseAMiEstadia } from './estadias.service.js';
+import { obtenerMiEspera } from './lista-espera.service.js';
 
 // null si no hay sesión (nada que revisar); el rol de la sesión actual si la hay.
 async function obtenerRolSiHaySesion() {
@@ -67,6 +68,12 @@ export async function verificarSesionAnonimaAlArrancar() {
   if (rol !== ROLES.CLIENTE_ANONIMO) return;
 
   const ultimaEstadia = await obtenerMiUltimaEstadia();
+  // Un anónimo que ya escaneó la entrada puede cerrar y reabrir la app mientras
+  // espera. Esa sesión sigue siendo válida aunque todavía no exista estadía.
+  if (!ultimaEstadia || ultimaEstadia.estado === ESTADOS_ESTADIA.CERRADA) {
+    const espera = await obtenerMiEspera();
+    if (espera) return;
+  }
   if (!ultimaEstadia || ultimaEstadia.estado === ESTADOS_ESTADIA.CERRADA) {
     await borrarTokenActual();
     await signOut();

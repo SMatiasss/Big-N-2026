@@ -22,6 +22,7 @@ import {
   iniciarPushAdministracion,
   iniciarPushListaEspera,
   iniciarPushCliente,
+  iniciarPushConsultasMozo,
   borrarTokenActual,
 } from '../../../services/notificaciones.service.js';
 
@@ -186,6 +187,9 @@ async function renderSesionIniciada(container, session, generacion) {
     // pasa por esta pantalla con sesión ya iniciada.
     void iniciarPushCliente(perfil).catch((error) => {
       console.error('No se pudieron iniciar los avisos de mesa asignada.', error);
+    });
+    void iniciarPushConsultasMozo(perfil).catch((error) => {
+      console.error('No se pudieron iniciar los avisos de consultas al mozo.', error);
     });
 
     if (esStaff) {

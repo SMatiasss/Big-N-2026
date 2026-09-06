@@ -9,6 +9,7 @@ import { initSupabase } from './services/supabase.client.js';
 import { verificarSesionAnonimaAlArrancar } from './services/sesion-anonima.service.js';
 import { iniciarRouter } from './router.js';
 import { escucharAccionesPush } from './services/notificaciones.service.js';
+import { resolverRutaClienteAlArrancar } from './services/navegacion-inicial.service.js';
 
 initialize();
 defineCustomElements(window);
@@ -22,7 +23,12 @@ void escucharAccionesPush();
 // nunca llegó a tener una), se cierra sola acá antes de mostrar cualquier
 // pantalla -ver sesion-anonima.service.js-. Para cualquier otro rol esto no
 // hace nada: mantienen su sesión persistente normal.
-verificarSesionAnonimaAlArrancar().finally(() => {
+verificarSesionAnonimaAlArrancar().then(async () => {
+  const rutaCliente = await resolverRutaClienteAlArrancar();
+  if (rutaCliente) location.hash = rutaCliente;
+}).catch((error) => {
+  console.error('No se pudo restaurar la pantalla operativa del cliente.', error);
+}).finally(() => {
   iniciarRouter(document.querySelector('#app'));
 });
 

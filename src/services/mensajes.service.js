@@ -7,9 +7,18 @@ import { validarMensaje } from '../utils/hu11.js';
 export async function enviarMensaje({ estadiaId, cuerpo, id }) {
   // Emisor, permisos y fecha se resuelven en BD. El UUID de intento permite
   // reintentar una respuesta de red incierta sin persistir mensajes duplicados.
-  return consultarHu11('hu11_enviar_mensaje', {
+  const mensaje = await consultarHu11('hu11_enviar_mensaje', {
     p_estadia_id: estadiaId, p_cuerpo: validarMensaje(cuerpo), p_id: id,
   });
+  let aviso = { ok: true, omitido: true };
+  if (mensaje.push_pendiente !== false) {
+    const resultadoAviso = await getSupabase().functions.invoke('avisar-mensaje-hu11', {
+      body: { mensajeId: mensaje.id },
+    });
+    if (resultadoAviso.error) throw resultadoAviso.error;
+    aviso = resultadoAviso.data;
+  }
+  return { mensaje, aviso };
 }
 
 export async function listarMensajes(estadiaId, antes = null) {

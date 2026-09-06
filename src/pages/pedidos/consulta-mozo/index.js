@@ -5,6 +5,7 @@ import { crearBurbujaChat } from '../../../components/burbuja-chat/burbuja-chat.
 import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { validarMensaje, haySaltoEnHistorial } from '../../../utils/hu11.js';
 import { navegarA } from '../../../router.js';
+import { consumirEstadiaPushHu11 } from '../../../services/notificaciones.service.js';
 import '../../productos/carta/index.css';
 
 export async function render(container) {
@@ -16,7 +17,7 @@ export async function render(container) {
     <div class="hu11__chat" role="log" aria-label="Mensajes" aria-live="polite"></div>
     <form class="hu11__form" hidden><label>Tu mensaje<textarea name="mensaje" required rows="2" aria-label="Tu mensaje"></textarea></label>
       <button type="submit">Enviar</button></form>
-    <p>Los avisos push aún no están habilitados. Mantené esta pantalla abierta para ver los mensajes.</p>
+    <p>Recibirás un aviso cuando haya un nuevo mensaje en la conversación.</p>
   </main></ion-content>`;
   const raiz = container.firstElementChild;
   const estado = raiz.querySelector('[role="status"]');
@@ -160,7 +161,7 @@ export async function render(container) {
       if (!raiz.isConnected || actual !== version) return;
       campo.value = '';
       intento = null;
-      estado.textContent = 'Mensaje guardado. La entrega push no está habilitada.';
+      estado.textContent = 'Mensaje enviado.';
       await actualizacion.actualizar();
     } catch (error) {
       if (!raiz.isConnected || actual !== version) return;
@@ -178,6 +179,7 @@ export async function render(container) {
     perfil = await obtenerPerfilActual();
     if (!raiz.isConnected) return;
     mozo = perfil?.rol === 'mozo';
+    if (mozo) seleccion = consumirEstadiaPushHu11();
     if (!perfil?.activo || (!mozo && !['cliente_registrado', 'cliente_anonimo'].includes(perfil.rol)) ||
       (perfil.rol !== 'cliente_anonimo' && perfil.estado !== 'aprobado')) {
       throw new Error('Esta pantalla es para clientes habilitados y mozos aprobados.');

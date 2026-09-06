@@ -2,52 +2,6 @@
 -- Reutiliza estadias (asignación del metre) y mensajes (conversación por visita).
 begin;
 
--- Dependencia mínima HU06: limitar el alta, sin modificar su flujo de decisiones.
--- RESTRICTIVE agrega un AND, incluso si subsiste la policy permisiva original.
--- No basta comprobar el NOMBRE de una policy: se instala la condición efectiva.
--- Coordinar antes el alta de empleados: signUp no debe sustituir la sesión del jefe.
-create policy hu11_perfiles_alta_segura on public.perfiles
-as restrictive for insert to public with check (
-  (
-    (select public.es_jefe()) and exists (
-      select 1 from public.perfiles actor where actor.id=(select auth.uid())
-      and actor.activo and actor.estado='aprobado'
-    )
-  ) or (
-    id=(select auth.uid()) and activo and resuelto_por is null and resuelto_en is null
-    and (
-      (rol='cliente_registrado' and estado='pendiente'
-        and coalesce((select auth.jwt())->>'is_anonymous','false')='false')
-      or (rol='cliente_anonimo' and estado='aprobado'
-        and (select auth.jwt())->>'is_anonymous'='true')
-    )
-  ) or (
-    (select public.mi_rol())='metre' and exists (
-      select 1 from public.perfiles actor where actor.id=(select auth.uid())
-      and actor.activo and actor.estado='aprobado'
-    ) and rol='cliente_registrado' and estado='pendiente'
-      and resuelto_por is null and resuelto_en is null
-  )
-);
--- es_jefe() ignora activo/estado: sin este AND un jefe deshabilitado podría
--- reactivarse o fabricar un mozo editando perfiles. No altera las transiciones HU06.
-create policy hu11_perfiles_edicion_segura on public.perfiles
-as restrictive for update to public
-using (
-  (select public.es_jefe()) and exists (
-    select 1 from public.perfiles actor where actor.id=(select auth.uid())
-      and actor.activo and actor.estado='aprobado'
-  )
-)
-with check (
-  (select public.es_jefe()) and exists (
-    select 1 from public.perfiles actor where actor.id=(select auth.uid())
-      and actor.activo and actor.estado='aprobado'
-  )
-);
--- TRUNCATE no obedece RLS; tampoco es necesario crear triggers desde la app.
-revoke truncate, references, trigger on public.perfiles, public.estadias from public, anon, authenticated;
-
 create schema if not exists hu11_privado;
 revoke all on schema hu11_privado from public, anon;
 grant usage on schema hu11_privado to authenticated;
@@ -204,7 +158,7 @@ begin
     select * into v_msg from public.mensajes where id=p_id and autor_id=auth.uid()
       and estadia_id=p_estadia_id and cuerpo=v_cuerpo;
     if not found then raise exception 'Identificador de envío inválido.' using errcode='42501'; end if;
-    return to_jsonb(v_msg); -- Reintento: no duplica mensaje ni notificaciones.
+    return to_jsonb(v_msg) || jsonb_build_object('push_pendiente',false);
   end if;
   select rol into v_rol from public.perfiles where id=auth.uid();
   -- Registro durable en la tabla existente, NO entrega push. El proveedor pendiente
@@ -220,7 +174,7 @@ begin
       (v_rol='mozo' and p.id=(v_contexto->>'cliente_id')::uuid) or
       (v_rol<>'mozo' and p.rol='mozo' and p.estado='aprobado')
     );
-  return to_jsonb(v_msg);
+  return to_jsonb(v_msg) || jsonb_build_object('push_pendiente',true);
 end $$;
 
 -- Superficie RPC mínima. Los helpers privilegiados viven en un schema NO expuesto

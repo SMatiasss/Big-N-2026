@@ -2,9 +2,10 @@ import { test, mock, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { normalizarQrMesa, validarMensaje, ordenarFotosProducto, haySaltoEnHistorial } from '../src/utils/hu11.js';
 
-let llamadas, resultado, evento, suscripcion, retirados;
+let llamadas, resultado, evento, suscripcion, retirados, avisos;
 const cliente = {
   rpc: async (nombre, args) => { llamadas.push({ nombre, args }); return resultado; },
+  functions: { invoke: async (nombre, opciones) => { avisos.push({ nombre, opciones }); return { data: { ok: true }, error: null }; } },
   channel: () => ({
     on(_tipo, filtro, fn) { evento = { filtro, fn }; return this; },
     subscribe(fn) { suscripcion = fn; return this; },
@@ -14,7 +15,7 @@ const cliente = {
 mock.module('../src/services/supabase.client.js', { namedExports: { getSupabase: () => cliente } });
 const mesa = await import('../src/services/mesa-cliente.service.js');
 const chat = await import('../src/services/mensajes.service.js');
-beforeEach(() => { llamadas = []; resultado = { data: [], error: null }; retirados = 0; });
+beforeEach(() => { llamadas = []; avisos = []; resultado = { data: [], error: null }; retirados = 0; });
 const uuid = '12345678-abcd-1234-abcd-123456789012';
 
 test('QR admite formato del equipo y UUID, pero no QR de ingreso/URL/texto', () => {
@@ -49,10 +50,12 @@ test('mensaje obligatorio, tipado y máximo 1000 caracteres Unicode', () => {
 });
 test('enviar usa RPC y conserva ID en reintento; nunca manda autor/fecha', async () => {
   const intento = { estadiaId: uuid, cuerpo: ' Hola ', id: uuid };
+  resultado = { data: { id: uuid, push_pendiente: true }, error: null };
   await chat.enviarMensaje(intento);
   await chat.enviarMensaje(intento);
   assert.deepEqual(llamadas[0], llamadas[1]);
   assert.deepEqual(llamadas[0].args, { p_estadia_id: uuid, p_cuerpo: 'Hola', p_id: uuid });
+  assert.deepEqual(avisos[0], { nombre: 'avisar-mensaje-hu11', opciones: { body: { mensajeId: uuid } } });
 });
 test('vacío no llega a persistencia', async () => {
   await assert.rejects(chat.enviarMensaje({ estadiaId: uuid, cuerpo: '\t' }));
