@@ -1,5 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Outfit:wght@700;900&display=swap');
 
-    /* Estilos para nuestra Splash Screen Web */
+/* Estilos para nuestra Splash Screen Web */
 #web-splash {
     position: fixed;
     top: 0; left: 0;
@@ -10,8 +11,24 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: 50px 20px;
+    padding: 40px 20px 60px 20px; /* Más padding para ocupar mejor la pantalla */
     transition: opacity 0.5s ease-out; /* Animación suave al desaparecer */
+}
+
+.splash-header {
+    width: 100%;
+    text-align: center;
+    animation: bajarYAparecer 1.2s ease-out forwards;
+}
+
+.splash-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 4rem; /* Mucho más grande */
+    font-weight: 900;
+    color: #bc6c25;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .splash-logo {
@@ -22,33 +39,42 @@
 }
 
 .splash-logo img {
-    width: 400px;
-    animation: latido 2s infinite ease-in-out; 
+    width: 50vh; /* Que ocupe buena parte de la pantalla según la altura */
+    max-width: 450px;
+    animation: latido 1.5s infinite ease-in-out; /* Más rápido y notorio */
 }
 
 .splash-footer {
     text-align: center;
     color: #283618;
-    font-family: sans-serif;
-    margin-bottom: 20px;
+    font-family: 'Geist', sans-serif;
+    width: 100%;
     animation: subirYAparecer 1.2s ease-out forwards; /* Aparece una sola vez en 1.2 segundos */
 }
-.splash-footer p {
-    margin: 5px 0;
-    font-size: 16px;
-    font-weight: 600;
+
+.splash-names {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Separación entre nombres */
+    font-size: 1.8rem; /* Nombres mucho más grandes */
+    font-weight: 700;
 }
 
 /* 1. Creamos las animaciones */
 @keyframes latido {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); } /* Se agranda un 10% */
-    100% { transform: scale(1); }
+    0% { transform: scale(0.95); }
+    50% { transform: scale(1.25); } /* Se agranda un 25% */
+    100% { transform: scale(0.95); }
 }
 
 @keyframes subirYAparecer {
-    0% { opacity: 0; transform: translateY(20px); } /* Empieza invisible y más abajo */
+    0% { opacity: 0; transform: translateY(40px); } /* Empieza invisible y más abajo */
     100% { opacity: 1; transform: translateY(0); }  /* Termina en su lugar normal */
+}
+
+@keyframes bajarYAparecer {
+    0% { opacity: 0; transform: translateY(-40px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
 
