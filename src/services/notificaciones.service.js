@@ -62,7 +62,7 @@ async function prepararDispositivoParaPerfil(usuarioId) {
 
 // Rutas a las que puede llevar un toque sobre la notificación (o el botón
 // "Ver" mientras la app está en primer plano). Cada HU agrega la suya acá.
-const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta'];
+const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta', '/pedidos/confirmacion'];
 
 function guardarContextoNotificacion(notification) {
   const estadiaId = notification?.data?.estadia_id;
@@ -379,6 +379,12 @@ export async function avisarNuevaEspera() {
 // datos sueltos del formulario.
 export async function avisarMesaAsignada(estadiaId) {
   const { data, error } = await getSupabase().functions.invoke('avisar-mesa-asignada', { body: { estadiaId } });
+  if (error) throw error;
+  return data;
+}
+
+export async function avisarNuevoPedido(pedidoId) {
+  const { data, error } = await getSupabase().functions.invoke('avisar-nuevo-pedido', { body: { pedidoId } });
   if (error) throw error;
   return data;
 }

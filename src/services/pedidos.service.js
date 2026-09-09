@@ -49,3 +49,24 @@ export async function listarItemsPedido(pedidoId) {
   if (error) throw error;
   return data;
 }
+
+export async function listarPedidosPendientes() {
+  const { data, error } = await getSupabase()
+    .from(TABLAS.PEDIDOS)
+    .select(`
+      *,
+      estadias (
+        cliente:perfiles!cliente_id ( nombres, apellidos ),
+        mesas ( numero )
+      ),
+      pedido_items (
+        cantidad,
+        productos ( nombre )
+      )
+    `)
+    .eq('estado', ESTADOS_PEDIDO.CREADO)
+    .order('creado_en', { ascending: true });
+    
+  if (error) throw error;
+  return data;
+}

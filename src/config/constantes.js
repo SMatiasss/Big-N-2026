@@ -64,8 +64,8 @@ export const ESTADOS_PERFIL = {
 };
 
 export const ESTADOS_PEDIDO = {
-  CREADO: 'creado',
-  CONFIRMADO: 'confirmado',
+  CREADO: 'pendiente_confirmacion',
+  CONFIRMADO: 'en_preparacion',
   RECHAZADO: 'rechazado',
   EN_PREPARACION: 'en_preparacion',
   ENTREGADO: 'entregado',
@@ -97,7 +97,7 @@ export const TABLAS = {
   LISTA_ESPERA: 'lista_espera',
   ESTADIAS: 'estadias',
   PEDIDOS: 'pedidos',
-  ITEMS_PEDIDO: 'items_pedido',
+  ITEMS_PEDIDO: 'pedido_items',
   MENSAJES: 'mensajes',
   PARTIDAS: 'partidas',
   ENCUESTAS: 'encuestas',

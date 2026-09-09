@@ -205,9 +205,14 @@ async function renderSesionIniciada(container, session, generacion) {
       agregarBotonAccion('btn-clientes', 'Clientes', '/clientes/aprobacion');
     }
 
+    if (rol === ROLES.METRE) {
+      agregarBotonAccion('btn-agregar-cliente', 'Registrar cliente', '/clientes/alta')
+    }
+
     // HU11: el mozo accede al canal de consultas desde el mismo menú de staff.
     if (rol === ROLES.MOZO) {
       agregarBotonAccion('btn-consultas', 'Consultas de clientes', '/pedidos/consulta');
+      agregarBotonAccion('btn-confirmacion', 'Confirmar Pedidos', '/pedidos/confirmacion');
     }
 
     if (puedeIngresarAlLocal) {
