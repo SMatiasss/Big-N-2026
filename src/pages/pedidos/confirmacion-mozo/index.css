@@ -1,0 +1,89 @@
+.confirmacion-mozo__main {
+  padding: 16px;
+}
+
+.confirmacion-mozo__vacio {
+  text-align: center;
+  margin-top: 40px;
+  color: #e5e4c9;
+  font-size: 1.1rem;
+}
+
+.confirmacion-mozo__lista {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.pedido-card {
+  background: #283618;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.pedido-card__header {
+  border-bottom: 1px solid #4a572c;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.pedido-card__header h3 {
+  margin: 0;
+  color: #dda15e;
+  font-size: 1.4rem;
+}
+
+.pedido-card__cliente {
+  margin: 4px 0 0 0;
+  color: #fefae0;
+  font-size: 1rem;
+}
+
+.pedido-card__cuerpo ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+}
+
+.pedido-card__cuerpo li {
+  color: #fefae0;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.pedido-card__controles {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.pedido-card__controles button {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.btn-aceptar {
+  background: #dda15e;
+}
+
+.btn-rechazar {
+  background: #d62828;
+}
+
+.btn-volver {
+  background: transparent;
+  color: #dda15e;
+  border: 1px solid #dda15e;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
