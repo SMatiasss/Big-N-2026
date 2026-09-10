@@ -29,7 +29,7 @@ export async function render(container) {
   const aviso = raiz.querySelector('[role="status"]');
   const lista = raiz.querySelector('.hu11__productos');
   const acciones = raiz.querySelector('[data-acciones]');
-  raiz.querySelector('[data-volver]').onclick = () => navegarA(operativa ? '/lista-espera' : '/login');
+  raiz.querySelector('[data-volver]').onclick = () => navegarA(operativa ? '/lista-espera' : '/home');
   
   let carritoAbierto = false;
   const footerCarrito = document.createElement('div');

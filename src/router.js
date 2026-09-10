@@ -1,9 +1,11 @@
 // Router casero: cada ruta apunta a un módulo de pages/ que expone render(container).
 // Se importa con import() dinámico para que cada pantalla se cargue solo cuando se visita.
-import { verificarAccesoSesion } from './services/auth.service.js';
+import { obtenerPerfilActual, verificarAccesoSesion } from './services/auth.service.js';
+import { puedeAccederRuta, RUTAS_PUBLICAS } from './config/navegacion.js';
 
 const rutas = {
   '/login': () => import('./pages/auth/login/index.js'),
+  '/home': () => import('./pages/home/index.js'),
   '/ingreso-anonimo': () => import('./pages/auth/ingreso-anonimo/index.js'),
 
   '/empleados/alta-empleado': () => import('./pages/empleados/alta-empleado/index.js'),
@@ -45,6 +47,7 @@ const rutas = {
 
 const RUTA_POR_DEFECTO = '/login';
 let generacionNavegacion = 0;
+let avisoNavegacion = '';
 
 export async function iniciarRouter(container) {
   window.addEventListener('hashchange', () => navegar(container));
@@ -57,9 +60,9 @@ async function navegar(container) {
   const cargarPagina = rutas[ruta];
   container.removeAttribute('aria-busy');
 
-  // Revisar enlaces directos y sesiones restauradas: ocultar botones no impide
-  // que un cliente pendiente escriba una ruta manualmente. RLS sigue siendo necesaria.
-  if (!['/login', '/ingreso-anonimo', '/clientes/alta'].includes(ruta)) {
+  // Los permisos de ruta son la primera barrera de navegación. RLS sigue
+  // siendo la protección definitiva para las operaciones y los datos.
+  if (!RUTAS_PUBLICAS.has(ruta)) {
     // Se mantiene visible la pantalla actual mientras se consulta la sesión.
     // Así la validación no produce una pantalla blanca intermedia con texto plano.
     container.setAttribute('aria-busy', 'true');
@@ -69,6 +72,14 @@ async function navegar(container) {
       if (!session) {
         container.removeAttribute('aria-busy');
         navegarA('/login');
+        return;
+      }
+      const perfil = await obtenerPerfilActual();
+      if (generacion !== generacionNavegacion) return;
+      if (!puedeAccederRuta(ruta, perfil?.rol)) {
+        container.removeAttribute('aria-busy');
+        avisoNavegacion = 'Esa opción no está disponible para tu perfil.';
+        reemplazarRuta('/home');
         return;
       }
     } catch (error) {
@@ -83,6 +94,35 @@ async function navegar(container) {
       volver.addEventListener('click', () => navegarA('/login'));
       container.append(mensaje, volver);
       return;
+    }
+  }
+
+  // Login e ingreso anónimo son exclusivos de usuarios sin sesión. El alta
+  // de cliente también es pública, pero con sesión sólo corresponde al metre.
+  if (RUTAS_PUBLICAS.has(ruta)) {
+    try {
+      const session = await verificarAccesoSesion();
+      if (generacion !== generacionNavegacion) return;
+      if (session) {
+        if (ruta === '/clientes/alta') {
+          const perfil = await obtenerPerfilActual();
+          if (puedeAccederRuta(ruta, perfil?.rol)) {
+            // El metre puede continuar con el alta administrativa.
+          } else {
+            avisoNavegacion = 'Esa opción no está disponible para tu perfil.';
+            reemplazarRuta('/home');
+            return;
+          }
+        } else {
+          reemplazarRuta('/home');
+          return;
+        }
+      }
+    } catch (error) {
+      if (generacion !== generacionNavegacion) return;
+      // Un perfil pendiente/rechazado ya fue desconectado por el servicio y
+      // debe poder ver el formulario junto con el mensaje correspondiente.
+      avisoNavegacion = error.message ?? 'No se pudo verificar la sesión.';
     }
   }
 
@@ -101,4 +141,23 @@ async function navegar(container) {
 
 export function navegarA(ruta) {
   location.hash = ruta;
+}
+
+export function irAlHome() {
+  navegarA('/home');
+}
+
+export function volverA(ruta) {
+  navegarA(ruta);
+}
+
+export function reemplazarRuta(ruta) {
+  const destino = `${window.location.pathname}${window.location.search}#${ruta}`;
+  window.location.replace(destino);
+}
+
+export function consumirAvisoNavegacion() {
+  const aviso = avisoNavegacion;
+  avisoNavegacion = '';
+  return aviso;
 }

@@ -203,7 +203,7 @@ export function render(container) {
 
   // Volver
   container.querySelector('.alta-mesa__volver').addEventListener('click', () => {
-    window.history.back();
+    navegarA('/mesas');
   });
 
   // Selector de segmentos (TIPO DE MESA)

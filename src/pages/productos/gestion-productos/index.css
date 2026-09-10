@@ -172,7 +172,7 @@
 .gestion-productos__lista {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 
@@ -185,11 +185,12 @@
 
   display: flex;
   align-items: flex-start;
-  gap: 13px;
+  gap: 17px;
 
   box-sizing: border-box;
 
-  padding: 13px;
+  min-height: 136px;
+  padding: 16px;
 
   background: var(--fondo-card);
   border-radius: 16px;
@@ -203,13 +204,13 @@
 
   box-sizing: border-box;
 
-  width: 62px;
-  height: 62px;
+  width: 104px;
+  height: 104px;
 
   background: rgb(254 250 224 / 8%);
-  border-radius: 12px;
+  border-radius: 14px;
 
-  font-size: 24px;
+  font-size: 38px;
 
   overflow: hidden;
 }
@@ -225,7 +226,7 @@
   min-width: 0;
 
   /* Deja libre la esquina donde se apoya el badge de tiempo. */
-  padding-right: 58px;
+  padding-right: 0;
 }
 
 .producto-card__nombre {
@@ -234,20 +235,20 @@
   color: var(--texto-claro);
 
   font-family: var(--fuente-outfit);
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 19px;
+  line-height: 21px;
 }
 
 .producto-card__precio {
-  margin: 2px 0 5px;
+  margin: 4px 0 7px;
 
   color: var(--acento);
 
   font-family: var(--fuente-outfit);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
-  line-height: 18px;
+  line-height: 20px;
 }
 
 .producto-card__descripcion {
@@ -255,9 +256,9 @@
 
   color: var(--texto-suave);
 
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 15px;
+  line-height: 18px;
 
   /* Dos líneas como mucho: las descripciones largas no deben empujar la lista. */
   display: -webkit-box;
@@ -274,10 +275,10 @@
 
 .producto-card__badge {
   position: absolute;
-  top: 13px;
-  right: 13px;
+  right: 16px;
+  bottom: 14px;
 
-  padding: 4px 10px;
+  padding: 5px 11px;
 
   background: var(--acento);
   border-radius: 999px;
@@ -285,10 +286,42 @@
   color: var(--texto-claro);
 
   font-family: var(--fuente-geist);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  line-height: 13px;
+  line-height: 14px;
   white-space: nowrap;
+}
+
+@media (max-width: 390px) {
+  .gestion-productos__contenido {
+    padding-inline: 12px;
+  }
+
+  .producto-card {
+    gap: 13px;
+    min-height: 128px;
+    padding: 14px;
+  }
+
+  .producto-card__foto {
+    width: 94px;
+    height: 100px;
+  }
+
+  .producto-card__nombre {
+    font-size: 17px;
+    line-height: 20px;
+  }
+
+  .producto-card__descripcion {
+    font-size: 13px;
+    line-height: 17px;
+  }
+
+  .producto-card__badge {
+    right: 14px;
+    bottom: 12px;
+  }
 }
 
 

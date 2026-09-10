@@ -4,7 +4,7 @@ import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
 import { ROLES, ROLES_EMPLEADO, ESTADOS_PERFIL } from '../../../config/constantes.js';
 import { registrarUsuarioSinIniciarSesion } from '../../../services/auth.service.js';
-import { altaPerfil } from '../../../services/perfiles.service.js';
+import { altaPerfil, subirFotoPerfil } from '../../../services/perfiles.service.js';
 import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
@@ -621,7 +621,7 @@ export function render(container) {
   container
     .querySelector('.alta-empleado__volver')
     .addEventListener('click', () => {
-      window.history.back();
+      navegarA('/empleados');
     });
 
 
@@ -852,6 +852,7 @@ export function render(container) {
           throw new Error('No se pudo obtener el usuario creado en Supabase Auth.');
         }
 
+        const fotoUrl = await subirFotoPerfil(foto);
         await altaPerfil({
           id: user.id,
           apellidos: datos.apellido,
@@ -859,14 +860,14 @@ export function render(container) {
           dni: datos.dni,
           cuil: datos.cuil,
           email: datos.email,
-          foto_url: 'https://placehold.co/200x200/png?text=Empleado',
+          foto_url: fotoUrl,
           rol: datos.rol,
           estado: ESTADOS_PERFIL.APROBADO,
         });
 
         mostrarToastNormal('Empleado creado y aprobado correctamente.');
 
-        setTimeout(() => { navegarA('/login')}, 2000);
+        setTimeout(() => { navegarA('/empleados')}, 2000);
 
       } catch (error) {
 

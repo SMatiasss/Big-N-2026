@@ -177,7 +177,7 @@ export function render(container) {
   let validacionMostrada = false;
 
   container.querySelector('.alta-producto__volver').addEventListener('click', () => {
-    window.history.back();
+    navegarA('/productos');
   });
 
   // La página recibe archivos mediante onCambio, sin conocer si provienen de

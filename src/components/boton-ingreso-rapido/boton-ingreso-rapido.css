@@ -13,7 +13,7 @@
   box-sizing: border-box;
   flex: 0 0 auto;
 
-  width: 132px;
+  width: 154px;
 
   padding: 13px 10px 12px;
 
@@ -78,7 +78,7 @@
 
 .boton-ingreso-rapido__rol {
   font-family: var(--fuente-outfit);
-  font-size: 14px;
+  font-size: var(--text-md);
   font-weight: 700;
   line-height: 17px;
 }
@@ -89,9 +89,9 @@
   color: #C8C8A0;
 
   font-family: var(--fuente-geist, 'Geist', sans-serif);
-  font-size: 10px;
+  font-size: var(--text-sm);
   font-weight: 400;
-  line-height: 12px;
+  line-height: var(--line-body);
 
   overflow: hidden;
   text-overflow: ellipsis;
@@ -135,3 +135,19 @@
   background: #BC6C25;
   border-radius: 50%;
 }
+
+/* Apariencia clara usada por el carrusel comercial del inicio de sesión. */
+.login .boton-ingreso-rapido {
+  width: 128px;
+  min-height: 112px;
+  padding: 13px 9px 11px;
+  gap: 5px;
+  border-color: rgb(254 250 224 / 70%);
+  background: #fefae0;
+  color: #354421;
+  box-shadow: 0 5px 13px rgb(40 54 24 / 18%);
+}
+.login .boton-ingreso-rapido__avatar { background: #c4c679; color: #354421; }
+.login .boton-ingreso-rapido__email { color: #9f641f; font-size: 11px; }
+.login .boton-ingreso-rapido--activo { border: 2px solid #dda15e; }
+.login .boton-ingreso-rapido--activo .boton-ingreso-rapido__avatar { background: #efb15f; color: #354421; }

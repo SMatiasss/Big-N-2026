@@ -118,7 +118,7 @@ export function render(container) {
   formulario.querySelector('.ingreso-anonimo__foto').append(selectorFoto.elemento);
 
   const botonVolver = container.querySelector('.ingreso-anonimo__volver');
-  botonVolver.addEventListener('click', () => window.history.back());
+  botonVolver.addEventListener('click', () => navegarA('/login'));
 
   formulario.querySelector('#nombre-anonimo').addEventListener('input', revalidar);
 

@@ -13,7 +13,7 @@ export function crearBurbujaChat(mensaje, usuarioId) {
   fecha.dateTime = mensaje.creado_en;
   // Se presenta el timestamp guardado por PostgreSQL, no la hora de recepción.
   fecha.textContent = new Intl.DateTimeFormat('es-AR', {
-    dateStyle: 'short', timeStyle: 'short',
+    hour: '2-digit', minute: '2-digit',
   }).format(new Date(mensaje.creado_en));
   el.append(autor, texto, fecha);
   return el;

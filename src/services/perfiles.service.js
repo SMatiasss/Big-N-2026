@@ -117,7 +117,7 @@ export async function rechazarPerfil(perfilId) {
 export async function listarEmpleados() {
   const { data, error } = await getSupabase()
     .from(TABLAS.PERFILES)
-    .select('id, nombres, apellidos, rol, estado')
+    .select('id, nombres, apellidos, rol, estado, foto_url')
     .in('rol', ROLES_EMPLEADO)
     .order('apellidos', { ascending: true });
   if (error) throw error;

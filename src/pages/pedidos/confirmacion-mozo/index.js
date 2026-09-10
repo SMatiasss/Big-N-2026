@@ -19,7 +19,7 @@ export async function render(container) {
   const aviso = raiz.querySelector('[role="status"]');
   const lista = raiz.querySelector('.confirmacion-mozo__lista');
   
-  raiz.querySelector('[data-volver]').onclick = () => navegarA('/login');
+  raiz.querySelector('[data-volver]').onclick = () => navegarA('/home');
 
   const actualizacion = crearActualizacionHu11(raiz, async vigente => {
     let pedidos;
