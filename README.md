@@ -35,7 +35,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 09 | Ingresar al local como cliente anónimo            | Terenghi Goy | 01/09 | 02/09 | feature/09-10 | Finalizado |
 | 10 | Asignar una mesa a un cliente registrado          | Terenghi Goy | 01/09 | 03/09 | feature/09-10 | Finalizado |
 | 11 | Visualizar productos y realizar consultas al mozo | Cespedes     | 04/09 | 06/09 | feature/hu11-carta-consulta-mozo-chat | Finalizado |
-| 12 | Realizar un pedido                                | Romero       | - | - | - | Pendiente |
+| 12 | Realizar un pedido                                | Romero       | 09/09 | 09/09 | feature/hu12-realizar-pedido | Finalizada |
 | 13 | Rechazar y modificar un pedido                    | Terenghi Goy | - | - | - | Pendiente |
 | 14 | Confirmar y derivar un pedido                     | Romero       | - | - | - | Pendiente |
 | 15 | Acceder a juegos y obtener descuentos             | Cespedes     | - | - | - | Pendiente |
