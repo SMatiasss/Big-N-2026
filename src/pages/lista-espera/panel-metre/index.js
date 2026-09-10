@@ -9,6 +9,7 @@ import { asignarMesa } from '../../../services/estadias.service.js';
 import { listarEsperando, suscribirseAListaEspera } from '../../../services/lista-espera.service.js';
 import { listarMesasLibres } from '../../../services/mesas.service.js';
 import { avisarMesaAsignada } from '../../../services/notificaciones.service.js';
+import { navegarA } from '../../../router.js';
 
 const ETIQUETAS_TIPO_MESA = {
   estandar: 'Estándar',
@@ -65,7 +66,7 @@ export function render(container) {
   const mensaje = container.querySelector('.panel-metre__mensaje');
 
   container.querySelector('.panel-metre__volver').addEventListener('click', () => {
-    window.history.back();
+    navegarA('/home');
   });
 
   // Se refresca junto con el listado completo en cada carga; no hace falta

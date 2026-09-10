@@ -7,17 +7,29 @@ import { validarMensaje, haySaltoEnHistorial } from '../../../utils/hu11.js';
 import { navegarA } from '../../../router.js';
 import { consumirEstadiaPushHu11 } from '../../../services/notificaciones.service.js';
 import '../../productos/carta/index.css';
+import './index.css';
+
+function horaMensaje(fecha) {
+  if (!fecha) return '';
+  return new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit' }).format(new Date(fecha));
+}
 
 export async function render(container) {
-  container.innerHTML = `<ion-content class="hu11"><main>
-    <button type="button" data-volver>Volver</button><h1>Consulta al mozo</h1>
+  container.innerHTML = `<ion-content class="hu11 consulta-mozo"><main>
+    <header class="consulta-mozo__encabezado">
+      <button class="consulta-mozo__volver" type="button" data-volver aria-label="Volver">‹</button>
+      <div><h1>Consultas</h1><p data-subtitulo>Atención clientes</p></div><strong>Big N</strong>
+    </header>
     <p role="status" aria-live="polite">Verificando acceso…</p>
-    <label data-salas hidden>Conversación<select aria-label="Seleccionar mesa"></select></label>
-    <h2 data-mesa></h2><button type="button" data-anteriores hidden>Ver mensajes anteriores</button>
-    <div class="hu11__chat" role="log" aria-label="Mensajes" aria-live="polite"></div>
-    <form class="hu11__form" hidden><label>Tu mensaje<textarea name="mensaje" required rows="2" aria-label="Tu mensaje"></textarea></label>
-      <button type="submit">Enviar</button></form>
-    <p>Recibirás un aviso cuando haya un nuevo mensaje en la conversación.</p>
+    <label class="sr-only" data-salas hidden>Conversación<select aria-label="Seleccionar mesa"></select></label>
+    <section class="consulta-mozo__bandeja" data-bandeja hidden aria-label="Conversaciones"></section>
+    <section class="consulta-mozo__conversacion" data-conversacion>
+      <h2 data-mesa></h2><button type="button" data-anteriores hidden>Ver mensajes anteriores</button>
+      <div class="hu11__chat" role="log" aria-label="Mensajes" aria-live="polite"></div>
+      <form class="hu11__form" hidden><label><span class="sr-only">Tu mensaje</span><textarea name="mensaje" required rows="1" aria-label="Tu mensaje" placeholder="Escribe un mensaje..."></textarea></label>
+        <button type="submit" aria-label="Enviar mensaje">→</button></form>
+      <p class="consulta-mozo__aviso">Recibirás un aviso cuando haya un nuevo mensaje.</p>
+    </section>
   </main></ion-content>`;
   const raiz = container.firstElementChild;
   const estado = raiz.querySelector('[role="status"]');
@@ -26,11 +38,48 @@ export async function render(container) {
   const form = raiz.querySelector('form');
   const campo = form.elements.mensaje;
   const anteriores = raiz.querySelector('[data-anteriores]');
-  let perfil, mozo = false, seleccion = null, contexto = null;
+  const bandeja = raiz.querySelector('[data-bandeja]');
+  const conversacion = raiz.querySelector('[data-conversacion]');
+  let perfil, mozo = false, seleccion = null, contexto = null, nombreCliente = '';
   let mensajes = [], enviando = false, intento = null, cargandoAnteriores = false;
   let historialCompleto = false;
   let firma = '', version = 0, conectado = false;
-  raiz.querySelector('[data-volver]').onclick = () => navegarA(mozo ? '/login' : '/mesa/carta');
+  raiz.querySelector('[data-volver]').onclick = () => {
+    if (mozo && seleccion) {
+      cambiarSala(null);
+      raiz.querySelector('h1').textContent = 'Consultas';
+      raiz.querySelector('[data-subtitulo]').textContent = 'Atención clientes';
+      bandeja.hidden = false;
+      conversacion.hidden = true;
+      estado.textContent = 'Elegí una consulta para leer o responder.';
+      return;
+    }
+    navegarA(mozo ? '/home' : '/mesa/carta');
+  };
+
+  function dibujarBandeja(conversaciones, ultimos) {
+    bandeja.replaceChildren();
+    conversaciones.forEach((item, indice) => {
+      const ultimo = ultimos[indice]?.at(-1);
+      const boton = document.createElement('button');
+      boton.type = 'button';
+      boton.className = 'consulta-mozo__tarjeta';
+      boton.classList.toggle('consulta-mozo__tarjeta--pendiente', Boolean(ultimo && ultimo.autor_id !== perfil.id));
+      boton.innerHTML = `<span class="consulta-mozo__fila"><strong>Mesa ${item.numero_mesa}</strong><time></time></span><span class="consulta-mozo__resumen"></span>`;
+      boton.querySelector('time').dateTime = ultimo?.creado_en ?? item.ultimo_mensaje_en ?? '';
+      boton.querySelector('time').textContent = horaMensaje(ultimo?.creado_en ?? item.ultimo_mensaje_en);
+      boton.querySelector('.consulta-mozo__resumen').textContent = ultimo?.cuerpo || `Conversación con ${[item.nombres, item.apellidos].filter(Boolean).join(' ')}`;
+      boton.addEventListener('click', () => {
+        nombreCliente = [item.nombres, item.apellidos].filter(Boolean).join(' ');
+        cambiarSala(item.estadia_id);
+        salas.value = item.estadia_id;
+        bandeja.hidden = true;
+        conversacion.hidden = false;
+        void actualizacion.actualizar();
+      });
+      bandeja.append(boton);
+    });
+  }
 
   function dibujar(nuevos) {
     // Un mismo mensaje puede llegar por RPC, Realtime y reconexión: se combina por ID.
@@ -81,6 +130,9 @@ export async function render(container) {
       if (mozo) {
         const conversaciones = await listarConversacionesMozo();
         if (!vigente() || actual !== version) return;
+        const ultimos = await Promise.all(conversaciones.map(c => listarMensajes(c.estadia_id)));
+        if (!vigente() || actual !== version) return;
+        dibujarBandeja(conversaciones, ultimos);
         salas.replaceChildren();
         const opcion = document.createElement('option');
         opcion.value = '';
@@ -95,9 +147,13 @@ export async function render(container) {
         if (seleccion && !conversaciones.some(c => c.estadia_id === seleccion)) cambiarSala(null);
         salas.value = seleccion || '';
         if (!seleccion) {
-          estado.textContent = conversaciones.length ? 'Elegí una mesa para leer o responder.' : 'No hay conversaciones de mesas habilitadas.';
+          bandeja.hidden = false;
+          conversacion.hidden = true;
+          estado.textContent = conversaciones.length ? 'Elegí una consulta para leer o responder.' : 'No hay consultas de mesas habilitadas.';
           return;
         }
+        bandeja.hidden = true;
+        conversacion.hidden = false;
       }
       const id = seleccion;
       const ctx = await obtenerContextoMesa(id);
@@ -106,6 +162,10 @@ export async function render(container) {
       seleccion = ctx.estadia_id;
       contexto = ctx;
       raiz.querySelector('[data-mesa]').textContent = `Mesa ${ctx.numero_mesa}`;
+      if (mozo) {
+        raiz.querySelector('h1').textContent = `Mesa ${ctx.numero_mesa}`;
+        raiz.querySelector('[data-subtitulo]').textContent = nombreCliente || 'Cliente';
+      }
       const salto = haySaltoEnHistorial(mensajes, nuevos);
       if (salto) { mensajes = []; firma = ''; historialCompleto = false; }
       if (!mensajes.length && nuevos.length < 100) historialCompleto = true;
@@ -184,7 +244,8 @@ export async function render(container) {
       (perfil.rol !== 'cliente_anonimo' && perfil.estado !== 'aprobado')) {
       throw new Error('Esta pantalla es para clientes habilitados y mozos aprobados.');
     }
-    raiz.querySelector('h1').textContent = mozo ? 'Consultas de clientes' : 'Consulta al mozo';
+    raiz.querySelector('h1').textContent = mozo ? 'Consultas' : 'Consulta al mozo';
+    raiz.querySelector('[data-subtitulo]').textContent = mozo ? 'Atención clientes' : 'Mesa asignada';
     raiz.querySelector('[data-salas]').hidden = !mozo;
     if (!mozo) {
       const ctx = await obtenerContextoMesa();

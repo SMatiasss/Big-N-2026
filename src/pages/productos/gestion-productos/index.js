@@ -122,7 +122,7 @@ export function render(container) {
   let puedeCrearBebida = false;
 
   container.querySelector('.gestion-productos__volver').addEventListener('click', () => {
-    window.history.back();
+    navegarA('/home');
   });
 
   botonAlta.addEventListener('click', () => {

@@ -56,7 +56,7 @@ export async function render(container) {
   function solicitarRecargaVisible() {
     if (!document.hidden) void cargar();
   }
-  raiz.querySelector('[data-volver]').addEventListener('click', () => navegarA('/login'));
+  raiz.querySelector('[data-volver]').addEventListener('click', () => navegarA('/home'));
 
   function bloquear(valor) {
     ocupado = valor;

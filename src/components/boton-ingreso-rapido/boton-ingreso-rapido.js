@@ -10,7 +10,7 @@ export function crearBotonIngresoRapido({ etiqueta, email, onClick = () => {} } 
   // El mail completo no siempre entra en la tarjeta: queda en el title y en
   // la etiqueta accesible para que no se pierda al recortarse.
   elemento.title = email;
-  elemento.setAttribute('aria-label', `Ingresar como ${etiqueta} (${email})`);
+  elemento.setAttribute('aria-label', `Completar credenciales de ${etiqueta} (${email})`);
   elemento.setAttribute('aria-pressed', 'false');
   elemento.innerHTML = `
     <span class="boton-ingreso-rapido__avatar" aria-hidden="true">${etiqueta.charAt(0)}</span>

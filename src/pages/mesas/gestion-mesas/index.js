@@ -68,7 +68,7 @@ export function render(container) {
 
   // Volver
   container.querySelector('.gestion-mesas__volver').addEventListener('click', () => {
-    window.history.back();
+    navegarA('/home');
   });
 
   // Agregar mesa (+): todo el staff puede ver el listado, pero el alta es de

@@ -15,4 +15,23 @@
   --color-borde: #ddd4c8;
   --fuente-outfit: 'Outfit', sans-serif;
   --fuente-geist: 'Geist', sans-serif;
+  --font-body: var(--fuente-geist);
+  --font-heading: var(--fuente-outfit);
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --text-2xl: 30px;
+  --line-compact: 1.25;
+  --line-heading: 1.2;
+  --line-body: 1.5;
+
+  --touch-target-min: 44px;
+  --touch-target: 48px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
 }

@@ -38,7 +38,7 @@ export async function obtenerPerfilActual() {
   if (error) throw error;
   if (!data.user) throw new Error('Necesitás iniciar sesión.');
   const resultado = await supabase.from('perfiles')
-    .select('id, rol, estado, activo').eq('id', data.user.id).maybeSingle();
+    .select('id, nombres, apellidos, email, rol, estado, activo').eq('id', data.user.id).maybeSingle();
   if (resultado.error) throw resultado.error;
   return resultado.data;
 }

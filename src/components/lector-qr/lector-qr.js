@@ -27,7 +27,7 @@ export function crearLectorQr({
 
   function mostrarError(texto = '') { mensaje.textContent = texto; }
 
-  boton.addEventListener('click', async () => {
+  async function escanear() {
     if (bloqueado) return;
     if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('BarcodeScanner')) {
       mostrarError(`La lectura del ${nombreObjeto} está disponible desde la aplicación instalada en un dispositivo.`);
@@ -57,14 +57,21 @@ export function crearLectorQr({
         mostrarError(`No se detectó un código válido. Intentá nuevamente con el ${nombreObjeto} completo y enfocado.`);
         return;
       }
-      onLectura(contenido);
+      await onLectura(contenido);
     } catch (errorScan) {
       console.error(`No se pudo leer el ${nombreObjeto}.`, errorScan);
       mostrarError(errorScan.message ?? `No se pudo leer el ${nombreObjeto}. Revisá el permiso de cámara e intentá nuevamente.`);
     } finally {
       boton.disabled = bloqueado;
     }
-  });
+  }
 
-  return { elemento, mostrarError, establecerBloqueado(valor) { bloqueado = Boolean(valor); boton.disabled = bloqueado; } };
+  boton.addEventListener('click', escanear);
+
+  return {
+    elemento,
+    escanear,
+    mostrarError,
+    establecerBloqueado(valor) { bloqueado = Boolean(valor); boton.disabled = bloqueado; },
+  };
 }
