@@ -66,52 +66,16 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 
 ## Pantallas
 
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px;">
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Inicio de sesión</h3>
-    <img src="assets/screens/login-ss.png" alt="Inicio de sesión" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Agreagr empleado</h3>
-    <img src="assets/screens/alta-empleado-ss.png" alt="Alta de empleado" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Listado de empleados</h3>
-    <img src="assets/screens/lista-empleados-ss.png" alt="Listado de empleados" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Agregar un plato</h3>
-    <img src="assets/screens/alta-plato-ss.png" alt="Alta de plato" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Agregar una bebida</h3>
-    <img src="assets/screens/alta-bebida-ss.png" alt="Alta de bebida" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Productos: platos</h3>
-    <img src="assets/screens/productos-platos-ss.png" alt="Productos: platos" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Productos: bebidas</h3>
-    <img src="assets/screens/productos-bebidas-ss.png" alt="Productos: bebidas" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Agregar una mesa</h3>
-    <img src="assets/screens/alta-mesa-ss.png" alt="Alta de mesa" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Listado de mesas</h3>
-    <img src="assets/screens/lista-mesas-ss.png" alt="Listado de mesas" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Clientes pendientes</h3>
-    <img src="assets/screens/lista-clientes-pendientes-ss.png" alt="Clientes pendientes" width="240">
-  </figure>
-  <figure style="width: 30%; min-width: 220px; margin: 0; text-align: center;">
-    <h3>Listado de clientes</h3>
-    <img src="assets/screens/lista-clientes-todos-ss.png" alt="Listado de clientes" width="240">
-  </figure>
-</div>
+| Nombre de pantalla | Imágen de pantalla | Misceláneos |
+| :---: | :---: | :---: |
+| Lista de empleados | <img src="assets/pages-samples/Lista%20empleados.png" alt="Lista de empleados" width="240"> | <!-- agregar imagen --> |
+| Agregar un empleado | <img src="assets/pages-samples/Agregar%20un%20empleado.png" alt="Agregar un empleado" width="240"> | <img src="assets/pages-samples/especiales/Ejemplo%20error.png" alt="Ejemplo error" width="240"> |
+| Lista de productos (platos) | <img src="assets/pages-samples/Lista%20productos%20%28platos%29.png" alt="Lista de productos (platos)" width="240"> | <!-- agregar imagen --> |
+| Lista de productos (bebidas) | <img src="assets/pages-samples/Lista%20productos%20%28bebidas%29.png" alt="Lista de productos (bebidas)" width="240"> | <!-- agregar imagen --> |
+| Lista de clientes (todos) | <img src="assets/pages-samples/Lista%20clientes%20%28todos%29.png" alt="Lista de clientes (todos)" width="240"> | <!-- agregar imagen --> |
+| Lista de clientes (pendientes) | <img src="assets/pages-samples/Lista%20clientes%20%28pendientes%29.png" alt="Lista de clientes (pendientes)" width="240"> | <img src="assets/pages-samples/especiales/confirmar-cliente.png" alt="Confirmar cliente" width="120"> <img src="assets/pages-samples/especiales/rechazar-cliente.png" alt="Rechazar cliente" width="120"> |
+| Lista de mesas | <img src="assets/pages-samples/Lista%20mesas.png" alt="Lista de mesas" width="240"> | <!-- agregar imagen --> |
+| Lista de espera | <img src="assets/pages-samples/Lista%20de%20espera.png" alt="Lista de espera" width="240"> | <img src="assets/pages-samples/especiales/Lista-de-mesas-en-espera.png" alt="Lista de mesas en espera" width="240"> |
 
 ## Logo
 
