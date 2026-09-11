@@ -37,6 +37,7 @@ const auth = await import('../src/services/auth.service.js');
 const servicio = await import('../src/services/aprobacion-clientes.service.js');
 
 beforeEach(() => {
+  auth.invalidarPerfilActual();
   perfil = { ...base, rol: 'dueno' };
   sesion = { user: { id: 'actor' } };
   resultado = { data: { id: 'cliente', estado: 'aprobado' }, error: null };
@@ -77,6 +78,18 @@ test('sesión aprobada y ausencia de sesión', async () => {
   assert.ok(await auth.verificarAccesoSesion());
   sesion = null;
   assert.equal(await auth.verificarAccesoSesion(), null);
+});
+test('perfil se reutiliza durante la navegación y se invalida al cerrar sesión', async () => {
+  perfil = { ...base, rol: 'dueno' };
+  await auth.verificarAccesoSesion();
+  await auth.obtenerPerfilActual();
+  await auth.obtenerPermisos();
+  assert.equal(consultas.filter((pasos) => pasos[0]?.[0] === 'from').length, 1);
+
+  await auth.signOut();
+  sesion = { user: { id: 'actor' } };
+  await auth.obtenerPerfilActual();
+  assert.equal(consultas.filter((pasos) => pasos[0]?.[0] === 'from').length, 2);
 });
 test('listado filtra clientes registrados pendientes sin PII innecesaria', async () => {
   resultado = { data: [], error: null };

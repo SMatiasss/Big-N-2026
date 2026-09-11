@@ -24,7 +24,7 @@ test('doble submit del controlador produce una sola llamada y bloquea el botón'
     document:{createElement:nodo},crypto,validarMensaje,haySaltoEnHistorial,
     obtenerPerfilActual:async()=>({id:'cliente',rol:'cliente_registrado',estado:'aprobado',activo:true}),
     obtenerContextoMesa:async()=>({estadia_id:'visita',numero_mesa:7}),
-    listarMensajes:async()=>[],crearBurbujaChat:nodo,navegarA:()=>{},
+    listarMensajes:async()=>[],crearBurbujaChat:nodo,crearAppHeader:()=>nodo(),navegarA:()=>{},
     enviarMensaje:async()=>{envios++;await pendiente;},
     suscribirseAMensajes:()=>()=>{},
     crearActualizacionHu11:(_r,fn,error)=>({alSalir:()=>{},actualizar:async()=>{try{await fn(()=>true);}catch(e){error(e);}}}),
