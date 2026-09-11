@@ -1,44 +1,111 @@
+/* =========================================================
+   APP-HEADER — Estilos únicos del header de pantalla
+   Variables CSS para fácil acoplamiento a la maqueta Figma.
+   ========================================================= */
+
 .app-header {
+  /* Escala del header: 1 = tamaño original. Subir o bajar este número
+     agranda/achica todo el header de una sola vez. */
+  --ah-escala:        1.75;
+
+  /* ── Paleta ─────────────────────────────────── */
+  --ah-bg:            #606c38;          /* Fondo del header                */
+  --ah-bg-btn:        #4a572c;          /* Fondo botón atrás               */
+  --ah-bg-accion:     #dda15e;          /* Fondo botón de acción (+, etc.) */
+  --ah-color:         #fefae0;          /* Color de texto e íconos         */
+
+  /* ── Dimensiones ────────────────────────────────
+     Los botones llevan techo en vw: con la escala alta, dos círculos fijos
+     se comerían el ancho y no quedaría lugar para el título. */
+  --ah-height:        calc(56px * var(--ah-escala));
+  --ah-btn-size:      min(calc(32px * var(--ah-escala)), 21vw);
+  --ah-pad-v:         max(calc(8px * var(--ah-escala)), env(safe-area-inset-top));
+  --ah-pad-b:         calc(8px * var(--ah-escala));
+  --ah-pad-h:         clamp(14px, 4vw, 22px);
+  --ah-gap:           calc(6px * var(--ah-escala));
+
+  /* ── Tipografía ─────────────────────────────────
+     El título crece con el ancho disponible; el glifo de los botones se mide
+     contra el diámetro para que siempre quede proporcionado. */
+  --ah-font-titulo:   700 clamp(20px, 8.5vw, 36px) / 1.15 var(--font-heading, 'Outfit', sans-serif);
+  --ah-font-btn:      700 calc(var(--ah-btn-size) * 0.52) / 1 var(--font-heading, 'Outfit', sans-serif);
+
+  /* ── Layout ─────────────────────────────────── */
   position: sticky;
   top: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: var(--touch-target-min) minmax(0, 1fr) var(--touch-target-min);
+  grid-template-columns: var(--ah-btn-size) 1fr var(--ah-btn-size);
   align-items: center;
-  gap: var(--space-sm);
-  min-height: 64px;
-  padding: max(var(--space-sm), env(safe-area-inset-top)) var(--space-md) var(--space-sm);
-  background: rgb(96 108 56 / 96%);
-  color: #fefae0;
+  gap: var(--ah-gap);
+  min-height: var(--ah-height);
+  padding: var(--ah-pad-v) var(--ah-pad-h) var(--ah-pad-b);
+  background: var(--ah-bg);
+  color: var(--ah-color);
   box-sizing: border-box;
 }
 
-.app-header__control,
-.app-header__espaciador {
-  width: var(--touch-target-min);
-  height: var(--touch-target-min);
+/* ── Botones (atrás y acción) ───────────────────
+   Especificidad reforzada (.app-header .app-header__control) a propósito:
+   varias pantallas tienen reglas genéricas tipo ".mi-pantalla button {...}"
+   que, con selector simple, le ganaban al estilo del header por
+   especificidad. Con dos clases el header gana siempre sin tener que tocar
+   el CSS de cada pantalla. */
+.app-header .app-header__control,
+.app-header .app-header__espaciador {
+  width: var(--ah-btn-size);
+  height: var(--ah-btn-size);
 }
 
-.app-header__control {
+.app-header .app-header__control {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  margin: 0;
   border: 0;
   border-radius: 50%;
-  background: #4a572c;
-  color: #fefae0;
-  font: 700 var(--text-xl)/1 var(--font-heading);
+  background: var(--ah-bg-btn);
+  color: var(--ah-color);
+  font: var(--ah-font-btn);
   cursor: pointer;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
 }
 
-.app-header__accion { background: #dda15e; color: #283618; }
-.app-header__titulo {
+.app-header .app-header__control:active {
+  opacity: 0.7;
+}
+
+/* Botón de acción derecha (+, etc.) */
+.app-header .app-header__accion {
+  background: var(--ah-bg-accion);
+  color: var(--ah-color);
+}
+
+/* ── Título central ─────────────────────────────
+   Con la escala alta un título largo ya no entra en una línea, así que puede
+   usar dos antes de recortarse. Los títulos largos además bajan de tamaño
+   (clase que pone crearAppHeader según el largo del texto). */
+.app-header .app-header__titulo {
   margin: 0;
-  overflow: hidden;
-  color: inherit;
-  font: 700 var(--text-xl)/var(--line-heading) var(--font-heading);
+  color: var(--ah-color);
+  font: var(--ah-font-titulo);
+  letter-spacing: -0.01em;
   text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.app-header--titulo-largo {
+  --ah-font-titulo: 700 clamp(17px, 6.2vw, 27px) / 1.2 var(--font-heading, 'Outfit', sans-serif);
+}
+
+.app-header--titulo-muy-largo {
+  --ah-font-titulo: 700 clamp(15px, 5vw, 22px) / 1.2 var(--font-heading, 'Outfit', sans-serif);
 }

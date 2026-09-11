@@ -1,41 +1,36 @@
 import './index.css';
+import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { navegarA } from '../../../router.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
+import { crearPestanas } from '../../../components/pestanas-filtro/pestanas-filtro.js';
+import { crearModalConfirmacion } from '../../../components/modal-confirmacion/modal-confirmacion.js';
 import { listarClientesPendientes, listarClientesAceptados, resolverClientePendiente, observarClientesPendientes } from '../../../services/aprobacion-clientes.service.js';
 import { ESTADOS_PERFIL } from '../../../config/constantes.js';
 
 export async function render(container) {
   container.innerHTML = `
-    <ion-content class="aprobacion-clientes">
-      <main class="aprobacion-clientes__contenido">
-        <header><button type="button" data-volver aria-label="Volver al inicio">‹</button><h1>Clientes</h1></header>
-        <nav class="aprobacion-clientes__pestanas" aria-label="Filtrar clientes">
-          <button type="button" data-estado="aprobado" aria-pressed="false">Todos</button>
-          <button type="button" data-estado="pendiente" aria-pressed="true">Pendientes</button>
-        </nav>
+    <ion-content class="aprobacion-clientes pantalla-lista" scroll-y="false">
+      <div data-header></div>
+      <main class="aprobacion-clientes__contenido pantalla-lista__cuerpo">
+        <div data-pestanas></div>
         <div class="aprobacion-clientes__resumen">
           <p role="status" aria-live="polite" data-mensaje></p>
           <p data-conexion>Conectando las actualizaciones…</p>
         </div>
         <p class="aprobacion-clientes__resultado" role="status" aria-live="polite" data-decision></p>
-        <section class="aprobacion-clientes__lista" aria-label="Clientes pendientes"></section>
+        <section class="aprobacion-clientes__lista lista-ajustada" aria-label="Clientes pendientes"></section>
         <p class="aprobacion-clientes__aviso">Al aprobar o rechazar, se intentará enviar un correo al cliente.</p>
       </main>
     </ion-content>`;
   const raiz = container.firstElementChild;
   const lista = raiz.querySelector('section');
+  const ajusteLista = ajustarLista(lista);
   const mensaje = raiz.querySelector('[data-mensaje]');
   const conexion = raiz.querySelector('[data-conexion]');
   const decision = raiz.querySelector('[data-decision]');
   let ocupado = false;
   let clientes = [];
   let estadoSeleccionado = ESTADOS_PERFIL.PENDIENTE;
-  const pestanas = [...raiz.querySelectorAll('[data-estado]')];
-  pestanas.forEach((boton) => boton.addEventListener('click', () => {
-    if (ocupado || cerrado) return;
-    estadoSeleccionado = boton.dataset.estado;
-    pestanas.forEach((item) => item.setAttribute('aria-pressed', String(item === boton)));
-    dibujar();
-  }));
   let cerrado = false;
   let recargaPendiente = false;
   let detenerObservacion;
@@ -47,8 +42,9 @@ export async function render(container) {
   window.addEventListener('hashchange', destruir, { once: true });
   function destruir() {
     cerrado = true;
-    void confirmacion?.dismiss(undefined, 'cancel');
+    confirmacion?.cerrar('cancel');
     clearInterval(intervalo);
+    ajusteLista.destruir();
     detenerObservacion?.();
     window.removeEventListener('online', solicitarRecargaVisible);
     document.removeEventListener('visibilitychange', solicitarRecargaVisible);
@@ -56,13 +52,33 @@ export async function render(container) {
   function solicitarRecargaVisible() {
     if (!document.hidden) void cargar();
   }
-  raiz.querySelector('[data-volver]').addEventListener('click', () => navegarA('/home'));
+  const header = crearAppHeader({
+    titulo: 'Clientes',
+    etiquetaVolver: 'Volver al inicio',
+    onVolver: () => navegarA('/home'),
+  });
+  raiz.querySelector('[data-header]').append(header);
+
+  const pestanas = crearPestanas({
+    etiqueta: 'Filtrar clientes',
+    opciones: [
+      { valor: ESTADOS_PERFIL.APROBADO, texto: 'Todos' },
+      { valor: ESTADOS_PERFIL.PENDIENTE, texto: 'Pendientes' },
+    ],
+    seleccionInicial: estadoSeleccionado,
+    permitirCambio: () => !ocupado && !cerrado,
+    onCambio: (valor) => {
+      estadoSeleccionado = valor;
+      dibujar();
+    },
+  });
+  raiz.querySelector('[data-pestanas]').append(pestanas.elemento);
 
   function bloquear(valor) {
     ocupado = valor;
     lista.setAttribute('aria-busy', String(valor));
     lista.querySelectorAll('button, select').forEach((control) => { control.disabled = valor; });
-    pestanas.forEach((boton) => { boton.disabled = valor; });
+    pestanas.establecerBloqueado(valor);
     // No se pierden eventos recibidos durante un SELECT o una decisión.
     if (!valor && recargaPendiente && !cerrado) {
       recargaPendiente = false;
@@ -102,7 +118,15 @@ export async function render(container) {
         }
       } catch { /* La falta de una foto no impide revisar los demás perfiles. */ }
       const nombre = document.createElement('h2');
-      nombre.textContent = `${cliente.nombres} ${cliente.apellidos ?? ''}`.trim();
+      const nombreCompleto = `${cliente.nombres} ${cliente.apellidos ?? ''}`.trim();
+      nombre.textContent = nombreCompleto;
+      // Nombres largos ("Estefano Caballeroso Palermo") no deben desbordar ni
+      // achicar el resto de la tarjeta: se reduce sólo la tipografía del nombre.
+      if (nombreCompleto.length > 28) {
+        nombre.classList.add('aprobacion-clientes__nombre--muy-largo');
+      } else if (nombreCompleto.length > 18) {
+        nombre.classList.add('aprobacion-clientes__nombre--largo');
+      }
       tarjeta.append(foto, nombre);
       if (pendientes) {
         // El desplegable sólo elige la acción; el modal sigue siendo obligatorio.
@@ -158,30 +182,27 @@ export async function render(container) {
       const cliente = clientes.find((item) => item.id === id);
       if (!cliente) return;
       const aceptar = estado === ESTADOS_PERFIL.APROBADO;
-      // Ionic administra el foco y el cierre del modal. El nombre va como texto,
-      // no como HTML. Cancelar o salir de la pantalla nunca guarda la decisión.
-      const modal = document.createElement('ion-alert');
+      // El nombre va como texto, no como HTML. Cancelar o salir de la
+      // pantalla nunca guarda la decisión.
+      const modal = crearModalConfirmacion({
+        variante: aceptar ? 'exito' : 'error',
+        titulo: aceptar ? '¿Aceptar a este cliente?' : '¿Rechazar a este cliente?',
+        subtitulo: `${cliente.nombres} ${cliente.apellidos ?? ''}`.trim(),
+        mensaje: aceptar
+          ? 'Su registro quedará aprobado y podrá ingresar a la aplicación. ¿Querés continuar?'
+          : 'Su registro quedará rechazado y no podrá ingresar a la aplicación. ¿Querés continuar?',
+        botones: [
+          { texto: 'Cancelar', rol: 'cancel' },
+          { texto: aceptar ? 'Sí, aceptar' : 'Sí, rechazar', rol: 'confirm', destacado: true },
+        ],
+      });
       confirmacion = modal;
-      modal.cssClass = 'confirmacion-cliente';
-      modal.header = aceptar ? '¿Aceptar a este cliente?' : '¿Rechazar a este cliente?';
-      modal.subHeader = `${cliente.nombres} ${cliente.apellidos ?? ''}`.trim();
-      modal.message = aceptar
-        ? 'Su registro quedará aprobado y podrá ingresar a la aplicación. ¿Querés continuar?'
-        : 'Su registro quedará rechazado y no podrá ingresar a la aplicación. ¿Querés continuar?';
-      modal.backdropDismiss = false;
-      modal.buttons = [
-        { text: 'Cancelar', role: 'cancel' },
-        { text: aceptar ? 'Sí, aceptar' : 'Sí, rechazar', role: 'confirm' },
-      ];
-      document.body.append(modal);
       try {
-        const cierre = modal.onDidDismiss();
-        await modal.present();
-        if (cerrado) await modal.dismiss(undefined, 'cancel');
-        const { role } = await cierre;
-        if (role !== 'confirm' || cerrado || !raiz.isConnected) return;
+        const rolCierre = modal.presentar();
+        if (cerrado) modal.cerrar('cancel');
+        const rol = await rolCierre;
+        if (rol !== 'confirm' || cerrado || !raiz.isConnected) return;
       } finally {
-        modal.remove();
         confirmacion = undefined;
       }
       decision.textContent = 'Guardando tu decisión…';

@@ -1,6 +1,8 @@
 // Panel del metre: lista de espera en tiempo real + asignación de mesa
 // (puntos 9 y 10).
 import './index.css';
+import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { ROLES } from '../../../config/constantes.js';
 import { puedeAsignarMesa } from '../../../config/permisos.js';
@@ -43,18 +45,15 @@ function filaCliente(entrada) {
 export function render(container) {
   container.innerHTML = `
     <ion-page class="panel-metre">
-      <ion-content>
-        <main class="panel-metre__contenido">
-          <header class="panel-metre__header">
-            <button class="panel-metre__volver" type="button" aria-label="Volver">‹</button>
-            <h1 class="panel-metre__titulo">Lista de espera</h1>
-          </header>
+      <ion-content class="pantalla-lista" scroll-y="false">
+        <div data-header></div>
+        <main class="panel-metre__contenido pantalla-lista__cuerpo">
 
           <div class="panel-metre__estado-carga">
             <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
             <span>Cargando...</span>
           </div>
-          <ul class="panel-metre__lista" hidden></ul>
+          <ul class="panel-metre__lista lista-ajustada" hidden></ul>
           <p class="panel-metre__mensaje" hidden>No hay clientes esperando.</p>
         </main>
       </ion-content>
@@ -65,9 +64,15 @@ export function render(container) {
   const lista = container.querySelector('.panel-metre__lista');
   const mensaje = container.querySelector('.panel-metre__mensaje');
 
-  container.querySelector('.panel-metre__volver').addEventListener('click', () => {
-    navegarA('/home');
+  const ajusteLista = ajustarLista(lista);
+
+  /* — Header — */
+  const header = crearAppHeader({
+    titulo: 'Lista de espera',
+    etiquetaVolver: 'Volver al inicio',
+    onVolver: () => navegarA('/home'),
   });
+  container.querySelector('[data-header]').append(header);
 
   // Se refresca junto con el listado completo en cada carga; no hace falta
   // que esté perfectamente al día entre medio: si dos metres asignan la
@@ -195,5 +200,8 @@ export function render(container) {
   // Nuevos clientes en espera aparecen y los asignados desaparecen solos.
   const cancelarSuscripcion = suscribirseAListaEspera(() => cargarListado());
 
-  window.addEventListener('hashchange', () => cancelarSuscripcion(), { once: true });
+  window.addEventListener('hashchange', () => {
+    cancelarSuscripcion();
+    ajusteLista.destruir();
+  }, { once: true });
 }

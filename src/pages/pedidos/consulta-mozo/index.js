@@ -6,6 +6,7 @@ import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { validarMensaje, haySaltoEnHistorial } from '../../../utils/hu11.js';
 import { navegarA } from '../../../router.js';
 import { consumirEstadiaPushHu11 } from '../../../services/notificaciones.service.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import '../../productos/carta/index.css';
 import './index.css';
 
@@ -15,11 +16,8 @@ function horaMensaje(fecha) {
 }
 
 export async function render(container) {
-  container.innerHTML = `<ion-content class="hu11 consulta-mozo"><main>
-    <header class="consulta-mozo__encabezado">
-      <button class="consulta-mozo__volver" type="button" data-volver aria-label="Volver">‹</button>
-      <div><h1>Consultas</h1><p data-subtitulo>Atención clientes</p></div><strong>Big N</strong>
-    </header>
+  container.innerHTML = `<ion-content class="hu11 consulta-mozo"><div data-header></div><main>
+    <p class="consulta-mozo__subtitulo" data-subtitulo>Atención clientes</p>
     <p role="status" aria-live="polite">Verificando acceso…</p>
     <label class="sr-only" data-salas hidden>Conversación<select aria-label="Seleccionar mesa"></select></label>
     <section class="consulta-mozo__bandeja" data-bandeja hidden aria-label="Conversaciones"></section>
@@ -44,18 +42,22 @@ export async function render(container) {
   let mensajes = [], enviando = false, intento = null, cargandoAnteriores = false;
   let historialCompleto = false;
   let firma = '', version = 0, conectado = false;
-  raiz.querySelector('[data-volver]').onclick = () => {
-    if (mozo && seleccion) {
-      cambiarSala(null);
-      raiz.querySelector('h1').textContent = 'Consultas';
-      raiz.querySelector('[data-subtitulo]').textContent = 'Atención clientes';
-      bandeja.hidden = false;
-      conversacion.hidden = true;
-      estado.textContent = 'Elegí una consulta para leer o responder.';
-      return;
-    }
-    navegarA(mozo ? '/home' : '/mesa/carta');
-  };
+  const header = crearAppHeader({
+    titulo: 'Consultas',
+    onVolver: () => {
+      if (mozo && seleccion) {
+        cambiarSala(null);
+        raiz.querySelector('h1').textContent = 'Consultas';
+        raiz.querySelector('[data-subtitulo]').textContent = 'Atención clientes';
+        bandeja.hidden = false;
+        conversacion.hidden = true;
+        estado.textContent = 'Elegí una consulta para leer o responder.';
+        return;
+      }
+      navegarA(mozo ? '/home' : '/mesa/carta');
+    },
+  });
+  raiz.querySelector('[data-header]').append(header);
 
   function dibujarBandeja(conversaciones, ultimos) {
     bandeja.replaceChildren();

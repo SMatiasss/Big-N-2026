@@ -1,0 +1,74 @@
+/* =========================================================
+   PESTAÑAS-FILTRO — Diseño único de las barras de pestañas
+   (gestión de productos, aprobación de clientes, etc.)
+   ========================================================= */
+
+.pestanas-filtro {
+  --pf-color-activo: #dda15e;
+  --pf-color-inactivo: #c8c8a0;
+
+  display: flex;
+
+  margin: 0 0 16px;
+
+  border-bottom: 1px solid rgb(254 250 224 / 15%);
+
+  /* En las pantallas de listado las pestañas quedan fijas arriba (fuera del
+     área que scrollea), así que no deben comprimirse. */
+  flex-shrink: 0;
+}
+
+/* Especificidad reforzada (.pestanas-filtro .pestanas-filtro__boton) a
+   propósito: algunas pantallas tienen reglas genéricas tipo
+   ".mi-pantalla button {...}" que, con selector simple, le ganaban al
+   estilo del componente por especificidad (mismo motivo que app-header.css). */
+.pestanas-filtro .pestanas-filtro__boton {
+  position: relative;
+  flex: 1;
+
+  min-height: 54px;
+
+  padding: 14px 8px;
+
+  background: transparent;
+  border: 0;
+
+  color: var(--pf-color-inactivo);
+
+  font-family: var(--fuente-outfit, 'Outfit', sans-serif);
+  font-size: 19px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.pestanas-filtro .pestanas-filtro__boton[aria-pressed="true"] {
+  color: var(--pf-color-activo);
+  transform: scale(1.08);
+}
+
+.pestanas-filtro .pestanas-filtro__boton[aria-pressed="true"]::after {
+  content: '';
+
+  position: absolute;
+  right: 22%;
+  bottom: -1px;
+  left: 22%;
+
+  height: 4px;
+
+  background: var(--pf-color-activo);
+  border-radius: 2px;
+}
+
+.pestanas-filtro .pestanas-filtro__boton:focus-visible {
+  outline: 2px solid var(--pf-color-activo);
+  outline-offset: -4px;
+}
+
+.pestanas-filtro .pestanas-filtro__boton:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}

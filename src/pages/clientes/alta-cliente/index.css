@@ -8,7 +8,6 @@
 .alta-cliente {
   --fondo-empleado: #606c38;
   --fondo-campo-empleado: #4a572c;
-  --fondo-hover-empleado: #53632f;
   --acento-empleado: #dda15e;
   --marco-dni-empleado: #bc6c25;
 
@@ -51,59 +50,6 @@
 
   margin: 0 auto;
   padding: 25px 18px;
-}
-
-
-/* =========================================================
-   ENCABEZADO
-   ========================================================= */
-
-.alta-cliente__introduccion {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  margin: 0 0 14px;
-}
-
-.alta-cliente__introduccion h1 {
-  margin: 0;
-
-  color: var(--texto-claro-empleado);
-
-  font-family: var(--fuente-outfit);
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 24px;
-  letter-spacing: -0.02em;
-}
-
-.alta-cliente__volver {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  box-sizing: border-box;
-
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-
-  margin: 0;
-  padding: 0 0 4px;
-
-  border: 0;
-  border-radius: 50%;
-
-  background: var(--fondo-hover-empleado);
-  color: var(--texto-claro-empleado);
-
-  cursor: pointer;
-
-  font-family: system-ui, sans-serif;
-  font-size: 29px;
-  font-weight: 700;
-  line-height: 32px;
 }
 
 

@@ -37,47 +37,6 @@
   flex-direction: column;
 }
 
-/* ENCABEZADO */
-.alta-mesa__header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 0 0 26px;
-  flex-shrink: 0;
-}
-
-.alta-mesa__volver {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: var(--fondo-campo);
-  border: none;
-  border-radius: 50%;
-  color: var(--texto-claro);
-  font-family: var(--fuente-outfit);
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: opacity 0.2s;
-}
-
-.alta-mesa__volver:active {
-  opacity: 0.7;
-}
-
-.alta-mesa__titulo {
-  margin: 0;
-  color: var(--texto-claro);
-  font-family: var(--fuente-outfit);
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
 /* FORMULARIO */
 .alta-mesa__formulario {
   display: flex;
@@ -252,11 +211,13 @@
   font-weight: 700;
 }
 
-/* FOTO DE UBICACIÓN AMPLIA */
+/* FOTO DE LA MESA — mismo cuadro-foto que usa alta-empleado, del tamaño de
+   este contenedor (ver components/cuadro-foto): un cuadrado de hasta 280px
+   centrado, en vez del rectángulo fijo que tenía antes. */
 .alta-mesa__foto {
   width: 100%;
-  min-height: 280px;
-  height: 280px;
+  max-width: 280px;
+  margin: 0 auto;
   display: flex;
 }
 
@@ -269,12 +230,6 @@
 .alta-mesa__foto .selector-foto-mesa__posicion {
   width: 100%;
   display: flex;
-}
-
-.alta-mesa__foto .selector-foto-mesa__contenido {
-  width: 100%;
-  min-height: 280px;
-  height: 280px;
 }
 
 /* BOTÓN SUBMIT SIEMPRE ABAJO Y CON TEXTO COLOR CREMA */

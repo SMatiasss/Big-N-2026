@@ -2,6 +2,7 @@
 // ingreso al local (punto 9). Se llega acá desde el botón "Ingresar como
 // invitado" del login; esta pantalla ya arranca directo en el formulario.
 import './index.css';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorFotoMesa } from '../../../components/selector-foto-mesa/selector-foto-mesa.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
@@ -23,11 +24,8 @@ export function render(container) {
   container.innerHTML = `
     <ion-page class="ingreso-anonimo">
       <ion-content>
+        <div data-header></div>
         <main class="ingreso-anonimo__contenido">
-          <header class="ingreso-anonimo__encabezado">
-            <button class="ingreso-anonimo__volver" type="button" aria-label="Volver">‹</button>
-            <h1>Ingreso como invitado</h1>
-          </header>
 
           <!-- Dos pasos: datos y QR. El indicador deja claro cuánto falta. -->
           <ol class="ingreso-anonimo__progreso">
@@ -117,8 +115,12 @@ export function render(container) {
 
   formulario.querySelector('.ingreso-anonimo__foto').append(selectorFoto.elemento);
 
-  const botonVolver = container.querySelector('.ingreso-anonimo__volver');
-  botonVolver.addEventListener('click', () => navegarA('/login'));
+  const header = crearAppHeader({
+    titulo: 'Ingreso como invitado',
+    onVolver: () => navegarA('/login'),
+  });
+  container.querySelector('[data-header]').append(header);
+  const controlVolver = header.querySelector('.app-header__volver');
 
   formulario.querySelector('#nombre-anonimo').addEventListener('input', revalidar);
 
@@ -159,7 +161,7 @@ export function render(container) {
       // ya existe, así que volver atrás desde acá no tendría sentido.
       pasoDatos.hidden = true;
       pasoQr.hidden = false;
-      botonVolver.hidden = true;
+      controlVolver.hidden = true;
 
       container.querySelectorAll('[data-progreso]').forEach((item) => {
         item.classList.toggle(

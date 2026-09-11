@@ -1,5 +1,6 @@
 import './index.css';
 import { navegarA } from '../../../router.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
 import { ROLES, ESTADOS_PERFIL } from '../../../config/constantes.js';
@@ -203,22 +204,9 @@ export function render(container) {
 
       <ion-content>
 
+        <div data-header></div>
+
         <main class="alta-cliente__contenido">
-
-          <header class="alta-cliente__introduccion">
-
-            <button
-              class="alta-cliente__volver"
-              type="button"
-              aria-label="Volver"
-            >
-              ‹
-            </button>
-
-            <h1>Registrar un cliente nuevo</h1>
-
-          </header>
-
 
           <form
             class="alta-cliente__formulario"
@@ -483,14 +471,13 @@ export function render(container) {
 
 
   /* =========================================================
-     VOLVER
+     HEADER
      ========================================================= */
 
-  container
-    .querySelector('.alta-cliente__volver')
-    .addEventListener('click', () => {
-      window.history.back();
-    });
+  const header = crearAppHeader({
+    titulo: 'Registrar un cliente nuevo',
+  });
+  container.querySelector('[data-header]').append(header);
 
 
   /* =========================================================

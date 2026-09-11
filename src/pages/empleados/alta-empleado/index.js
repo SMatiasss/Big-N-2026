@@ -8,6 +8,7 @@ import { altaPerfil, subirFotoPerfil } from '../../../services/perfiles.service.
 import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 
 
 const ROLES_DISPONIBLES = ROLES_EMPLEADO;
@@ -40,6 +41,7 @@ function datosFormulario(formulario) {
       'cuil',
       'email',
       'password',
+      'confirmarPassword',
       'rol',
     ].map((campo) => {
       const control = formulario.querySelector(
@@ -89,6 +91,12 @@ function validar(datos, foto) {
   ) {
     errores.password =
       'Usá al menos 8 caracteres, con mayúscula, minúscula y número.';
+  }
+
+  if (!datos.confirmarPassword) {
+    errores.confirmarPassword = 'Repetí la contraseña.';
+  } else if (datos.confirmarPassword !== datos.password) {
+    errores.confirmarPassword = 'Las contraseñas no coinciden.';
   }
 
   if (!ROLES_DISPONIBLES.includes(datos.rol)) {
@@ -277,36 +285,21 @@ export function render(container) {
 
       <ion-content>
 
+        <div data-header></div>
+
         <main class="alta-empleado__contenido">
-
-          <header class="alta-empleado__introduccion">
-
-            <button
-              class="alta-empleado__volver"
-              type="button"
-              aria-label="Volver"
-            >
-              ‹
-            </button>
-
-            <h1>Agregar un empleado</h1>
-
-          </header>
-
 
           <form
             class="alta-empleado__formulario"
             novalidate
           >
 
-            <!-- FOTO -->
+            <!-- FOTO Y LECTOR DNI, lado a lado -->
 
-            <div class="alta-empleado__foto"></div>
-
-
-            <!-- LECTOR DNI -->
-
-            <div class="alta-empleado__lector-qr"></div>
+            <div class="alta-empleado__medios">
+              <div class="alta-empleado__foto"></div>
+              <div class="alta-empleado__lector-qr"></div>
+            </div>
 
 
             <!-- RESULTADO DEL ESCANEO -->
@@ -378,36 +371,6 @@ export function render(container) {
             </div>
 
 
-            <!-- CORREO -->
-
-            <div
-              class="campo-formulario"
-              data-campo="email"
-            >
-
-              <label for="email-empleado">
-                Correo electrónico
-              </label>
-
-              <input
-                class="campo-control"
-                id="email-empleado"
-                name="email"
-                type="email"
-                inputmode="email"
-                autocomplete="email"
-                placeholder="usuario@bign.com"
-                required
-              >
-
-              <ion-note
-                color="danger"
-                data-error="email"
-              ></ion-note>
-
-            </div>
-
-
             <!-- DNI / CUIL -->
 
             <div class="alta-empleado__fila">
@@ -472,6 +435,65 @@ export function render(container) {
             </div>
 
 
+            <!-- PERFIL -->
+
+            <div
+              class="campo-formulario alta-empleado__campo-rol"
+              data-campo="rol"
+            >
+
+              <label for="rol-empleado">
+                Perfil
+              </label>
+
+              <ion-select
+                class="campo-control"
+                id="rol-empleado"
+                placeholder="Seleccioná un perfil"
+                interface="popover"
+                required
+              >
+                ${opcionesRoles}
+              </ion-select>
+
+              <ion-note
+                color="danger"
+                data-error="rol"
+              ></ion-note>
+
+            </div>
+
+
+            <!-- CORREO -->
+
+            <div
+              class="campo-formulario"
+              data-campo="email"
+            >
+
+              <label for="email-empleado">
+                Correo electrónico
+              </label>
+
+              <input
+                class="campo-control"
+                id="email-empleado"
+                name="email"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                placeholder="usuario@bign.com"
+                required
+              >
+
+              <ion-note
+                color="danger"
+                data-error="email"
+              ></ion-note>
+
+            </div>
+
+
             <!-- CONTRASEÑA -->
 
             <div
@@ -501,30 +523,30 @@ export function render(container) {
             </div>
 
 
-            <!-- PERFIL -->
+            <!-- CONFIRMAR CONTRASEÑA -->
 
             <div
-              class="campo-formulario alta-empleado__campo-rol"
-              data-campo="rol"
+              class="campo-formulario"
+              data-campo="confirmarPassword"
             >
 
-              <label for="rol-empleado">
-                Perfil
+              <label for="confirmarPassword-empleado">
+                Confirmar contraseña
               </label>
 
-              <ion-select
+              <input
                 class="campo-control"
-                id="rol-empleado"
-                placeholder="Seleccioná un perfil"
-                interface="popover"
+                id="confirmarPassword-empleado"
+                name="confirmarPassword"
+                type="password"
+                autocomplete="new-password"
+                placeholder="••••••••••"
                 required
               >
-                ${opcionesRoles}
-              </ion-select>
 
               <ion-note
                 color="danger"
-                data-error="rol"
+                data-error="confirmarPassword"
               ></ion-note>
 
             </div>
@@ -618,11 +640,11 @@ export function render(container) {
      VOLVER
      ========================================================= */
 
-  container
-    .querySelector('.alta-empleado__volver')
-    .addEventListener('click', () => {
-      navegarA('/empleados');
-    });
+  const header = crearAppHeader({
+    titulo: 'Agregar un empleado',
+    onVolver: () => navegarA('/empleados'),
+  });
+  container.querySelector('[data-header]').append(header);
 
 
   /* =========================================================
@@ -646,6 +668,7 @@ export function render(container) {
       'cuil',
       'email',
       'password',
+      'confirmarPassword',
       'rol',
     ].forEach((campo) => {
       mostrarError(

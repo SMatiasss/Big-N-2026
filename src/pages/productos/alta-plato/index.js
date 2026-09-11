@@ -4,6 +4,7 @@ import '../alta-producto.css';
 import { crearSelectorFotosProducto } from '../../../components/selector-fotos-producto/selector-fotos-producto.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { SECTORES, TIPOS_PRODUCTO } from '../../../config/constantes.js';
 import { crearPlatoCompleto } from '../../../services/productos.service.js';
 import { navegarA } from '../../../router.js';
@@ -88,11 +89,8 @@ export function render(container) {
   container.innerHTML = `
     <ion-page class="alta-producto alta-plato">
       <ion-content>
+        <div data-header></div>
         <main class="alta-producto__contenido">
-          <header class="alta-producto__introduccion">
-            <button class="alta-producto__volver" type="button" aria-label="Volver">‹</button>
-            <h1>Agregar un plato</h1>
-          </header>
 
           <form class="alta-producto__formulario" novalidate>
             <div class="alta-producto__fotos"></div>
@@ -176,9 +174,11 @@ export function render(container) {
   let enviando = false;
   let validacionMostrada = false;
 
-  container.querySelector('.alta-producto__volver').addEventListener('click', () => {
-    navegarA('/productos');
+  const header = crearAppHeader({
+    titulo: 'Agregar un plato',
+    onVolver: () => navegarA('/productos'),
   });
+  container.querySelector('[data-header]').append(header);
 
   // La página recibe archivos mediante onCambio, sin conocer si provienen de
   // un input local o de Camera/Gallery.

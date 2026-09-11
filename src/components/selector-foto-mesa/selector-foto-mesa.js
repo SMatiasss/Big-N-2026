@@ -1,6 +1,7 @@
 // Selector visual de foto de la mesa adaptado al diseño de Alta Mesa:
 // contenedor rectangular con borde punteado, ícono de cámara y texto "Tomar o subir foto".
 import './selector-foto-mesa.css';
+import { ICONO_CAMARA_SVG } from '../cuadro-foto/cuadro-foto.js';
 import { obtenerErrorArchivoImagen } from '../../utils/validadores.js';
 import {
   obtenerImagenNativa,
@@ -49,7 +50,7 @@ export function crearSelectorFotoMesa({
 
   elemento.innerHTML = `
     <article class="selector-foto-mesa__posicion">
-      <button class="selector-foto-mesa__contenido" type="button" aria-label="Tomar o subir foto de la mesa"></button>
+      <button class="selector-foto-mesa__contenido cuadro-foto" type="button" aria-label="Tomar o subir foto de la mesa"></button>
       <div class="selector-foto-mesa__acciones" hidden></div>
     </article>
     <ion-note class="selector-foto-mesa__error" color="danger" aria-live="polite"></ion-note>
@@ -71,17 +72,14 @@ export function crearSelectorFotoMesa({
     if (urlPreview) {
       contenido.innerHTML = `
         <div class="selector-foto-mesa__preview-wrap">
-          <img src="${urlPreview}" alt="Vista previa de la mesa">
+          <img class="cuadro-foto__img" src="${urlPreview}" alt="Vista previa de la mesa">
           <span class="selector-foto-mesa__cambiar-badge">Cambiar foto</span>
         </div>
       `;
     } else {
       contenido.innerHTML = `
         <div class="selector-foto-mesa__placeholder">
-          <svg class="selector-foto-mesa__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-            <circle cx="12" cy="13" r="4"></circle>
-          </svg>
+          <span class="cuadro-foto__icono">${ICONO_CAMARA_SVG}</span>
           <span class="selector-foto-mesa__texto">Tomar o subir foto</span>
         </div>
       `;

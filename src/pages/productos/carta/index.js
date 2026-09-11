@@ -5,6 +5,7 @@ import { crearCarruselImagenes } from '../../../components/carrusel-imagenes/car
 import { ordenarFotosProducto } from '../../../utils/hu11.js';
 import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { navegarA } from '../../../router.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 
 import './nuevos-estilos.css';
 import { CarritoService } from '../../../services/carrito.service.js';
@@ -15,9 +16,8 @@ export async function render(container) {
   const operativa = location.hash.replace('#', '') === '/mesa/carta';
   container.innerHTML = `
     <ion-content class="hu11">
+      <div data-header></div>
       <main class="hu11__main-espaciado">
-        <button type="button" data-volver>Volver</button>
-        <h1>Carta</h1>
         <p data-mesa></p>
         <div data-acciones class="hu11__acciones-contenedor"></div>
         <p role="status"></p>
@@ -29,7 +29,11 @@ export async function render(container) {
   const aviso = raiz.querySelector('[role="status"]');
   const lista = raiz.querySelector('.hu11__productos');
   const acciones = raiz.querySelector('[data-acciones]');
-  raiz.querySelector('[data-volver]').onclick = () => navegarA(operativa ? '/lista-espera' : '/home');
+  const header = crearAppHeader({
+    titulo: 'Carta',
+    onVolver: () => navegarA(operativa ? '/lista-espera' : '/home'),
+  });
+  raiz.querySelector('[data-header]').append(header);
   
   let carritoAbierto = false;
   const footerCarrito = document.createElement('div');

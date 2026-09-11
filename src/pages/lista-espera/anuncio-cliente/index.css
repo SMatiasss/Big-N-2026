@@ -38,57 +38,6 @@
 
 
 /* =========================================================
-   MARCA
-
-   Esta pantalla es del cliente y no tiene navegación hacia atrás (viene de
-   escanear el QR de la puerta), así que el encabezado lo da la marca.
-   ========================================================= */
-
-.lista-espera-cliente__marca {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  margin: 0 0 24px;
-}
-
-.lista-espera-cliente__logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  box-sizing: border-box;
-
-  width: 64px;
-  height: 64px;
-
-  margin: 0 0 10px;
-  padding: 10px;
-
-  /* El SVG del logo está dibujado en el mismo verde del fondo. */
-  background: var(--texto-claro);
-  border-radius: 50%;
-}
-
-.lista-espera-cliente__logo img {
-  width: 100%;
-  height: 100%;
-}
-
-.lista-espera-cliente__marca h1 {
-  margin: 0;
-
-  color: var(--texto-claro);
-
-  font-family: var(--fuente-outfit);
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 28px;
-  letter-spacing: -0.02em;
-}
-
-
-/* =========================================================
    AVISO DE ESTADO
    ========================================================= */
 

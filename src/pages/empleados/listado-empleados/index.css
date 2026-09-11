@@ -25,97 +25,6 @@
 
 
 /* =========================================================
-   ENCABEZADO FIJO (NAVBAR)
-   ========================================================= */
-
-.listado-empleados__header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  width: 100%;
-  background: rgba(96, 108, 56, 0.95);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.listado-empleados__header-contenido {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.listado-empleados__volver {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 38px;
-  height: 38px;
-
-  background: var(--fondo-card);
-  border: none;
-  border-radius: 50%;
-
-  color: var(--texto-claro);
-  font-size: 20px;
-  font-family: var(--fuente-outfit);
-  font-weight: 700;
-  line-height: 1;
-
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform 0.1s ease;
-}
-
-.listado-empleados__volver:active {
-  transform: scale(0.95);
-}
-
-.listado-empleados__titulo {
-  margin: 0;
-  color: var(--texto-claro);
-  font-family: var(--fuente-outfit);
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  text-align: center;
-  flex: 1;
-}
-
-.listado-empleados__boton-alta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 38px;
-  height: 38px;
-
-  background: var(--acento);
-  border: none;
-  border-radius: 50%;
-
-  color: #fff;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform 0.1s ease;
-}
-
-.listado-empleados__boton-alta:active {
-  transform: scale(0.95);
-}
-
-
-/* =========================================================
    CONTENIDO PRINCIPAL Y LISTA
    ========================================================= */
 
@@ -124,17 +33,21 @@
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  padding: 20px 16px max(24px, env(safe-area-inset-bottom));
+  padding: 20px 16px max(16px, env(safe-area-inset-bottom));
 }
 
+/* Cuántos empleados entran completos en pantalla (ver lista-ajustada.css). */
 .listado-empleados__lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  scroll-snap-type: y proximity;
+  --la-items: 5;
+  --la-gap: 16px;
+}
+
+@media (max-height: 720px) {
+  .listado-empleados__lista { --la-items: 4; }
+}
+
+@media (min-height: 950px) {
+  .listado-empleados__lista { --la-items: 6; }
 }
 
 
@@ -142,19 +55,21 @@
    CARD DE EMPLEADO
    ========================================================= */
 
+/* El alto de la tarjeta lo calcula lista-ajustada.js y lo publica en
+   --la-alto; todo lo de adentro se mide contra ese valor, así acompaña
+   cualquier alto (incluido el que deja el header grande). */
+
 .empleado-card {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: clamp(12px, calc(var(--la-alto, 118px) * 0.13), 20px);
 
   box-sizing: border-box;
-  min-height: 176px;
-  padding: 28px 22px;
+  padding: clamp(10px, calc(var(--la-alto, 118px) * 0.12), 26px)
+           clamp(14px, calc(var(--la-alto, 118px) * 0.14), 22px);
 
   background: var(--fondo-card);
   border-radius: 20px;
-  scroll-snap-align: start;
-  scroll-margin-top: 20px;
 }
 
 .empleado-card__avatar {
@@ -163,15 +78,15 @@
   justify-content: center;
   flex-shrink: 0;
 
-  width: 92px;
-  height: 92px;
+  width: clamp(44px, calc(var(--la-alto, 118px) * 0.56), 92px);
+  height: clamp(44px, calc(var(--la-alto, 118px) * 0.56), 92px);
 
   background: var(--acento);
   border-radius: 50%;
 
   color: #fff;
   font-family: var(--fuente-outfit);
-  font-size: 28px;
+  font-size: clamp(16px, calc(var(--la-alto, 118px) * 0.2), 28px);
   font-weight: 700;
   text-transform: uppercase;
   overflow: hidden;
@@ -190,10 +105,10 @@
 }
 
 .empleado-card__nombre {
-  margin: 0 0 7px;
+  margin: 0 0 clamp(3px, calc(var(--la-alto, 118px) * 0.05), 7px);
   color: var(--texto-claro);
   font-family: var(--fuente-geist);
-  font-size: 22px;
+  font-size: clamp(15px, calc(var(--la-alto, 118px) * 0.17), 22px);
   line-height: 1.18;
   font-weight: 600;
   white-space: normal;
@@ -207,7 +122,7 @@
   margin: 0;
   color: var(--acento);
   font-family: var(--fuente-geist);
-  font-size: 17px;
+  font-size: clamp(12px, calc(var(--la-alto, 118px) * 0.13), 17px);
   line-height: 1.3;
   font-weight: 400;
   text-transform: capitalize;
@@ -221,7 +136,7 @@
 
   color: var(--texto-suave);
   font-family: var(--fuente-geist);
-  font-size: 15px;
+  font-size: clamp(11px, calc(var(--la-alto, 118px) * 0.12), 15px);
 }
 
 .empleado-card__estado--activo {
@@ -241,18 +156,16 @@
    ESTADOS: CARGANDO / ERROR / VACÍO
    ========================================================= */
 
-.listado-empleados__mensaje {
-  margin: 40px 0 0;
+/* Mensaje de carga/vacío: ocupa un lugar de la lista, centrado. */
+
+.listado-empleados__lista .listado-empleados__mensaje {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
   text-align: center;
   color: var(--texto-suave);
   font-family: var(--fuente-geist);
   font-size: 15px;
-}
-
-@media (max-width: 390px) {
-  .empleado-card { min-height: 160px; gap: 15px; padding: 24px 16px; }
-  .empleado-card__avatar { width: 82px; height: 82px; font-size: 25px; }
-  .empleado-card__nombre { font-size: 20px; }
-  .empleado-card__rol { font-size: 16px; }
-  .empleado-card__estado { font-size: 13px; }
 }

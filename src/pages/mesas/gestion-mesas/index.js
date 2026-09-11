@@ -1,10 +1,13 @@
 // Gestión de mesas adaptada al diseño temático de la aplicación:
 // encabezado con botón volver y alta (+), leyenda de estados y cuadrícula de 3 columnas.
 import './index.css';
+import { ajustarGrilla } from '../../../components/lista-ajustada/lista-ajustada.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { puedeAltaMesa } from '../../../config/permisos.js';
 import { obtenerPermisos } from '../../../services/auth.service.js';
 import { listarMesas } from '../../../services/mesas.service.js';
 import { navegarA } from '../../../router.js';
+import { reintentarUnaVez } from '../../../utils/reintentar.js';
 
 function tarjetaMesa(mesa) {
   const estado = mesa.estado ?? 'libre';
@@ -22,13 +25,9 @@ function tarjetaMesa(mesa) {
 export function render(container) {
   container.innerHTML = `
     <ion-page class="gestion-mesas">
-      <ion-content>
-        <main class="gestion-mesas__contenido">
-          <header class="gestion-mesas__header">
-            <button class="gestion-mesas__volver" type="button" aria-label="Volver">‹</button>
-            <h1 class="gestion-mesas__titulo">Mesas</h1>
-            <button class="gestion-mesas__boton-alta" type="button" aria-label="Agregar mesa" hidden>+</button>
-          </header>
+      <ion-content class="pantalla-lista" scroll-y="false">
+        <div data-header></div>
+        <main class="gestion-mesas__contenido pantalla-lista__cuerpo">
 
           <!-- LEYENDA -->
           <div class="gestion-mesas__leyenda" aria-label="Referencias de estado">
@@ -53,7 +52,7 @@ export function render(container) {
           </div>
 
           <!-- GRID DE MESAS -->
-          <div class="gestion-mesas__grid" hidden></div>
+          <div class="gestion-mesas__grid grilla-ajustada" hidden></div>
 
           <!-- MENSAJE VACÍO O ERROR -->
           <p class="gestion-mesas__mensaje" role="status" aria-live="polite" hidden></p>
@@ -66,19 +65,26 @@ export function render(container) {
   const grid = container.querySelector('.gestion-mesas__grid');
   const mensaje = container.querySelector('.gestion-mesas__mensaje');
 
-  // Volver
-  container.querySelector('.gestion-mesas__volver').addEventListener('click', () => {
-    navegarA('/home');
-  });
+  // Calcula el lado de las mesas para que entre un número entero de filas
+  // en el alto disponible, manteniéndolas cuadradas.
+  ajustarGrilla(grid, { columnas: 3 });
 
-  // Agregar mesa (+): todo el staff puede ver el listado, pero el alta es de
-  // dueño/supervisor y metre (policy mesas_admin, ver config/permisos.js).
-  const botonAlta = container.querySelector('.gestion-mesas__boton-alta');
-  botonAlta.addEventListener('click', () => {
-    navegarA('/mesas/alta');
+  /* — Header — */
+  const header = crearAppHeader({
+    titulo: 'Mesas',
+    etiquetaVolver: 'Volver al inicio',
+    onVolver: () => navegarA('/home'),
+    accion: {
+      texto: '+',
+      etiqueta: 'Agregar mesa',
+      onClick: () => navegarA('/mesas/alta'),
+    },
   });
+  container.querySelector('[data-header]').append(header);
+  const botonAlta = header.querySelector('.app-header__accion');
+  botonAlta.hidden = true;
 
-  obtenerPermisos()
+  reintentarUnaVez(obtenerPermisos)
     .then((permisos) => { botonAlta.hidden = !puedeAltaMesa(permisos); })
     .catch((error) => console.error('No se pudieron cargar los permisos de mesas.', error));
 

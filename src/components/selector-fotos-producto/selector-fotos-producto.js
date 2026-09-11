@@ -1,5 +1,6 @@
 // Los estilos pertenecen al componente y se cargan cuando éste se importa.
 import './selector-fotos-producto.css';
+import { ICONO_CAMARA_SVG } from '../cuadro-foto/cuadro-foto.js';
 import { obtenerErrorArchivoImagen } from '../../utils/validadores.js';
 import {
   obtenerImagenNativa,
@@ -83,12 +84,9 @@ export function crearSelectorFotosProducto({
     const numeroVisible = indice + 1;
 
     if (urlsPreview[indice]) {
-      contenido.innerHTML = `<img src="${urlsPreview[indice]}" alt="Vista previa de la foto ${numeroVisible} ${descripcionProducto}">`;
+      contenido.innerHTML = `<img class="cuadro-foto__img" src="${urlsPreview[indice]}" alt="Vista previa de la foto ${numeroVisible} ${descripcionProducto}">`;
     } else {
-      contenido.innerHTML = `
-        <span class="selector-fotos-producto__icono" aria-hidden="true">＋</span>
-        <span>Foto ${numeroVisible}</span>
-      `;
+      contenido.innerHTML = `<span class="cuadro-foto__icono">${ICONO_CAMARA_SVG}</span>`;
     }
 
     botones.forEach((boton) => {
@@ -165,7 +163,7 @@ export function crearSelectorFotosProducto({
       : '<ion-button type="button" fill="outline" size="small" data-origen="local">Seleccionar archivo</ion-button>';
 
     posicion.innerHTML = `
-      <button class="selector-fotos-producto__contenido" type="button" aria-label="Seleccionar foto ${indice + 1}"></button>
+      <button class="selector-fotos-producto__contenido cuadro-foto" type="button" aria-label="Seleccionar foto ${indice + 1}"></button>
       <div class="selector-fotos-producto__acciones">${acciones}</div>
     `;
 

@@ -1,6 +1,7 @@
 // Alta de mesa adaptada al diseño temático de la aplicación:
 // diseño idéntico al mockup (fondo #606c38, campos #4a572c, etiquetas #dda15e, segmented controls y toasts).
 import './index.css';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearSelectorFotoMesa } from '../../../components/selector-foto-mesa/selector-foto-mesa.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
@@ -78,11 +79,8 @@ export function render(container) {
   container.innerHTML = `
     <ion-page class="alta-mesa">
       <ion-content>
+        <div data-header></div>
         <main class="alta-mesa__contenido">
-          <header class="alta-mesa__header">
-            <button class="alta-mesa__volver" type="button" aria-label="Volver">‹</button>
-            <h1 class="alta-mesa__titulo">Agregar una mesa</h1>
-          </header>
 
           <form class="alta-mesa__formulario" novalidate>
             <!-- NÚMERO Y ASIENTOS -->
@@ -201,10 +199,13 @@ export function render(container) {
   const botonSubmit = formulario.querySelector('.alta-mesa__submit');
   const textoSubmit = botonSubmit.querySelector('span');
 
-  // Volver
-  container.querySelector('.alta-mesa__volver').addEventListener('click', () => {
-    navegarA('/mesas');
+  // Header
+  const header = crearAppHeader({
+    titulo: 'Agregar una mesa',
+    etiquetaVolver: 'Volver a mesas',
+    onVolver: () => navegarA('/mesas'),
   });
+  container.querySelector('[data-header]').append(header);
 
   // Selector de segmentos (TIPO DE MESA)
   const inputTipo = formulario.querySelector('#tipo-mesa');

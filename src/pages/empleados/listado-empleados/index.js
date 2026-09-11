@@ -1,10 +1,12 @@
 import './index.css';
+import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { navegarA } from '../../../router.js';
 import { listarEmpleados } from '../../../services/perfiles.service.js';
 import { obtenerPermisos } from '../../../services/auth.service.js';
 import { ROLES, ESTADOS_PERFIL } from '../../../config/constantes.js';
 import { puedeAltaEmpleado } from '../../../config/permisos.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
+import { reintentarUnaVez } from '../../../utils/reintentar.js';
 
 
 /* =========================================================
@@ -29,12 +31,12 @@ export function render(container) {
   container.innerHTML = `
     <ion-page class="listado-empleados">
 
-      <ion-content>
+      <ion-content class="pantalla-lista" scroll-y="false">
 
         <div data-header></div>
 
-        <main class="listado-empleados__contenido">
-          <ul class="listado-empleados__lista" aria-live="polite">
+        <main class="listado-empleados__contenido pantalla-lista__cuerpo">
+          <ul class="listado-empleados__lista lista-ajustada" aria-live="polite">
             <li class="listado-empleados__mensaje">Cargando empleados…</li>
           </ul>
         </main>
@@ -50,6 +52,10 @@ export function render(container) {
      ========================================================= */
 
   const lista = container.querySelector('.listado-empleados__lista');
+
+  // Ajusta el alto de las tarjetas al alto disponible; se recalcula solo
+  // cuando llegan los empleados o cambia el tamaño de la pantalla.
+  ajustarLista(lista);
 
 
   /* =========================================================
@@ -68,7 +74,7 @@ export function render(container) {
   const botonAlta = header.querySelector('.app-header__accion');
   botonAlta.hidden = true;
 
-  obtenerPermisos()
+  reintentarUnaVez(obtenerPermisos)
     .then((permisos) => { botonAlta.hidden = !puedeAltaEmpleado(permisos); })
     .catch((error) => console.error('No se pudieron cargar los permisos de empleados.', error));
 

@@ -1,0 +1,114 @@
+/* =========================================================
+   LISTA-AJUSTADA — listados que nunca cortan un elemento.
+
+   Idea: el header y los filtros quedan FIJOS arriba, así la lista
+   tiene un alto conocido. lista-ajustada.js mide ese alto y calcula
+   el tamaño estándar de cada elemento para que entren N completos;
+   como además la lista snapea al inicio de cada elemento, al soltar
+   el dedo nunca queda uno cortado ni arriba ni abajo.
+
+   Ese tamaño se aplica SÓLO cuando hay más elementos de los que
+   entran: si hay pocos, cada uno conserva su alto natural en vez de
+   estirarse para llenar la pantalla.
+
+   Cada pantalla elige su propio N con --la-items (y lo baja por
+   media query en pantallas bajas), y su separación con --la-gap.
+   ========================================================= */
+
+
+/* ── Cáscara de pantalla ──────────────────────────────────
+   El scroll deja de hacerlo ion-content: su contenedor pasa a ser
+   una columna flex (header arriba, cuerpo ocupando el resto). */
+
+ion-content.pantalla-lista::part(scroll) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* El header nunca se comprime: mantiene su alto y el resto es para el cuerpo. */
+
+ion-content.pantalla-lista [data-header] {
+  flex-shrink: 0;
+}
+
+/* El <main> de la pantalla: filtros/estados fijos + lista elástica. */
+
+.pantalla-lista__cuerpo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+
+/* ── La lista ─────────────────────────────────────────────── */
+
+.lista-ajustada {
+  --la-items: 5;
+  --la-gap: 14px;
+
+  /* Ocupa todo el alto libre que dejan header y filtros. min-height:0
+     es lo que permite que un hijo flex scrollee en vez de estirarse. */
+  flex: 1;
+  min-height: 0;
+
+  display: block;
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+}
+
+/* --la-alto lo calcula lista-ajustada.js. Mientras no esté definido (pocos
+   elementos), cada uno mide lo que necesita su contenido. */
+
+.lista-ajustada > * {
+  box-sizing: border-box;
+
+  height: var(--la-alto, auto);
+  margin: 0 0 var(--la-gap);
+
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+.lista-ajustada > *:last-child {
+  margin-bottom: 0;
+}
+
+
+/* ── Variante en grilla de celdas cuadradas (mesas) ───────── */
+
+.grilla-ajustada {
+  --la-gap: 12px;
+
+  flex: 1;
+  min-height: 0;
+
+  display: grid;
+  /* Columnas y lado los calcula lista-ajustada.js (ajustarGrilla). */
+  grid-template-columns: repeat(var(--la-columnas, 3), var(--la-lado, 1fr));
+  grid-auto-rows: var(--la-lado, auto);
+  justify-content: center;
+  gap: var(--la-gap);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+}
+
+.grilla-ajustada > * {
+  box-sizing: border-box;
+  overflow: hidden;
+  scroll-snap-align: start;
+}

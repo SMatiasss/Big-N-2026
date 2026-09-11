@@ -3,6 +3,7 @@
 // desde "Ingresar al local" para un cliente registrado ya logueado.
 import './index.css';
 import { navegarA } from '../../../router.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { avisarNuevaEspera } from '../../../services/notificaciones.service.js';
 import { ESTADOS_ESPERA } from '../../../config/constantes.js';
@@ -19,13 +20,8 @@ export function render(container) {
   container.innerHTML = `
     <ion-page class="lista-espera-cliente">
       <ion-content>
+        <div data-header></div>
         <main class="lista-espera-cliente__contenido">
-          <header class="lista-espera-cliente__marca">
-            <div class="lista-espera-cliente__logo">
-              <img src="/assets/logo/Icono Big N.svg" alt="" aria-hidden="true">
-            </div>
-            <h1>Lista de espera</h1>
-          </header>
 
           <section class="lista-espera-cliente__aviso" role="status" aria-live="polite" hidden>
             <ion-spinner class="lista-espera-cliente__aviso-spinner" name="crescent" aria-hidden="true"></ion-spinner>
@@ -54,6 +50,16 @@ export function render(container) {
       </ion-content>
     </ion-page>
   `;
+
+  // Esta pantalla es del cliente y no tiene navegación hacia atrás lógica
+  // (se llega acá tras escanear el QR de la puerta), así que se mantiene el
+  // header estándar sólo por el título, ocultando el control de volver.
+  const header = crearAppHeader({
+    titulo: 'Lista de espera',
+    onVolver: () => navegarA('/home'),
+  });
+  container.querySelector('[data-header]').append(header);
+  header.querySelector('.app-header__volver').hidden = true;
 
   const aviso = container.querySelector('.lista-espera-cliente__aviso');
   const avisoTexto = container.querySelector('.lista-espera-cliente__aviso-texto');

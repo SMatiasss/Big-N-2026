@@ -3,11 +3,15 @@
 // que aprobación de clientes: se cargan todos los productos una sola vez y el
 // cambio de solapa sólo vuelve a dibujar, sin pedir datos de nuevo.
 import './index.css';
+import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { TIPOS_PRODUCTO } from '../../../config/constantes.js';
 import { puedeAltaBebida, puedeAltaPlato } from '../../../config/permisos.js';
 import { obtenerPermisos } from '../../../services/auth.service.js';
 import { listarCartaConFotos } from '../../../services/productos.service.js';
 import { navegarA } from '../../../router.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
+import { crearPestanas } from '../../../components/pestanas-filtro/pestanas-filtro.js';
+import { reintentarUnaVez } from '../../../utils/reintentar.js';
 
 const PESTANAS = {
   [TIPOS_PRODUCTO.PLATO]: {
@@ -82,25 +86,18 @@ function tarjetaProducto(producto) {
 export function render(container) {
   container.innerHTML = `
     <ion-page class="gestion-productos">
-      <ion-content>
-        <main class="gestion-productos__contenido">
-          <header class="gestion-productos__header">
-            <button class="gestion-productos__volver" type="button" aria-label="Volver">‹</button>
-            <h1 class="gestion-productos__titulo">Productos</h1>
-            <button class="gestion-productos__boton-alta" type="button" aria-label="Agregar producto" hidden>+</button>
-          </header>
+      <ion-content class="pantalla-lista" scroll-y="false">
+        <div data-header></div>
+        <main class="gestion-productos__contenido pantalla-lista__cuerpo">
 
-          <nav class="gestion-productos__pestanas" aria-label="Filtrar productos">
-            <button type="button" data-tipo="${TIPOS_PRODUCTO.PLATO}" aria-pressed="true">Platos</button>
-            <button type="button" data-tipo="${TIPOS_PRODUCTO.BEBIDA}" aria-pressed="false">Bebidas</button>
-          </nav>
+          <div data-pestanas></div>
 
           <div class="gestion-productos__estado-carga">
             <ion-spinner name="crescent" aria-hidden="true"></ion-spinner>
             <span>Cargando productos...</span>
           </div>
 
-          <section class="gestion-productos__lista" aria-label="Platos" hidden></section>
+          <section class="gestion-productos__lista lista-ajustada" aria-label="Platos" hidden></section>
 
           <p class="gestion-productos__mensaje" role="status" aria-live="polite" hidden></p>
         </main>
@@ -111,8 +108,8 @@ export function render(container) {
   const estadoCarga = container.querySelector('.gestion-productos__estado-carga');
   const lista = container.querySelector('.gestion-productos__lista');
   const mensaje = container.querySelector('.gestion-productos__mensaje');
-  const botonAlta = container.querySelector('.gestion-productos__boton-alta');
-  const pestanas = [...container.querySelectorAll('[data-tipo]')];
+
+  ajustarLista(lista);
 
   let productos = [];
   let tipoSeleccionado = TIPOS_PRODUCTO.PLATO;
@@ -121,21 +118,30 @@ export function render(container) {
   let puedeCrearPlato = false;
   let puedeCrearBebida = false;
 
-  container.querySelector('.gestion-productos__volver').addEventListener('click', () => {
-    navegarA('/home');
+  const header = crearAppHeader({
+    titulo: 'Productos',
+    etiquetaVolver: 'Volver al inicio',
+    onVolver: () => navegarA('/home'),
+    accion: {
+      texto: '+',
+      etiqueta: 'Agregar producto',
+      onClick: () => navegarA(PESTANAS[tipoSeleccionado].ruta),
+    },
   });
+  container.querySelector('[data-header]').append(header);
+  const botonAlta = header.querySelector('.app-header__accion');
+  botonAlta.hidden = true;
 
-  botonAlta.addEventListener('click', () => {
-    navegarA(PESTANAS[tipoSeleccionado].ruta);
-  });
-
-  pestanas.forEach((boton) => {
-    boton.addEventListener('click', () => {
-      tipoSeleccionado = boton.dataset.tipo;
-      pestanas.forEach((item) => item.setAttribute('aria-pressed', String(item === boton)));
+  const pestanas = crearPestanas({
+    etiqueta: 'Filtrar productos',
+    opciones: Object.entries(PESTANAS).map(([valor, { etiqueta }]) => ({ valor, texto: etiqueta })),
+    seleccionInicial: tipoSeleccionado,
+    onCambio: (valor) => {
+      tipoSeleccionado = valor;
       dibujar();
-    });
+    },
   });
+  container.querySelector('[data-pestanas]').append(pestanas.elemento);
 
   function actualizarBotonAlta() {
     const puede = tipoSeleccionado === TIPOS_PRODUCTO.PLATO ? puedeCrearPlato : puedeCrearBebida;
@@ -168,7 +174,7 @@ export function render(container) {
 
   // Los permisos no bloquean el listado: si la consulta falla, se muestra la
   // carta igual y sólo queda oculto el botón de alta.
-  obtenerPermisos()
+  reintentarUnaVez(obtenerPermisos)
     .then((permisos) => {
       puedeCrearPlato = puedeAltaPlato(permisos);
       puedeCrearBebida = puedeAltaBebida(permisos);

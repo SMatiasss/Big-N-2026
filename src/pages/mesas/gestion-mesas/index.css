@@ -28,82 +28,19 @@
   box-sizing: border-box;
   width: 100%;
   max-width: 480px;
-  min-height: 100%;
   margin: 0 auto;
-  padding: 20px 16px 40px;
+  padding: 16px 16px max(16px, env(safe-area-inset-bottom));
 }
 
-/* ENCABEZADO */
-.gestion-mesas__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 0 16px;
-}
 
-.gestion-mesas__volver {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  background: var(--fondo-card);
-  border: none;
-  border-radius: 50%;
-  color: var(--texto-claro);
-  font-family: var(--fuente-outfit);
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: opacity 0.2s;
-}
-
-.gestion-mesas__volver:active {
-  opacity: 0.7;
-}
-
-.gestion-mesas__titulo {
-  margin: 0;
-  color: var(--texto-claro);
-  font-family: var(--fuente-outfit);
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  text-align: center;
-  flex: 1;
-}
-
-.gestion-mesas__boton-alta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  background: var(--acento);
-  border: none;
-  border-radius: 50%;
-  color: #fff;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform 0.1s, opacity 0.2s;
-}
-
-.gestion-mesas__boton-alta:active {
-  transform: scale(0.92);
-}
-
-/* LEYENDA */
+/* LEYENDA (fija arriba, fuera del área que scrollea) */
 .gestion-mesas__leyenda {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 20px;
-  margin: 0 0 24px;
+  margin: 0 0 16px;
+  flex-shrink: 0;
 }
 
 .leyenda-item {
@@ -135,16 +72,14 @@
   background: var(--color-reservada);
 }
 
-/* CUADRÍCULA DE MESAS (3 COLUMNAS) */
+/* CUADRÍCULA DE MESAS — el lado cuadrado lo calcula ajustarGrilla()
+   (ver components/lista-ajustada) para que entren filas enteras. */
 .gestion-mesas__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  --la-gap: 12px;
 }
 
 .mesa-card {
   box-sizing: border-box;
-  aspect-ratio: 1 / 1.04;
   background: var(--fondo-card);
   border-radius: 18px;
   border: 2px solid transparent;
@@ -152,7 +87,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: clamp(4px, 1vh, 8px);
   padding: 8px 4px;
   user-select: none;
   transition: transform 0.1s;
@@ -177,7 +112,7 @@
 .mesa-card__numero {
   color: var(--texto-claro);
   font-family: var(--fuente-outfit);
-  font-size: 32px;
+  font-size: clamp(22px, 4vh, 34px);
   font-weight: 700;
   line-height: 1;
 }

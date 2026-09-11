@@ -1,3 +1,4 @@
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { obtenerMiEstadiaActiva } from '../../../services/estadias.service.js';
 import { validarQrMesaAsignada } from '../../../services/mesa-cliente.service.js';
@@ -5,10 +6,15 @@ import { navegarA } from '../../../router.js';
 import '../../productos/carta/index.css';
 
 export async function render(container) {
-  container.innerHTML = '<ion-content class="hu11"><main><button type="button" data-volver>Volver</button><h1>Tu mesa</h1><p role="status"></p><div data-lector></div></main></ion-content>';
+  container.innerHTML = '<ion-content class="hu11"><div data-header></div><main><p role="status"></p><div data-lector></div></main></ion-content>';
   const raiz = container.firstElementChild;
   const estado = raiz.querySelector('[role="status"]');
-  raiz.querySelector('[data-volver]').onclick = () => navegarA('/lista-espera');
+  const header = crearAppHeader({
+    titulo: 'Tu mesa',
+    etiquetaVolver: 'Volver a la lista de espera',
+    onVolver: () => navegarA('/lista-espera'),
+  });
+  raiz.querySelector('[data-header]').append(header);
   estado.textContent = 'Consultando la mesa asignada…';
   let ocupado = false;
   try {

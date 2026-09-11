@@ -78,12 +78,3 @@
 .btn-rechazar {
   background: #d62828;
 }
-
-.btn-volver {
-  background: transparent;
-  color: #dda15e;
-  border: 1px solid #dda15e;
-  padding: 8px 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}

@@ -56,6 +56,7 @@ Deno.serve(async (req) => {
       console.error('FCM rechazó el envío.', envio.status, detalle?.error?.status || 'sin_detalle');
     }
   }
+  console.log('Push procesado', { destinatarios: ids.length, tokens: tokens.length, enviados });
   etapa = 'guardar_notificacion';
   const filas = ids.map((destinatario_id: string) => ({ destinatario_id, titulo: 'Nuevo cliente', cuerpo: 'Hay un nuevo cliente pendiente de aprobación', tipo: 'cliente_pendiente', datos: { cliente_id: usuario.id, ruta: '/clientes/aprobacion' } }));
   const guardado = await fetch(`${url}/rest/v1/notificaciones`, { method: 'POST', headers: apiHeaders, body: JSON.stringify(filas) });

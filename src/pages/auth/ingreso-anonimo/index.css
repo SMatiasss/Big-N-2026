@@ -47,63 +47,6 @@
 
 
 /* =========================================================
-   ENCABEZADO
-   ========================================================= */
-
-.ingreso-anonimo__encabezado {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  margin: 0 0 18px;
-}
-
-.ingreso-anonimo__volver {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  box-sizing: border-box;
-
-  width: 40px;
-  height: 40px;
-
-  margin: 0;
-  padding: 0 0 5px;
-
-  background: var(--fondo-card);
-  border: 0;
-  border-radius: 50%;
-
-  color: var(--texto-claro);
-
-  font-family: var(--fuente-outfit);
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1;
-
-  cursor: pointer;
-}
-
-.ingreso-anonimo__volver:active {
-  transform: scale(0.95);
-}
-
-.ingreso-anonimo__encabezado h1 {
-  margin: 0;
-
-  color: var(--texto-claro);
-
-  font-family: var(--fuente-outfit);
-  font-size: clamp(22px, 6.6vw, 28px);
-  font-weight: 700;
-  line-height: 1.16;
-  letter-spacing: -0.02em;
-}
-
-
-/* =========================================================
    INDICADOR DE PASOS
    ========================================================= */
 
@@ -250,9 +193,11 @@
   padding: 0 18px;
 }
 
-.ingreso-anonimo .selector-foto-mesa__icono {
+.ingreso-anonimo .cuadro-foto__icono {
   width: 46px;
+  max-width: none;
   height: 46px;
+  max-height: none;
 }
 
 .ingreso-anonimo .selector-foto-mesa__texto {

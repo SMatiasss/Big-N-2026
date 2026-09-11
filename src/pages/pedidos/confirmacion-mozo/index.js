@@ -2,13 +2,13 @@ import './index.css';
 import { listarPedidosPendientes, confirmarPedido, rechazarPedido } from '../../../services/pedidos.service.js';
 import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { navegarA } from '../../../router.js';
+import { crearAppHeader } from '../../../components/app-header/app-header.js';
 
 export async function render(container) {
   container.innerHTML = `
     <ion-content class="confirmacion-mozo">
+      <div data-header></div>
       <main class="confirmacion-mozo__main">
-        <button type="button" class="btn-volver" data-volver>Volver</button>
-        <h1>Confirmar Pedidos</h1>
         <p role="status"></p>
         <div class="confirmacion-mozo__lista" aria-live="polite"></div>
       </main>
@@ -18,8 +18,12 @@ export async function render(container) {
   const raiz = container.firstElementChild;
   const aviso = raiz.querySelector('[role="status"]');
   const lista = raiz.querySelector('.confirmacion-mozo__lista');
-  
-  raiz.querySelector('[data-volver]').onclick = () => navegarA('/home');
+
+  const header = crearAppHeader({
+    titulo: 'Confirmar pedidos',
+    onVolver: () => navegarA('/home'),
+  });
+  raiz.querySelector('[data-header]').append(header);
 
   const actualizacion = crearActualizacionHu11(raiz, async vigente => {
     let pedidos;

@@ -1,0 +1,155 @@
+/* =========================================================
+   MODAL-CONFIRMACION — mismo lenguaje visual que los toast
+   (tarjeta redondeada, borde de color, circulito en la esquina),
+   centrado en pantalla con botones de acción propios.
+   ========================================================= */
+
+.modal-confirmacion {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  padding: 20px;
+
+  background: rgb(40 54 24 / 55%);
+
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.modal-confirmacion--visible {
+  opacity: 1;
+}
+
+.modal-confirmacion__tarjeta {
+  position: relative;
+
+  width: 100%;
+  max-width: 360px;
+
+  box-sizing: border-box;
+  padding: 24px 22px 20px;
+
+  border: 2px solid;
+  border-radius: 18px;
+
+  font-family: var(--fuente-outfit, 'Outfit', sans-serif);
+
+  box-shadow: 0 8px 20px rgb(42 49 19 / 30%);
+
+  transform: scale(0.94);
+  transition: transform 0.2s ease-out;
+}
+
+.modal-confirmacion--visible .modal-confirmacion__tarjeta {
+  transform: scale(1);
+}
+
+/* Variante "éxito" (confirmaciones normales): mismos colores que toast-normal. */
+.modal-confirmacion__tarjeta--exito {
+  background: #fefae0;
+  border-color: #bc6c25;
+  color: #283618;
+}
+
+/* Variante "error" (confirmaciones destructivas, ej. rechazar): mismos colores que toast-error. */
+.modal-confirmacion__tarjeta--error {
+  background: #ac6653;
+  border-color: #fefae0;
+  color: #fefae0;
+}
+
+/* CÍRCULO — mismo color que el borde, igual que en los toast. */
+.modal-confirmacion__tarjeta::after {
+  content: '';
+
+  position: absolute;
+  top: 14px;
+  right: 16px;
+
+  width: 12px;
+  height: 12px;
+
+  border-radius: 50%;
+}
+
+.modal-confirmacion__tarjeta--exito::after {
+  background: #bc6c25;
+}
+
+.modal-confirmacion__tarjeta--error::after {
+  background: #fefae0;
+}
+
+.modal-confirmacion__titulo {
+  margin: 0 0 6px;
+  padding-right: 20px;
+
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 23px;
+}
+
+.modal-confirmacion__subtitulo {
+  margin: 0 0 12px;
+
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.modal-confirmacion__mensaje {
+  margin: 0;
+
+  font-family: var(--fuente-geist, 'Geist', sans-serif);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 19px;
+}
+
+.modal-confirmacion__botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 22px;
+
+  margin-top: 18px;
+}
+
+.modal-confirmacion__boton {
+  padding: 8px 2px;
+
+  background: transparent;
+  border: 0;
+
+  color: inherit;
+  opacity: 0.7;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+}
+
+.modal-confirmacion__boton:active {
+  opacity: 0.5;
+}
+
+.modal-confirmacion__boton--destacado {
+  opacity: 1;
+}
+
+.modal-confirmacion__tarjeta--exito .modal-confirmacion__boton--destacado {
+  color: #bc6c25;
+}
+
+.modal-confirmacion__tarjeta--error .modal-confirmacion__boton--destacado {
+  color: #fefae0;
+}

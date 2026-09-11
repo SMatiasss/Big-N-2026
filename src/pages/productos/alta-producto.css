@@ -57,63 +57,6 @@
 
 
 /* =========================================================
-   ENCABEZADO
-   ========================================================= */
-
-.alta-producto__introduccion {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  margin: 0 0 20px;
-}
-
-.alta-producto__volver {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  box-sizing: border-box;
-
-  width: 34px;
-  height: 34px;
-
-  margin: 0;
-  padding: 0 0 4px;
-
-  background: var(--fondo-campo);
-  border: 0;
-  border-radius: 50%;
-
-  color: var(--texto-claro);
-
-  font-family: var(--fuente-outfit);
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 1;
-
-  cursor: pointer;
-}
-
-.alta-producto__volver:active {
-  transform: scale(0.95);
-}
-
-.alta-producto__introduccion h1 {
-  margin: 0;
-
-  color: var(--texto-claro);
-
-  font-family: var(--fuente-outfit);
-  font-size: 21px;
-  font-weight: 700;
-  line-height: 25px;
-  letter-spacing: -0.02em;
-}
-
-
-/* =========================================================
    FOTOS
    ========================================================= */
 
@@ -140,83 +83,24 @@
 }
 
 
-/* TARJETA DE CADA FOTO */
+/* TARJETA DE CADA FOTO — mismo diseño de cuadro-foto que usa alta-empleado
+   (recuadro punteado + cámara centrada); ver components/cuadro-foto. */
 
 .alta-producto .selector-fotos-producto__contenido {
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  box-sizing: border-box;
-
-  width: 100%;
-  height: 100%;
+  --cf-icono: var(--texto-claro);
 
   padding: 0;
 
-  background: var(--fondo-campo);
-  border: 1px dashed var(--acento);
-  border-radius: 12px;
-
-  /* El componente escribe "＋ Foto N"; el ícono lo dibuja el CSS de abajo. */
-  color: transparent;
-  font-size: 0;
+  background: var(--fondo-campo) !important;
+  border: 2px dashed var(--acento) !important;
+  border-radius: 16px !important;
 
   cursor: pointer;
-  overflow: hidden;
-}
-
-.alta-producto .selector-fotos-producto__contenido img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-
-/* ÍCONO DE CÁMARA (cuerpo y lente), sólo mientras no hay foto cargada */
-
-.alta-producto .selector-fotos-producto__contenido::before {
-  content: '';
-
-  position: absolute;
-  top: calc(50% - 9px);
-  left: calc(50% - 12px);
-
-  box-sizing: border-box;
-
-  width: 24px;
-  height: 18px;
-
-  border: 2px solid var(--texto-claro);
-  border-radius: 5px;
-}
-
-.alta-producto .selector-fotos-producto__contenido::after {
-  content: '';
-
-  position: absolute;
-  top: calc(50% - 4px);
-  left: calc(50% - 4px);
-
-  box-sizing: border-box;
-
-  width: 8px;
-  height: 8px;
-
-  border: 2px solid var(--texto-claro);
-  border-radius: 50%;
 }
 
 .alta-producto .selector-fotos-producto__contenido:has(img) {
   border-style: solid;
   border-color: var(--borde);
-}
-
-.alta-producto .selector-fotos-producto__contenido:has(img)::before,
-.alta-producto .selector-fotos-producto__contenido:has(img)::after {
-  content: none;
 }
 
 
@@ -244,7 +128,7 @@
 
   margin: 0;
 
-  background: var(--acento-fuerte);
+  background: var(--acento);
   border-radius: 50%;
 }
 
