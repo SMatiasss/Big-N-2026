@@ -15,53 +15,65 @@
   --fuente-geist: 'Geist', sans-serif;
   --fuente-outfit: 'Outfit', sans-serif;
 
+  /* --am-ajuste lo calcula lista-ajustada.js (ajustarFormulario) MIDIENDO el
+     alto real disponible bajo el header contra lo que este formulario
+     necesita — no un vh estimado a mano (eso nunca terminaba de coincidir
+     con el dispositivo real: primero se calibró contra ~915px, después
+     contra ~860px, y en ningún caso encajaba de forma confiable). Vale 1
+     (tamaño completo) si entra sin ajustar; si no entra, un número menor
+     que se aplica a cada alto/fuente/margen de esta hoja vía
+     calc(valor-base * var(--am-ajuste, 1)). */
+  --am-campo-alto: calc(44px * var(--am-ajuste, 1));
+
   background: var(--fondo);
   color: var(--texto-claro);
   font-family: var(--fuente-geist);
-  height: 100%;
 }
 
 .alta-mesa ion-content {
   --background: var(--fondo);
-  height: 100%;
+}
+
+
+/* Header al 0.9x de la escala general de la app (1.75 → 1.58), igual que en
+   alta-empleado: lo que devuelve el header es alto disponible para el
+   formulario. Para volver atrás, borrar la regla. */
+.alta-mesa .app-header {
+  --ah-escala: 1.58;
 }
 
 .alta-mesa__contenido {
   box-sizing: border-box;
   width: 100%;
   max-width: 480px;
-  min-height: 100%;
   margin: 0 auto;
-  padding: 24px 22px 36px;
-  display: flex;
-  flex-direction: column;
+  padding: calc(16px * var(--am-ajuste, 1)) 18px calc(20px * var(--am-ajuste, 1));
 }
 
-/* FORMULARIO */
+/* FORMULARIO — pocos campos: gap chico entre secciones, como alta-empleado. */
 .alta-mesa__formulario {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  gap: 26px;
+  gap: calc(14px * var(--am-ajuste, 1));
 }
 
 .alta-mesa__fila-numerica {
   display: grid;
   grid-template-columns: 1fr 1.15fr;
-  gap: 14px;
+  gap: 12px;
 }
 
 .campo-formulario {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: calc(5px * var(--am-ajuste, 1));
 }
 
-/* LABELS EN COLOR CREMA Y MAYOR TAMAÑO */
+/* LABELS — mismo tamaño que alta-empleado. */
 .campo-label {
   color: var(--texto-claro);
   font-family: var(--fuente-outfit);
-  font-size: 15px;
+  font-size: calc(13px * var(--am-ajuste, 1));
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -70,14 +82,14 @@
 .campo-control {
   box-sizing: border-box;
   width: 100%;
-  height: 58px;
-  padding: 0 18px;
+  height: var(--am-campo-alto);
+  padding: 0 14px;
   background: var(--fondo-campo);
   border: 2px solid transparent;
-  border-radius: 16px;
+  border-radius: 12px;
   color: var(--texto-claro);
   font-family: var(--fuente-geist);
-  font-size: 18px;
+  font-size: calc(15px * var(--am-ajuste, 1));
   font-weight: 600;
   outline: none;
   transition: border-color 0.2s;
@@ -97,12 +109,12 @@
   display: flex;
   align-items: center;
   background: var(--fondo-campo);
-  border-radius: 16px;
+  border-radius: 12px;
   border: 2px solid transparent;
-  height: 58px;
+  height: var(--am-campo-alto);
   box-sizing: border-box;
-  padding: 0 12px 0 18px;
-  gap: 8px;
+  padding: 0 10px 0 14px;
+  gap: calc(6px * var(--am-ajuste, 1));
   transition: border-color 0.2s;
 }
 
@@ -111,15 +123,15 @@
 }
 
 .campo-control--asientos {
-  flex: 0 0 36px;
-  width: 36px;
+  flex: 0 0 28px;
+  width: 28px;
   background: transparent;
   border: none;
   padding: 0;
   height: 100%;
   color: var(--texto-claro);
   font-family: var(--fuente-geist);
-  font-size: 18px;
+  font-size: calc(15px * var(--am-ajuste, 1));
   font-weight: 600;
   outline: none;
   -webkit-appearance: none;
@@ -136,7 +148,7 @@
 .campo-control-asientos__sufijo {
   color: var(--texto-claro);
   font-family: var(--fuente-geist);
-  font-size: 17px;
+  font-size: calc(14px * var(--am-ajuste, 1));
   font-weight: 600;
   white-space: nowrap;
   flex: 1;
@@ -150,8 +162,8 @@
   justify-content: center;
   align-items: center;
   gap: 3px;
-  height: 42px;
-  width: 28px;
+  height: calc(32px * var(--am-ajuste, 1));
+  width: 24px;
   flex-shrink: 0;
 }
 
@@ -159,13 +171,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 19px;
+  width: 24px;
+  height: calc(15px * var(--am-ajuste, 1));
   background: rgba(254, 250, 224, 0.12);
   border: none;
   border-radius: 5px;
   color: var(--texto-claro);
-  font-size: 11px;
+  font-size: calc(10px * var(--am-ajuste, 1));
   cursor: pointer;
   padding: 0;
   transition: background 0.15s;
@@ -183,9 +195,9 @@
 .selector-segmentos {
   display: flex;
   background: var(--fondo-campo);
-  border-radius: 16px;
-  padding: 6px;
-  gap: 6px;
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
 }
 
 .selector-segmentos__opcion {
@@ -194,10 +206,10 @@
   background: transparent;
   color: rgba(254, 250, 224, 0.7);
   font-family: var(--fuente-geist);
-  font-size: 16px;
+  font-size: calc(14px * var(--am-ajuste, 1));
   font-weight: 600;
-  padding: 14px 8px;
-  border-radius: 12px;
+  padding: calc(10px * var(--am-ajuste, 1)) 6px;
+  border-radius: 9px;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
   text-align: center;
@@ -211,43 +223,100 @@
   font-weight: 700;
 }
 
-/* FOTO DE LA MESA — mismo cuadro-foto que usa alta-empleado, del tamaño de
-   este contenedor (ver components/cuadro-foto): un cuadrado de hasta 280px
-   centrado, en vez del rectángulo fijo que tenía antes. */
+/* FOTO DE LA MESA — mismo cuadro-foto que usa alta-empleado (ver
+   components/cuadro-foto): un cuadrado que ocupa todo el ancho disponible
+   (igual que cualquier otro campo del formulario), con las acciones abajo
+   y sin el texto propio del componente (acá ya lo dice el label "FOTO DE
+   UBICACIÓN"). Antes ".selector-foto-mesa__posicion" tenía display:flex,
+   lo que ponía el cuadro y los botones en fila en vez de apilados: alcanza
+   con no tocar el layout por defecto del componente (columna: cuadro
+   arriba, acciones abajo) para que se vea igual que en alta-empleado. */
 .alta-mesa__foto {
   width: 100%;
-  max-width: 280px;
+
+  /* El cuadro saca su alto del ancho (aspect-ratio 1/1), así que no se achica
+     con --am-ajuste aunque es lo más alto de la pantalla: el ajuste tenía que
+     sacarle todo a los campos y nunca alcanzaba. Acotando el ancho también
+     baja de alto y sigue siendo cuadrado (los botones cámara/galería lo
+     acompañan, que es como tienen que verse). Achica más despacio que el
+     resto para no deformar el diseño de referencia. */
+  max-width: calc(100% * (0.6 + 0.4 * var(--am-ajuste, 1)));
   margin: 0 auto;
-  display: flex;
 }
 
 .alta-mesa__foto .selector-foto-mesa {
   width: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
-.alta-mesa__foto .selector-foto-mesa__posicion {
-  width: 100%;
-  display: flex;
+.alta-mesa .selector-foto-mesa__texto {
+  display: none;
 }
 
-/* BOTÓN SUBMIT SIEMPRE ABAJO Y CON TEXTO COLOR CREMA */
+/* El cuadro es mucho más ancho acá que en alta-empleado (una sola columna
+   en vez de dos), así que el ícono necesita un techo más grande para
+   guardar una proporción parecida en vez de quedar chico en el medio. */
+.alta-mesa .cuadro-foto__icono {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+/* Las dos fuentes (cámara/galería) como un solo botón partido al medio,
+   en vez de dos píldoras sueltas. */
+.alta-mesa .selector-foto-mesa__acciones {
+  display: flex;
+  gap: 0;
+  justify-content: stretch;
+  margin-top: calc(10px * var(--am-ajuste, 1));
+
+  background: var(--fondo-campo);
+  border: 1px solid var(--acento-secundario);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.alta-mesa .selector-foto-mesa__boton-fuente {
+  flex: 1;
+
+  background: transparent;
+  border: none;
+  border-radius: 0;
+
+  padding: calc(11px * var(--am-ajuste, 1)) 8px;
+
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.alta-mesa .selector-foto-mesa__boton-fuente:first-child {
+  border-right: 1px solid var(--acento-secundario);
+}
+
+/* El <ion-note> de error del componente reserva un alto fijo (min-height +
+   padding-top) aunque esté vacío, lo que dejaba un hueco grande entre estos
+   botones y "Guardar Mesa". Ya se había reducido a la mitad (10px/4px) y
+   ahora se vuelve a reducir a la mitad de eso. */
+.alta-mesa .selector-foto-mesa__error {
+  min-height: 3px;
+  padding-top: 2px;
+}
+
+/* BOTÓN SUBMIT */
 .alta-mesa__submit {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  height: 60px;
-  margin-top: 12px;
-  flex-shrink: 0;
+  height: calc(50px * var(--am-ajuste, 1));
+  margin-top: calc(6px * var(--am-ajuste, 1));
   background: var(--acento);
   color: var(--texto-claro);
   border: none;
-  border-radius: 18px;
+  border-radius: 14px;
   font-family: var(--fuente-outfit);
-  font-size: 19px;
+  font-size: calc(17px * var(--am-ajuste, 1));
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 4px 14px rgb(42 49 19 / 35%);

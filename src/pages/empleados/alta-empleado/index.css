@@ -21,21 +21,16 @@
 
   --sombra-submit: 0 3px 3px rgb(42 49 19 / 42%);
 
-  /* Valores calibrados contra un viewport de referencia de ~915px de alto
-     (celular Android moderno, ej. Pixel: 412×915 CSS px). En esa altura o
-     más, cada clamp() rinde exactamente el número de la derecha (el diseño
-     "perfecto" actual); por debajo, se van achicando junto con el vh hasta
-     tocar el piso de la izquierda, para no forzar scroll en celulares más
-     bajos (ej. iPhone SE, ~667px).
-
-     Si el resultado no convence, el diseño anterior (fijo, sin clamp) era:
-     --ae-medio-icono: 60px; --ae-campo-alto: 42px; margin de .alta-empleado__medios: 16px;
-     margin de .campo-formulario: 7px; fuente de label: 13px/14px; fuente de
-     .campo-control: 15px; gap de .alta-empleado__fila: 11px; fuente de
-     ion-note: 11px; alto/fuente/margin-top de .alta-empleado__submit: 50px/19px/20px;
-     padding vertical de .alta-empleado__contenido: 16px. */
-  --ae-medio-icono:  clamp(38px, 6.5vh, 60px);
-  --ae-campo-alto:   clamp(34px, 4.6vh, 42px);
+  /* --ae-ajuste lo calcula lista-ajustada.js (ajustarFormulario) MIDIENDO el
+     alto real disponible bajo el header contra lo que este formulario
+     necesita — nada de vh estimado a mano, que nunca terminaba de coincidir
+     con el dispositivo real. Vale 1 (tamaño completo) si entra sin ajustar;
+     si no entra, un número menor que se aplica a cada alto/fuente/margen de
+     esta hoja vía calc(valor-base * var(--ae-ajuste, 1)). El piso lo define
+     el "minimo" que le pasa alta-empleado/index.js; por debajo de eso se
+     permite scroll en vez de volver todo ilegible. */
+  --ae-medio-icono:  calc(60px * var(--ae-ajuste, 1));
+  --ae-campo-alto:   calc(42px * var(--ae-ajuste, 1));
 
   background: var(--fondo-empleado);
   color: var(--texto-claro-empleado);
@@ -54,6 +49,15 @@
 }
 
 
+/* Header al 0.9x de la escala general de la app (1.75 → 1.58): ésta es de las
+   pantallas más cargadas y cada píxel que devuelve el header es un píxel más
+   de alto disponible para el formulario. Para volver atrás, borrar la regla:
+   el componente vuelve a su escala global. */
+.alta-empleado .app-header {
+  --ah-escala: 1.58;
+}
+
+
 /* =========================================================
    CONTENIDO
    ========================================================= */
@@ -65,7 +69,7 @@
   max-width: 440px;
 
   margin: 0 auto;
-  padding: clamp(10px, 1.75vh, 16px) 18px;
+  padding: calc(16px * var(--ae-ajuste, 1)) 18px;
 }
 
 
@@ -90,7 +94,17 @@
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 
-  margin: 0 0 clamp(8px, 1.75vh, 16px);
+  width: 100%;
+
+  /* Los dos cuadrados sacan su alto del ancho (aspect-ratio 1/1), así que no
+     se achicaban con --ae-ajuste aunque son lo más alto de la pantalla: el
+     ajuste tenía que sacarle todo a los campos y nunca alcanzaba. Acotando el
+     ancho del par también bajan de alto, y siguen siendo cuadrados.
+     El 0.6 + 0.4x hace que achiquen más despacio que el resto (a ajuste 0.8
+     quedan al 92% del ancho), para no deformar el diseño de referencia. */
+  max-width: calc(100% * (0.6 + 0.4 * var(--ae-ajuste, 1)));
+
+  margin: 0 auto calc(16px * var(--ae-ajuste, 1));
 }
 
 .alta-empleado .selector-avatar-foto {
@@ -334,7 +348,7 @@
 
 .alta-empleado .campo-formulario {
   width: 100%;
-  margin: 0 0 clamp(4px, 0.8vh, 7px);
+  margin: 0 0 calc(7px * var(--ae-ajuste, 1));
 }
 
 .alta-empleado .campo-formulario label {
@@ -342,11 +356,11 @@
   box-sizing: border-box;
 
   width: 100%;
-  margin: 0 0 3px;
+  margin: 0 0 calc(3px * var(--ae-ajuste, 1));
 
   color: var(--texto-claro-empleado);
 
-  font-size: clamp(11px, 1.4vh, 13px);
+  font-size: calc(13px * var(--ae-ajuste, 1));
   line-height: 1.08;
   text-transform: uppercase;
 }
@@ -374,7 +388,7 @@
   color: var(--texto-claro-empleado) !important;
 
   font-family: var(--fuente-geist) !important;
-  font-size: clamp(13px, 1.64vh, 15px) !important;
+  font-size: calc(15px * var(--ae-ajuste, 1)) !important;
   font-weight: 400 !important;
 }
 
@@ -458,7 +472,7 @@
 .alta-empleado__fila {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: clamp(7px, 1.2vh, 11px);
+  gap: calc(11px * var(--ae-ajuste, 1));
 
   width: 100%;
 }
@@ -468,14 +482,15 @@
    ERRORES
    ========================================================= */
 
+/* Son ocho: aunque estén vacías, su padding superior se suma ocho veces. */
 .alta-empleado .campo-formulario ion-note {
   display: block;
 
   min-height: 0;
 
-  padding: 2px 3px 0;
+  padding: calc(2px * var(--ae-ajuste, 1)) 3px 0;
 
-  font-size: 11px;
+  font-size: calc(11px * var(--ae-ajuste, 1));
 }
 
 .alta-empleado .campo-formulario--invalido input {
@@ -556,14 +571,14 @@
 
 .alta-empleado__submit {
   width: 100%;
-  height: clamp(42px, 5.5vh, 50px);
-  min-height: clamp(42px, 5.5vh, 50px);
+  height: calc(50px * var(--ae-ajuste, 1));
+  min-height: calc(50px * var(--ae-ajuste, 1));
 
   /* Antes era "auto 0 0" para clavar el botón contra el borde inferior de
      la pantalla; con el header más chico eso dejaba un hueco enorme entre
      el último campo y el botón. Un margen fijo, como el resto de los
      campos, es más consistente. */
-  margin: clamp(12px, 2.2vh, 20px) 0 0;
+  margin: calc(20px * var(--ae-ajuste, 1)) 0 0;
 
   --background: var(--acento-empleado) !important;
   --background-hover: var(--acento-empleado) !important;
@@ -575,7 +590,7 @@
   --box-shadow: var(--sombra-submit) !important;
 
   font-family: var(--fuente-outfit) !important;
-  font-size: clamp(16px, 2.1vh, 19px) !important;
+  font-size: calc(19px * var(--ae-ajuste, 1)) !important;
   font-weight: 700 !important;
 
   text-transform: none !important;
@@ -585,7 +600,7 @@
   box-sizing: border-box;
 
   width: 100%;
-  height: clamp(42px, 5.5vh, 50px);
+  height: calc(50px * var(--ae-ajuste, 1));
 
   padding: 0;
 

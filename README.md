@@ -75,6 +75,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | Lista de clientes (todos) | <img src="assets/pages-samples/Lista%20clientes%20%28todos%29.png" alt="Lista de clientes (todos)" width="240"> | <!-- agregar imagen --> |
 | Lista de clientes (pendientes) | <img src="assets/pages-samples/Lista%20clientes%20%28pendientes%29.png" alt="Lista de clientes (pendientes)" width="240"> | <img src="assets/pages-samples/especiales/confirmar-cliente.png" alt="Confirmar cliente" width="120"> <img src="assets/pages-samples/especiales/rechazar-cliente.png" alt="Rechazar cliente" width="120"> |
 | Lista de mesas | <img src="assets/pages-samples/Lista%20mesas.png" alt="Lista de mesas" width="240"> | <!-- agregar imagen --> |
+| Agregar una mesa | <img src="assets/pages-samples/Agregar%20una%20mesa.png" alt="Agregar una mesa" width="240"> | <img src="assets/pages-samples/especiales/Ejemplo%20error.png" alt="Ejemplo error" width="240"> |
 | Lista de espera | <img src="assets/pages-samples/Lista%20de%20espera.png" alt="Lista de espera" width="240"> | <img src="assets/pages-samples/especiales/Lista-de-mesas-en-espera.png" alt="Lista de mesas en espera" width="240"> |
 
 ## Logo

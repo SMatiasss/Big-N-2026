@@ -2,6 +2,7 @@
 // diseño idéntico al mockup (fondo #606c38, campos #4a572c, etiquetas #dda15e, segmented controls y toasts).
 import './index.css';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
+import { ajustarFormulario } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { crearSelectorFotoMesa } from '../../../components/selector-foto-mesa/selector-foto-mesa.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
@@ -262,6 +263,14 @@ export function render(container) {
 
   formulario.querySelector('.alta-mesa__foto').append(selectorFoto.elemento);
 
+  // Recién acá (con la foto ya insertada: es la que le da su alto real al
+  // recuadro) tiene sentido medir cuánto hay que achicar para que entre
+  // todo sin scroll.
+  const ajusteFormulario = ajustarFormulario(
+    container.querySelector('.alta-mesa__contenido'),
+    { variable: '--am-ajuste' },
+  );
+
   // Bloqueo durante envío
   function establecerProcesando(valor) {
     enviando = valor;
@@ -316,5 +325,8 @@ export function render(container) {
     }
   });
 
-  window.addEventListener('hashchange', () => selectorFoto.destruir(), { once: true });
+  window.addEventListener('hashchange', () => {
+    selectorFoto.destruir();
+    ajusteFormulario.destruir();
+  }, { once: true });
 }

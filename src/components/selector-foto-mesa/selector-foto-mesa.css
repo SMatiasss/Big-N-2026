@@ -31,6 +31,12 @@
   justify-content: center;
   gap: 14px;
   padding: 34px 18px;
+
+  /* Sin ancho propio, el ícono (.cuadro-foto__icono, que mide 45% de SU
+     contenedor) no tiene contra qué resolver ese porcentaje y colapsa casi
+     a 0 — se ve como un puntito en vez de la cámara. */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .selector-foto-mesa__texto {

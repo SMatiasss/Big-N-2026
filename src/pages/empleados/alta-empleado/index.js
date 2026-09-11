@@ -9,6 +9,7 @@ import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersona
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
+import { ajustarFormulario } from '../../../components/lista-ajustada/lista-ajustada.js';
 
 
 const ROLES_DISPONIBLES = ROLES_EMPLEADO;
@@ -787,6 +788,20 @@ export function render(container) {
 
 
   /* =========================================================
+     AJUSTE DE ALTO
+
+     Recién acá (con la foto y el lector de DNI ya insertados: son los que
+     le dan su alto real a esos recuadros) tiene sentido medir. Antes,
+     ".alta-empleado__foto"/"__lector-qr" están vacíos y miden 0.
+     ========================================================= */
+
+  const ajusteFormulario = ajustarFormulario(
+    container.querySelector('.alta-empleado__contenido'),
+    { variable: '--ae-ajuste' },
+  );
+
+
+  /* =========================================================
      ROL PREDETERMINADO
      ========================================================= */
 
@@ -929,6 +944,7 @@ export function render(container) {
     'hashchange',
     () => {
       avatar.destruir();
+      ajusteFormulario.destruir();
     },
     { once: true }
   );
