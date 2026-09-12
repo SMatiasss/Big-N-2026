@@ -69,14 +69,16 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | Nombre de pantalla | Imágen de pantalla | Misceláneos |
 | :---: | :---: | :---: |
 | Lista de empleados | <img src="assets/pages-samples/Lista%20empleados.png" alt="Lista de empleados" width="240"> | <!-- agregar imagen --> |
-| Agregar un empleado | <img src="assets/pages-samples/Agregar%20un%20empleado.png" alt="Agregar un empleado" width="240"> | <img src="assets/pages-samples/especiales/Ejemplo%20error.png" alt="Ejemplo error" width="240"> |
+| Agregar un empleado | <img src="assets/pages-samples/Agregar%20un%20empleado.png" alt="Agregar un empleado" width="240"> | <img src="assets/pages-samples/especiales/Ejemplo%20error.png" alt="Ejemplo error" width="280"> |
 | Lista de productos (platos) | <img src="assets/pages-samples/Lista%20productos%20%28platos%29.png" alt="Lista de productos (platos)" width="240"> | <!-- agregar imagen --> |
+| Agregar un plato | <img src="assets/pages-samples/Agregar%20un%20plato.png" alt="Agregar un plato" width="240"> | <!-- agregar imagen --> |
 | Lista de productos (bebidas) | <img src="assets/pages-samples/Lista%20productos%20%28bebidas%29.png" alt="Lista de productos (bebidas)" width="240"> | <!-- agregar imagen --> |
+| Agregar una bebida | <img src="assets/pages-samples/Agregar%20una%20bebida.png" alt="Agregar una bebida" width="240"> | <!-- agregar imagen --> |
 | Lista de clientes (todos) | <img src="assets/pages-samples/Lista%20clientes%20%28todos%29.png" alt="Lista de clientes (todos)" width="240"> | <!-- agregar imagen --> |
-| Lista de clientes (pendientes) | <img src="assets/pages-samples/Lista%20clientes%20%28pendientes%29.png" alt="Lista de clientes (pendientes)" width="240"> | <img src="assets/pages-samples/especiales/confirmar-cliente.png" alt="Confirmar cliente" width="120"> <img src="assets/pages-samples/especiales/rechazar-cliente.png" alt="Rechazar cliente" width="120"> |
+| Lista de clientes (pendientes) | <img src="assets/pages-samples/Lista%20clientes%20%28pendientes%29.png" alt="Lista de clientes (pendientes)" width="240"> | <img src="assets/pages-samples/especiales/confirmar-cliente.png" alt="Confirmar cliente" width="150"> <img src="assets/pages-samples/especiales/rechazar-cliente.png" alt="Rechazar cliente" width="150"> <img src="assets/pages-samples/especiales/opciones.png" alt="Opciones" width="150"> |
 | Lista de mesas | <img src="assets/pages-samples/Lista%20mesas.png" alt="Lista de mesas" width="240"> | <!-- agregar imagen --> |
-| Agregar una mesa | <img src="assets/pages-samples/Agregar%20una%20mesa.png" alt="Agregar una mesa" width="240"> | <img src="assets/pages-samples/especiales/Ejemplo%20error.png" alt="Ejemplo error" width="240"> |
-| Lista de espera | <img src="assets/pages-samples/Lista%20de%20espera.png" alt="Lista de espera" width="240"> | <img src="assets/pages-samples/especiales/Lista-de-mesas-en-espera.png" alt="Lista de mesas en espera" width="240"> |
+| Agregar una mesa | <img src="assets/pages-samples/Agregar%20una%20mesa.png" alt="Agregar una mesa" width="240"> | <img src="assets/pages-samples/especiales/Ejemplo%20error.png" alt="Ejemplo error" width="280"> |
+| Lista de espera | <img src="assets/pages-samples/Lista%20de%20espera.png" alt="Lista de espera" width="240"> | <img src="assets/pages-samples/especiales/Lista-de-mesas-en-espera.png" alt="Lista de mesas en espera" width="280"> |
 
 ## Logo
 
