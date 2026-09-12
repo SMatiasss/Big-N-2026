@@ -41,8 +41,8 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 15 | Acceder a juegos y obtener descuentos             | Cespedes     | - | - | - | Pendiente |
 | 16 | Recepción de productos en cocina                  | Terenghi Goy | - | - | - | Pendiente |
 | 17 | Recepción de productos en bar                     | Romero       | - | - | - | Pendiente |
-| 18 | Finalizar la preparación del pedido               | Soria        | - | - | - | Pendiente |
-| 19 | Entregar y recibir el pedido                      | Soria        | - | - | - | Pendiente |
+| 18 | Finalizar la preparación del pedido               | Soria        | 12/09 | - | - | En curso |
+| 19 | Entregar y recibir el pedido                      | Soria        | 12/09 | - | - | En curso |
 | 20 | Realizar encuesta y visualizar resultados         | Cespedes     | - | - | - | Pendiente |
 | 21 | Solicitar y generar la cuenta                     | Romero       | - | - | - | Pendiente |
 | 22 | Confirmar el pago y liberar la mesa               | Soria        | - | - | - | Pendiente |
