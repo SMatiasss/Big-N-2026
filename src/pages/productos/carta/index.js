@@ -305,7 +305,14 @@ export async function render(container) {
         const consulta = document.createElement('button');
         consulta.textContent = 'Consulta al mozo';
         consulta.onclick = () => navegarA('/pedidos/consulta');
-        acciones.append(consulta);
+
+        // Puntos 18 y 19: desde acá el cliente sigue el estado de su pedido y
+        // confirma la recepción cuando el mozo se lo entrega.
+        const estadoPedido = document.createElement('button');
+        estadoPedido.textContent = 'Mi pedido';
+        estadoPedido.onclick = () => navegarA('/pedidos/estado');
+
+        acciones.append(consulta, estadoPedido);
       }
     }
     const productos = await listarCartaConFotos();

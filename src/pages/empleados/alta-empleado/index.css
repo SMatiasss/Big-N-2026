@@ -6,20 +6,22 @@
    ========================================================= */
 
 .alta-empleado {
-  --fondo-empleado: #606c38;
-  --fondo-campo-empleado: #4a572c;
-  --fondo-hover-empleado: #53632f;
-  --acento-empleado: #dda15e;
-  --marco-dni-empleado: #bc6c25;
+  /* Colores tomados de la paleta "formulario" compartida (ver
+     src/styles/variables.css) en vez de repetir los hex acá. */
+  --fondo-empleado: var(--form-fondo);
+  --fondo-campo-empleado: var(--form-campo-fondo);
+  --fondo-hover-empleado: var(--form-campo-fondo-hover);
+  --acento-empleado: var(--form-dorado);
+  --marco-dni-empleado: var(--form-terracota);
 
-  --texto-claro-empleado: #fefae0;
-  --texto-suave-empleado: #8f956f;
-  --borde-empleado: #6e6939;
+  --texto-claro-empleado: var(--form-texto-claro);
+  --texto-suave-empleado: var(--form-texto-suave);
+  --borde-empleado: var(--form-borde);
 
   --fuente-geist: 'Geist', sans-serif;
   --fuente-outfit: 'Outfit', sans-serif;
 
-  --sombra-submit: 0 3px 3px rgb(42 49 19 / 42%);
+  --sombra-submit: var(--form-sombra-submit);
 
   /* --ae-ajuste lo calcula lista-ajustada.js (ajustarFormulario) MIDIENDO el
      alto real disponible bajo el header contra lo que este formulario
@@ -522,7 +524,7 @@
   border: 2px solid var(--marco-dni-empleado);
   border-radius: 0 0 18px 18px;
 
-  color: #283618;
+  color: var(--form-texto-oscuro);
   font-family: var(--fuente-outfit);
   font-size: 17px;
   font-weight: 700;
@@ -547,7 +549,7 @@
   width: 12px;
   height: 12px;
 
-  background: #bc6c25;
+  background: var(--form-terracota);
   border-radius: 50%;
 }
 
@@ -618,22 +620,22 @@
    ========================================================= */
 
 ion-popover {
-  --background: #4a572c;
-  --color: #fefae0;
+  --background: var(--form-campo-fondo);
+  --color: var(--form-texto-claro);
 }
 
 ion-popover::part(content) {
-  background: #4a572c !important;
-  border: 1px solid #6e6939 !important;
+  background: var(--form-campo-fondo) !important;
+  border: 1px solid var(--form-borde) !important;
   border-radius: 10px !important;
 }
 
 ion-popover ion-list,
 ion-popover ion-select-popover {
-  --background: #4a572c !important;
-  --color: #fefae0 !important;
+  --background: var(--form-campo-fondo) !important;
+  --color: var(--form-texto-claro) !important;
 
-  background: #4a572c !important;
+  background: var(--form-campo-fondo) !important;
 }
 
 ion-popover ion-list {
@@ -641,18 +643,18 @@ ion-popover ion-list {
 }
 
 ion-popover ion-select-popover ion-item {
-  --background: #4a572c !important;
-  --background-hover: #53632f !important;
-  --background-activated: #53632f !important;
-  --background-focused: #53632f !important;
-  --color: #fefae0 !important;
+  --background: var(--form-campo-fondo) !important;
+  --background-hover: var(--form-campo-fondo-hover) !important;
+  --background-activated: var(--form-campo-fondo-hover) !important;
+  --background-focused: var(--form-campo-fondo-hover) !important;
+  --color: var(--form-texto-claro) !important;
 
   font-size: 14px !important;
 }
 
 ion-popover ion-select-popover ion-item::part(native) {
-  background: #4a572c !important;
-  color: #fefae0 !important;
+  background: var(--form-campo-fondo) !important;
+  color: var(--form-texto-claro) !important;
 }
 
 

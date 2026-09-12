@@ -68,11 +68,30 @@ export const ESTADOS_PEDIDO = {
   CONFIRMADO: 'en_preparacion',
   RECHAZADO: 'rechazado',
   EN_PREPARACION: 'en_preparacion',
+  // Punto 18: todos los sectores terminaron su parte. No lo escribe la app:
+  // lo pone el trigger trg_estado_pedido cuando ya no queda ningún ítem sin
+  // marcar 'listo' (ver 01_schema.sql).
+  LISTO: 'listo',
+  // Punto 19: el cliente confirmó que recibió el pedido.
+  ENTREGADO: 'entregado',
+};
+
+// El estado vive también a nivel de ítem: es lo que permite representar
+// "la cocina ya terminó pero el bar todavía no" (puntos 16 a 18).
+export const ESTADOS_ITEM = {
+  PENDIENTE: 'pendiente',
+  EN_PREPARACION: 'en_preparacion',
+  LISTO: 'listo',
   ENTREGADO: 'entregado',
 };
 
 export const ESTADOS_ESTADIA = {
   ABIERTA: 'abierta',
+  PEDIDO_EN_CURSO: 'pedido_en_curso',
+  // Punto 19: con el pedido ya recibido se habilitan juegos, encuesta y cuenta.
+  ENTREGADO: 'entregado',
+  CUENTA_SOLICITADA: 'cuenta_solicitada',
+  PAGADA: 'pagada',
   CERRADA: 'cerrada',
 };
 

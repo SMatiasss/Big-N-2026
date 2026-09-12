@@ -32,6 +32,7 @@ const rutas = {
   '/pedidos/cocina': () => import('./pages/pedidos/panel-cocina/index.js'),
   '/pedidos/bar': () => import('./pages/pedidos/panel-bar/index.js'),
   '/pedidos/entrega': () => import('./pages/pedidos/entrega-pedido/index.js'),
+  '/pedidos/estado': () => import('./pages/pedidos/estado-pedido/index.js'),
   '/pedidos/consulta': () => import('./pages/pedidos/consulta-mozo/index.js'),
 
   '/juegos/1': () => import('./pages/juegos/juego-1/index.js'),

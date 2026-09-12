@@ -1,0 +1,337 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Outfit:wght@700&display=swap');
+
+/* =========================================================
+   ENTREGAR PEDIDOS (puntos 18 y 19, lado mozo)
+
+   Misma cáscara que el resto de los listados: ion-content no scrollea
+   (pantalla-lista) y la única parte elástica es la lista, que además
+   hace snap para no dejar ninguna tarjeta cortada. Ver
+   components/lista-ajustada.
+   ========================================================= */
+
+.entrega-pedido {
+  --fondo: #606c38;
+  --fondo-card: #4a572c;
+  --acento: #dda15e;
+  --acento-fuerte: #bc6c25;
+  --texto-claro: #fefae0;
+  --texto-suave: #c8c8a0;
+
+  --color-listo: #22c55e;
+  --color-preparando: #eab308;
+
+  --fuente-geist: 'Geist', sans-serif;
+  --fuente-outfit: 'Outfit', sans-serif;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+}
+
+.entrega-pedido ion-content {
+  --background: var(--fondo);
+}
+
+.entrega-pedido__contenido {
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 480px;
+
+  margin: 0 auto;
+  padding: 20px 16px max(16px, env(safe-area-inset-bottom));
+}
+
+
+/* =========================================================
+   LISTA
+
+   Cuántos pedidos entran completos en pantalla. Son tarjetas altas
+   (mesa + sectores + ítems + botón), así que van de a dos.
+   ========================================================= */
+
+.entrega-pedido__lista {
+  --la-items: 2;
+  --la-gap: 14px;
+}
+
+@media (max-height: 700px) {
+  .entrega-pedido__lista { --la-items: 1; }
+}
+
+@media (min-height: 900px) {
+  .entrega-pedido__lista { --la-items: 3; }
+}
+
+
+/* =========================================================
+   TARJETA DE PEDIDO
+
+   El alto lo fija .lista-ajustada en --la-alto; lo de adentro se mide
+   contra ese alto con clamp(), como en gestion-productos, así la misma
+   tarjeta sirve en una pantalla baja y en una alta.
+   ========================================================= */
+
+.pedido-entrega {
+  --tarjeta-alto: var(--la-alto, 220px);
+
+  display: flex;
+  flex-direction: column;
+  gap: clamp(5px, calc(var(--tarjeta-alto) * 0.03), 9px);
+
+  box-sizing: border-box;
+
+  padding: clamp(11px, calc(var(--tarjeta-alto) * 0.06), 16px);
+
+  background: var(--fondo-card);
+  border: 2px solid var(--color-preparando);
+  border-radius: 16px;
+}
+
+/* Punto 18: el pedido completo tiene que distinguirse de un vistazo. */
+.pedido-entrega--completo {
+  border-color: var(--color-listo);
+}
+
+
+/* — Cabecera: mesa + estado — */
+
+.pedido-entrega__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pedido-entrega__mesa {
+  margin: 0;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: clamp(17px, calc(var(--tarjeta-alto) * 0.1), 24px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.pedido-entrega__estado {
+  flex-shrink: 0;
+
+  padding: clamp(3px, calc(var(--tarjeta-alto) * 0.018), 5px)
+           clamp(8px, calc(var(--tarjeta-alto) * 0.045), 12px);
+
+  background: var(--color-preparando);
+  border-radius: 999px;
+
+  color: #283618;
+
+  font-family: var(--fuente-geist);
+  font-size: clamp(10px, calc(var(--tarjeta-alto) * 0.055), 13px);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.pedido-entrega__estado--completo {
+  background: var(--color-listo);
+}
+
+
+/* — Fecha y cliente (punto 16/17/18: fecha con hora y minutos) — */
+
+.pedido-entrega__datos {
+  margin: 0;
+
+  color: var(--texto-suave);
+
+  font-size: clamp(11px, calc(var(--tarjeta-alto) * 0.055), 14px);
+  line-height: 1.3;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* — Chips de sector: qué sector ya terminó y cuál falta — */
+
+.pedido-entrega__sectores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.sector-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: clamp(3px, calc(var(--tarjeta-alto) * 0.018), 5px)
+           clamp(7px, calc(var(--tarjeta-alto) * 0.04), 10px);
+
+  background: rgb(254 250 224 / 10%);
+  border-radius: 999px;
+
+  color: var(--texto-claro);
+
+  font-size: clamp(10px, calc(var(--tarjeta-alto) * 0.05), 13px);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.sector-chip strong {
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.sector-chip__punto {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sector-chip--listo .sector-chip__punto {
+  background: var(--color-listo);
+}
+
+.sector-chip--preparando .sector-chip__punto {
+  background: var(--color-preparando);
+}
+
+
+/* — Ítems del pedido —
+   Es la única parte que puede sobrar: un pedido de quince productos no entra
+   en una tarjeta de alto fijo. Scrollea acá adentro en vez de cortarse. */
+
+.pedido-entrega__items {
+  flex: 1;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2px, calc(var(--tarjeta-alto) * 0.012), 4px);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.pedido-entrega__item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+
+  color: var(--texto-claro);
+
+  font-size: clamp(12px, calc(var(--tarjeta-alto) * 0.058), 15px);
+  line-height: 1.35;
+}
+
+.pedido-entrega__cantidad {
+  flex-shrink: 0;
+
+  color: var(--acento);
+  font-family: var(--fuente-outfit);
+  font-weight: 700;
+}
+
+.pedido-entrega__producto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El ítem que su sector ya terminó lleva un tilde al final. */
+.pedido-entrega__item--listo .pedido-entrega__producto::after {
+  content: ' ✓';
+  color: var(--color-listo);
+  font-weight: 700;
+}
+
+
+/* — Botón de entrega (punto 19) — */
+
+.pedido-entrega__accion {
+  flex-shrink: 0;
+
+  width: 100%;
+  height: clamp(34px, calc(var(--tarjeta-alto) * 0.18), 46px);
+
+  margin: 0;
+  padding: 0;
+
+  background: var(--acento-fuerte);
+  border: none;
+  border-radius: 11px;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: clamp(13px, calc(var(--tarjeta-alto) * 0.065), 17px);
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.pedido-entrega__accion:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Deshabilitado se ve claramente distinto: o falta un sector, o ya se entregó
+   y lo que falta es que el cliente confirme (punto 19). */
+.pedido-entrega__accion:disabled {
+  background: rgb(254 250 224 / 12%);
+  color: var(--texto-suave);
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   ESTADOS: CARGANDO / VACÍO / ERROR
+   ========================================================= */
+
+.entrega-pedido__estado-carga {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+
+.entrega-pedido__estado-carga ion-spinner {
+  color: var(--acento);
+}
+
+.entrega-pedido__mensaje {
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+
+  font-size: 15px;
+  line-height: 19px;
+  text-align: center;
+}
+
+
+@media (max-width: 390px) {
+  .entrega-pedido__contenido {
+    padding-inline: 12px;
+  }
+}

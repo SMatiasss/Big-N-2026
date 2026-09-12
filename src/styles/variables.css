@@ -34,4 +34,20 @@
   --space-sm: 8px;
   --space-md: 16px;
   --space-lg: 24px;
+
+  /* Paleta "formulario oliva": usada por las pantallas de alta (cliente,
+     empleado, mesa), que hasta ahora la traían copiada con los mismos hex en
+     cada index.css (y con nombres de variable distintos entre sí). Se
+     centraliza acá por color/función, no por nombre viejo, para no arrastrar
+     la inconsistencia de naming que ya tenían esas pantallas. */
+  --form-fondo: #606c38;
+  --form-campo-fondo: #4a572c;
+  --form-campo-fondo-hover: #53632f;
+  --form-borde: #6e6939;
+  --form-dorado: #dda15e;
+  --form-terracota: #bc6c25;
+  --form-texto-claro: #fefae0;
+  --form-texto-suave: #8f956f;
+  --form-texto-oscuro: #283618;
+  --form-sombra-submit: 0 3px 3px rgb(42 49 19 / 42%);
 }

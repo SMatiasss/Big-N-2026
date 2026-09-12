@@ -62,7 +62,7 @@ async function prepararDispositivoParaPerfil(usuarioId) {
 
 // Rutas a las que puede llevar un toque sobre la notificación (o el botón
 // "Ver" mientras la app está en primer plano). Cada HU agrega la suya acá.
-const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta', '/pedidos/confirmacion'];
+const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta', '/pedidos/confirmacion', '/pedidos/entrega'];
 
 function guardarContextoNotificacion(notification) {
   const estadiaId = notification?.data?.estadia_id;
@@ -356,6 +356,15 @@ export async function iniciarPushConsultasMozo(perfil) {
     description: 'Mensajes de clientes con mesa asignada.', importance: 5,
     visibility: 1, vibration: true,
   });
+  // Canal de los avisos de pedidos (avisar-nuevo-pedido del punto 12 y
+  // avisar-pedido-listo del punto 18, que lo usan como channel_id). En Android
+  // 8+ un push con un canal inexistente no se muestra, así que tiene que
+  // crearse acá, en el mismo arranque del mozo.
+  await PushNotifications.createChannel({
+    id: 'pedidos-mozo', name: 'Pedidos',
+    description: 'Pedidos nuevos por confirmar y pedidos completos por entregar.',
+    importance: 5, visibility: 1, vibration: true,
+  });
   await PushNotifications.register();
   return true;
 }
@@ -385,6 +394,17 @@ export async function avisarMesaAsignada(estadiaId) {
 
 export async function avisarNuevoPedido(pedidoId) {
   const { data, error } = await getSupabase().functions.invoke('avisar-nuevo-pedido', { body: { pedidoId } });
+  if (error) throw error;
+  return data;
+}
+
+// Punto 18: avisa a los mozos que el pedido quedó completo (todos los sectores
+// terminaron). La tiene que llamar la pantalla del sector (puntos 16 y 17)
+// después de marcar sus ítems como listos, igual que la carta llama a
+// avisarNuevoPedido al cerrar el pedido. El backend no confía en el llamador:
+// relee el pedido y sólo avisa si de verdad quedó en estado 'listo'.
+export async function avisarPedidoListo(pedidoId) {
+  const { data, error } = await getSupabase().functions.invoke('avisar-pedido-listo', { body: { pedidoId } });
   if (error) throw error;
   return data;
 }

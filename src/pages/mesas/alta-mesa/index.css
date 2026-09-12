@@ -5,13 +5,18 @@
    ========================================================= */
 
 .alta-mesa {
-  --fondo: #606c38;
-  --fondo-campo: #4a572c;
-  --acento: #bc6c25;
-  --acento-secundario: #dda15e;
-  --texto-claro: #fefae0;
-  --texto-oscuro: #283618;
-  --texto-suave: #8f956f;
+  /* Colores tomados de la paleta "formulario" compartida (ver
+     src/styles/variables.css) en vez de repetir los hex acá. Ojo: acá
+     "--acento" es el terracota y "--acento-secundario" es el dorado, al
+     revés que en alta-cliente/alta-empleado (donde el dorado es el acento
+     principal) — se respeta el mapeo que ya tenía esta pantalla. */
+  --fondo: var(--form-fondo);
+  --fondo-campo: var(--form-campo-fondo);
+  --acento: var(--form-terracota);
+  --acento-secundario: var(--form-dorado);
+  --texto-claro: var(--form-texto-claro);
+  --texto-oscuro: var(--form-texto-oscuro);
+  --texto-suave: var(--form-texto-suave);
   --fuente-geist: 'Geist', sans-serif;
   --fuente-outfit: 'Outfit', sans-serif;
 

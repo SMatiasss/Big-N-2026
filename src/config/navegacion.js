@@ -28,6 +28,19 @@ export const ROLES_POR_RUTA = {
   '/mesa/carta': CLIENTES,
   '/pedidos/consulta': [ROLES.MOZO, ...CLIENTES],
   '/pedidos/confirmacion': [ROLES.MOZO],
+  // Puntos 18 y 19: el mozo ve los pedidos completos y los entrega; el cliente
+  // sigue el estado del suyo y confirma que lo recibió.
+  '/pedidos/entrega': [ROLES.MOZO],
+  '/pedidos/estado': CLIENTES,
+  // Punto 19: "el cliente podrá acceder a los juegos, a la encuesta y a la
+  // opción de pedir la cuenta". Las pantallas son de los puntos 15, 20 y 21
+  // (todavía sin implementar); acá sólo se abre el acceso, que es la parte que
+  // le corresponde al 19.
+  '/juegos/1': CLIENTES,
+  '/juegos/2': CLIENTES,
+  '/juegos/3': CLIENTES,
+  '/encuesta': CLIENTES,
+  '/cuenta/solicitar': CLIENTES,
 };
 
 // Home de clientes: se mantiene la lógica por rol (es un caso totalmente

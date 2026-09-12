@@ -22,6 +22,13 @@ export async function render(container) {
   const header = crearAppHeader({
     titulo: 'Confirmar pedidos',
     onVolver: () => navegarA('/home'),
+    // Puntos 18 y 19: desde acá se llega al listado de pedidos completos
+    // para entregar (la tarjeta "Pedidos" del home entra por esta pantalla).
+    accion: {
+      texto: '›',
+      etiqueta: 'Ir a entregar pedidos',
+      onClick: () => navegarA('/pedidos/entrega'),
+    },
   });
   raiz.querySelector('[data-header]').append(header);
 
