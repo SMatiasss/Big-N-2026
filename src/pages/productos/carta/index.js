@@ -6,6 +6,8 @@ import { ordenarFotosProducto } from '../../../utils/hu11.js';
 import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { navegarA } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
+import { crearPestanas } from '../../../components/pestanas-filtro/pestanas-filtro.js';
+import '../../../components/lista-ajustada/lista-ajustada.css';
 
 import './nuevos-estilos.css';
 import { CarritoService } from '../../../services/carrito.service.js';
@@ -15,13 +17,14 @@ import { avisarNuevoPedido } from '../../../services/notificaciones.service.js';
 export async function render(container) {
   const operativa = location.hash.replace('#', '') === '/mesa/carta';
   container.innerHTML = `
-    <ion-content class="hu11">
+    <ion-content class="hu11 pantalla-lista" scroll-y="false">
       <div data-header></div>
-      <main class="hu11__main-espaciado">
+      <main class="hu11__main-espaciado pantalla-lista__cuerpo">
         <p data-mesa></p>
         <div data-acciones class="hu11__acciones-contenedor"></div>
+        <div data-pestanas></div>
         <p role="status"></p>
-        <div class="hu11__productos"></div>
+        <section class="hu11__productos lista-ajustada" aria-label="Productos" style="--la-gap: 20px; padding-bottom: 20px;"></section>
       </main>
     </ion-content>
   `;
@@ -203,6 +206,95 @@ export async function render(container) {
   // Escuchar eventos globales si necesitamos reaccionar desde otro lado
   window.addEventListener('carrito-actualizado', actualizarUI);
 
+  let productosCache = [];
+  let tipoSeleccionado = 'plato';
+
+  const pestanasContainer = raiz.querySelector('[data-pestanas]');
+  const pestanas = crearPestanas({
+    etiqueta: 'Filtrar carta',
+    opciones: [
+      { valor: 'plato', texto: 'Platos' },
+      { valor: 'bebida', texto: 'Bebidas' },
+      { valor: 'postre', texto: 'Postres' }
+    ],
+    seleccionInicial: tipoSeleccionado,
+    onCambio: (valor) => {
+      tipoSeleccionado = valor;
+      dibujarCarta();
+    },
+  });
+  if (pestanasContainer) pestanasContainer.append(pestanas.elemento);
+
+  const dibujarCarta = () => {
+    lista.replaceChildren();
+    const productosVisibles = productosCache.filter(p => p.tipo === tipoSeleccionado);
+    
+    if (productosVisibles.length === 0) {
+      lista.textContent = 'No hay productos disponibles en esta categoría.';
+      return;
+    }
+
+    for (const producto of productosVisibles) {
+      const tarjeta = document.createElement('article');
+      tarjeta.className = 'hu11-producto';
+      const datos = document.createElement('div');
+      datos.className = 'hu11-producto__datos';
+      const nombre = document.createElement('h3'); nombre.textContent = producto.nombre;
+      const descripcion = document.createElement('p'); descripcion.textContent = producto.descripcion;
+      descripcion.className = 'hu11-producto__descripcion';
+      const precio = document.createElement('strong');
+      precio.className = 'hu11-producto__precio';
+      precio.textContent = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(producto.precio);
+      const tiempo = document.createElement('p'); tiempo.textContent = `Preparación: ${producto.tiempo_elaboracion_min} min`;
+      tiempo.className = 'hu11-producto__tiempo';
+      datos.append(nombre, descripcion, precio, tiempo);
+      
+      if (operativa) {
+        const controles = document.createElement('div');
+        controles.className = 'hu11-producto__controles';
+        
+        let cantidad = CarritoService.obtenerCantidad(producto.id);
+        
+        controles.innerHTML = `
+          <button type="button" class="btn-menos hu11-producto__btn-cantidad">-</button>
+          <span class="cantidad hu11-producto__cantidad-texto">${cantidad}</span>
+          <button type="button" class="btn-mas hu11-producto__btn-cantidad">+</button>
+        `;
+        
+        const btnMenos = controles.querySelector('.btn-menos');
+        const btnMas = controles.querySelector('.btn-mas');
+        const spanCantidad = controles.querySelector('.cantidad');
+        
+        btnMenos.onclick = () => {
+          if (cantidad > 0) {
+            cantidad--;
+            spanCantidad.textContent = cantidad;
+            CarritoService.actualizarProducto(producto, cantidad);
+            actualizarUI();
+          }
+        };
+        
+        btnMas.onclick = () => {
+          cantidad++;
+          spanCantidad.textContent = cantidad;
+          CarritoService.actualizarProducto(producto, cantidad);
+          actualizarUI();
+        };
+        
+        // Escuchar cambios hechos desde el carrito flotante
+        window.addEventListener('carrito-actualizado', () => {
+          cantidad = CarritoService.obtenerCantidad(producto.id);
+          if (spanCantidad) spanCantidad.textContent = cantidad;
+        });
+        
+        datos.append(controles);
+      }
+
+      tarjeta.append(crearCarruselImagenes(ordenarFotosProducto(producto.producto_fotos), producto.nombre), datos);
+      lista.append(tarjeta);
+    }
+  };
+
   const actualizacion = crearActualizacionHu11(raiz, async vigente => {
     if (operativa) {
       const contexto = await obtenerContextoMesa();
@@ -221,83 +313,10 @@ export async function render(container) {
     const firma = JSON.stringify(productos);
     if (lista.dataset.firma === firma) return;
     lista.dataset.firma = firma;
-    lista.replaceChildren();
-    const tipos = { plato: 'Platos', bebida: 'Bebidas', postre: 'Postres' };
-    for (const [tipo, titulo] of Object.entries(tipos)) {
-      const details = document.createElement('details');
-      if (tipo === 'plato') details.open = true;
-      details.className = 'hu11__categoria';
-      const summary = document.createElement('summary');
-      summary.textContent = titulo;
-      summary.className = 'hu11__categoria-titulo';
-      details.append(summary);
+    
+    productosCache = productos;
+    dibujarCarta();
 
-      const grupo = document.createElement('div');
-      grupo.className = 'hu11__grupo hu11__grupo-espaciado';
-      
-      for (const producto of productos.filter(p => p.tipo === tipo)) {
-        const tarjeta = document.createElement('article');
-        tarjeta.className = 'hu11-producto';
-        const datos = document.createElement('div');
-        datos.className = 'hu11-producto__datos';
-        const nombre = document.createElement('h3'); nombre.textContent = producto.nombre;
-        const descripcion = document.createElement('p'); descripcion.textContent = producto.descripcion;
-        descripcion.className = 'hu11-producto__descripcion';
-        const precio = document.createElement('strong');
-        precio.className = 'hu11-producto__precio';
-        precio.textContent = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(producto.precio);
-        const tiempo = document.createElement('p'); tiempo.textContent = `Preparación: ${producto.tiempo_elaboracion_min} min`;
-        tiempo.className = 'hu11-producto__tiempo';
-        datos.append(nombre, descripcion, precio, tiempo);
-        
-        if (operativa) {
-          const controles = document.createElement('div');
-          controles.className = 'hu11-producto__controles';
-          
-          let cantidad = CarritoService.obtenerCantidad(producto.id);
-          
-          controles.innerHTML = `
-            <button type="button" class="btn-menos hu11-producto__btn-cantidad">-</button>
-            <span class="cantidad hu11-producto__cantidad-texto">${cantidad}</span>
-            <button type="button" class="btn-mas hu11-producto__btn-cantidad">+</button>
-          `;
-          
-          const btnMenos = controles.querySelector('.btn-menos');
-          const btnMas = controles.querySelector('.btn-mas');
-          const spanCantidad = controles.querySelector('.cantidad');
-          
-          btnMenos.onclick = () => {
-            if (cantidad > 0) {
-              cantidad--;
-              spanCantidad.textContent = cantidad;
-              CarritoService.actualizarProducto(producto, cantidad);
-              actualizarUI();
-            }
-          };
-          
-          btnMas.onclick = () => {
-            cantidad++;
-            spanCantidad.textContent = cantidad;
-            CarritoService.actualizarProducto(producto, cantidad);
-            actualizarUI();
-          };
-          
-          // Escuchar cambios hechos desde el carrito flotante
-          window.addEventListener('carrito-actualizado', () => {
-            cantidad = CarritoService.obtenerCantidad(producto.id);
-            if (spanCantidad) spanCantidad.textContent = cantidad;
-          });
-          
-          datos.append(controles);
-        }
-
-        tarjeta.append(crearCarruselImagenes(ordenarFotosProducto(producto.producto_fotos), producto.nombre), datos);
-        grupo.append(tarjeta);
-      }
-      if (!grupo.childElementCount) grupo.textContent = 'No hay productos disponibles en esta categoría.';
-      details.append(grupo);
-      lista.append(details);
-    }
     aviso.textContent = '';
     actualizarUI(); // Sincronizar UI al cargar
   }, error => {
