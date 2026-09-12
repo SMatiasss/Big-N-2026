@@ -1,11 +1,41 @@
+/* =========================================================
+   BASE
+   ========================================================= */
+
+.confirmacion-mozo {
+  --fondo: #606c38;
+  --fondo-card: #4a572c;
+  --acento: #dda15e;
+  --acento-fuerte: #bc6c25;
+  --acento-peligro: #d62828;
+
+  --texto-claro: #fefae0;
+  --texto-suave: #c8c8a0;
+  --borde: #6e6939;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+
+  font-family: var(--font-body, 'Geist', sans-serif);
+  font-weight: 400;
+}
+
+.confirmacion-mozo {
+  --background: var(--fondo);
+}
+
 .confirmacion-mozo__main {
-  padding: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px 16px max(16px, env(safe-area-inset-bottom));
 }
 
 .confirmacion-mozo__vacio {
   text-align: center;
   margin-top: 40px;
-  color: #e5e4c9;
+  color: var(--texto-suave);
   font-size: 1.1rem;
 }
 
@@ -16,28 +46,33 @@
   margin-top: 16px;
 }
 
+/* =========================================================
+   PEDIDO CARD
+   ========================================================= */
+
 .pedido-card {
-  background: #283618;
+  background: var(--fondo-card);
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
 .pedido-card__header {
-  border-bottom: 1px solid #4a572c;
+  border-bottom: 1px solid var(--borde);
   padding-bottom: 8px;
   margin-bottom: 12px;
 }
 
 .pedido-card__header h3 {
   margin: 0;
-  color: #dda15e;
+  color: var(--acento);
+  font-family: var(--font-heading, 'Outfit', sans-serif);
   font-size: 1.4rem;
 }
 
 .pedido-card__cliente {
   margin: 4px 0 0 0;
-  color: #fefae0;
+  color: var(--texto-claro);
   font-size: 1rem;
 }
 
@@ -48,7 +83,7 @@
 }
 
 .pedido-card__cuerpo li {
-  color: #fefae0;
+  color: var(--texto-claro);
   font-size: 1.1rem;
   margin-bottom: 4px;
 }
@@ -69,12 +104,22 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.pedido-card__controles button:active {
+  transform: scale(0.95);
+}
+
+.pedido-card__controles button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn-aceptar {
-  background: #dda15e;
+  background: var(--acento);
 }
 
 .btn-rechazar {
-  background: #d62828;
+  background: var(--acento-peligro);
 }
