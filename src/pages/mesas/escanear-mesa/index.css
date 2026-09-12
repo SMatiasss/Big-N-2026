@@ -1,0 +1,62 @@
+.escanear-mesa main {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  padding: 32px 24px 22dvh;
+  text-align: center;
+  gap: 32px;
+}
+
+.escanear-mesa p[role="status"] {
+  color: #fefae0;
+  font-family: var(--font-body, 'Geist', sans-serif);
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+.escanear-mesa .lector-qr {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.escanear-mesa .lector-qr h2 {
+  color: #fefae0;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  margin: 0 0 16px;
+  font-size: 26px;
+}
+
+.escanear-mesa .lector-qr p {
+  color: #c8c8a0;
+  font-family: var(--font-body, 'Geist', sans-serif);
+  margin: 0 0 40px;
+  font-size: 18px;
+}
+
+.escanear-mesa .lector-qr ion-button {
+  --background: #dda15e;
+  --background-hover: #bc6c25;
+  --background-activated: #bc6c25;
+  --background-focused: #bc6c25;
+
+  --color: #fefae0;
+  --border-radius: 12px;
+  --border-width: 0;
+  --box-shadow: 0 3px 3px rgb(42 49 19 / 42%);
+
+  height: 56px;
+  margin-top: 16px;
+  width: 100%;
+  
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: none;
+}

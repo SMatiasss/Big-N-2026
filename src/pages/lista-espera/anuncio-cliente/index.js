@@ -26,12 +26,7 @@ export function render(container) {
           <section class="lista-espera-cliente__aviso" role="status" aria-live="polite" hidden>
             <ion-spinner class="lista-espera-cliente__aviso-spinner" name="crescent" aria-hidden="true"></ion-spinner>
             <span class="lista-espera-cliente__aviso-texto"></span>
-            <ion-button class="lista-espera-cliente__boton-mesa" fill="clear" hidden aria-label="Escanear el QR de la mesa">📷</ion-button>
           </section>
-
-          <p class="lista-espera-cliente__indicacion" hidden>
-            Buscá el código QR que está en tu mesa y escanealo con el botón de arriba.
-          </p>
 
           <section class="lista-espera-cliente__encuestas">
             <h2>Encuestas anteriores</h2>
@@ -44,6 +39,12 @@ export function render(container) {
 
           <div class="lista-espera-cliente__acciones">
             <ion-button class="lista-espera-cliente__ingresar" expand="block">Ingresar a la lista de espera</ion-button>
+            <button class="lista-espera-cliente__accion-mesa" type="button" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM18 18h3v3h-3z"/>
+              </svg>
+              <strong>Ingresar a la mesa</strong>
+            </button>
             <ion-button class="lista-espera-cliente__cancelar" expand="block" fill="outline" hidden>Cancelar espera</ion-button>
           </div>
         </main>
@@ -51,27 +52,25 @@ export function render(container) {
     </ion-page>
   `;
 
-  // Esta pantalla es del cliente y no tiene navegación hacia atrás lógica
-  // (se llega acá tras escanear el QR de la puerta), así que se mantiene el
-  // header estándar sólo por el título, ocultando el control de volver.
   const header = crearAppHeader({
     titulo: 'Lista de espera',
     onVolver: () => navegarA('/home'),
   });
   container.querySelector('[data-header]').append(header);
-  header.querySelector('.app-header__volver').hidden = true;
 
   const aviso = container.querySelector('.lista-espera-cliente__aviso');
   const avisoTexto = container.querySelector('.lista-espera-cliente__aviso-texto');
   // El spinner sólo acompaña a la espera; cuando llega la mesa se apaga.
   const avisoSpinner = container.querySelector('.lista-espera-cliente__aviso-spinner');
-  // HU11 continúa desde la asignación existente, sin crear otra estadía.
-  const botonMesa = container.querySelector('.lista-espera-cliente__boton-mesa');
-  botonMesa.addEventListener('click', () => navegarA('/mesa/escanear'));
+  
   const seccionEncuestas = container.querySelector('.lista-espera-cliente__encuestas');
-  const indicacion = container.querySelector('.lista-espera-cliente__indicacion');
   const botonIngresar = container.querySelector('.lista-espera-cliente__ingresar');
+  const botonIngresarMesa = container.querySelector('.lista-espera-cliente__accion-mesa');
   const botonCancelar = container.querySelector('.lista-espera-cliente__cancelar');
+
+  botonIngresarMesa.addEventListener('click', () => {
+    navegarA('/mesa/escanear');
+  });
 
   let cancelarSuscripcion = null;
   let entradaActual = null;
@@ -79,11 +78,10 @@ export function render(container) {
   // ---- Estado de espera ----
   function mostrarEsperando() {
     botonIngresar.hidden = true;
+    botonIngresarMesa.hidden = true;
     botonCancelar.hidden = false;
-    botonMesa.hidden = true;
     aviso.hidden = false;
     avisoSpinner.hidden = false;
-    indicacion.hidden = true;
     aviso.classList.remove('lista-espera-cliente__aviso--asignada');
     avisoTexto.textContent = 'Esperando la confirmación del metre';
   }
@@ -91,23 +89,21 @@ export function render(container) {
   function mostrarInicial() {
     botonIngresar.hidden = false;
     botonIngresar.disabled = false;
+    botonIngresarMesa.hidden = true;
     botonCancelar.hidden = true;
-    botonMesa.hidden = true;
     aviso.hidden = true;
-    indicacion.hidden = true;
     seccionEncuestas.hidden = false;
   }
 
   function mostrarAsignada(numeroMesa) {
     aviso.hidden = false;
     botonIngresar.disabled = true;
-    avisoTexto.textContent = `Solicitud aceptada para la mesa ${numeroMesa}`;
+    avisoTexto.textContent = `¡Solicitud aceptada para la mesa ${numeroMesa}!`;
     avisoSpinner.hidden = true;
     aviso.classList.add('lista-espera-cliente__aviso--asignada');
     botonIngresar.hidden = true;
     botonCancelar.hidden = true;
-    botonMesa.hidden = false;
-    indicacion.hidden = false;
+    botonIngresarMesa.hidden = false;
     // Las encuestas se ocultan en este punto (el paso siguiente es HU11).
     seccionEncuestas.hidden = true;
   }
