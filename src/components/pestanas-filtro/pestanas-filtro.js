@@ -5,7 +5,9 @@ import './pestanas-filtro.css';
  *
  * @param {object} opciones
  * @param {string}   opciones.etiqueta        - aria-label del <nav>.
- * @param {{valor: string, texto: string}[]} opciones.opciones - Pestañas a mostrar.
+ * @param {{valor: string, texto: string, deshabilitada?: boolean}[]} opciones.opciones
+ *   - Pestañas a mostrar. deshabilitada:true la deja visible pero gris y sin
+ *   poder tocarla (permiso por rol, no un estado transitorio de carga).
  * @param {string}   opciones.seleccionInicial - Valor de la pestaña activa al crearla.
  * @param {Function} opciones.onCambio         - Recibe el valor de la pestaña elegida.
  * @param {Function} [opciones.permitirCambio] - Se evalúa antes de tocar el DOM; si
@@ -17,13 +19,18 @@ export function crearPestanas({ etiqueta, opciones, seleccionInicial, onCambio, 
   nav.className = 'pestanas-filtro';
   nav.setAttribute('aria-label', etiqueta);
 
-  const botones = opciones.map(({ valor, texto }) => {
+  const botones = opciones.map(({ valor, texto, deshabilitada }) => {
     const boton = document.createElement('button');
     boton.type = 'button';
     boton.className = 'pestanas-filtro__boton';
     boton.dataset.valor = valor;
     boton.setAttribute('aria-pressed', String(valor === seleccionInicial));
     boton.textContent = texto;
+    if (deshabilitada) {
+      boton.disabled = true;
+      boton.classList.add('pestanas-filtro__boton--bloqueada');
+      boton.title = 'No disponible para tu perfil';
+    }
     boton.addEventListener('click', () => {
       if (boton.getAttribute('aria-pressed') === 'true') return;
       if (permitirCambio && !permitirCambio()) return;
@@ -38,7 +45,12 @@ export function crearPestanas({ etiqueta, opciones, seleccionInicial, onCambio, 
   return {
     elemento: nav,
     establecerBloqueado(valor) {
-      botones.forEach((boton) => { boton.disabled = valor; });
+      // Una pestaña deshabilitada por permiso de rol queda siempre así: el
+      // bloqueo transitorio (mientras se guarda algo) no debe reactivarla.
+      botones.forEach((boton) => {
+        if (boton.classList.contains('pestanas-filtro__boton--bloqueada')) return;
+        boton.disabled = valor;
+      });
     },
   };
 }

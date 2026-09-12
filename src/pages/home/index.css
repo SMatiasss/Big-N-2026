@@ -7,42 +7,231 @@
   color: var(--home-texto);
   font-family: var(--font-body);
 }
-.home ion-content { --background: #606c38; }
-.home__contenido { box-sizing: border-box; display: flex; flex-direction: column; width: 100%; max-width: 520px; min-height: 100%; min-height: 100dvh; margin: 0 auto; padding: max(clamp(18px, 3.5dvh, 34px), env(safe-area-inset-top)) 18px max(14px, env(safe-area-inset-bottom)); }
-.home__encabezado { text-align: center; }
-.home__marca { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 10px; color: var(--home-texto); font: 800 36px/1.05 var(--font-heading); }
-.home__marca img { box-sizing: border-box; width: clamp(76px, 12dvh, 104px); height: clamp(76px, 12dvh, 104px); padding: clamp(10px, 1.6dvh, 14px); border-radius: 50%; background: var(--home-texto); object-fit: contain; }
-.home__saludo { margin: 0 0 clamp(14px, 2.5dvh, 24px); color: var(--home-texto); font: 400 clamp(21px, 3dvh, 25px)/1.2 var(--font-body); }
-.home__aviso { margin: 0 0 18px; padding: 12px 14px; border-left: 4px solid var(--home-acento); border-radius: 8px; background: var(--home-tarjeta); font-size: var(--text-sm); }
-.home__seccion { margin-bottom: clamp(8px, 1.5dvh, 14px); }
-.home__seccion--principal { flex: 1; }
-.home__seccion h1, .home__seccion h2 { margin: 0 0 12px; font: 700 var(--text-xl)/var(--line-heading) var(--font-heading); }
-.home__seccion h2 { font-size: var(--text-lg); }
-.home__acciones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(8px, 1.3dvh, 12px); }
-.home__accion { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 72px; padding: 13px 10px; border: 1px solid rgb(221 161 94 / 18%); border-radius: 14px; background: var(--home-tarjeta); color: var(--home-texto); text-align: center; cursor: pointer; box-shadow: 0 5px 14px rgb(48 56 29 / 12%); }
-.home__accion--principal { min-height: clamp(112px, 18dvh, 170px); }
-.home__acciones .home__accion--principal:last-child:nth-child(odd) { grid-column: 1 / -1; min-height: clamp(100px, 15dvh, 156px); }
-.home__accion svg { width: 42px; height: 42px; margin-bottom: 14px; fill: none; stroke: var(--home-acento); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.home__accion strong { font: 700 var(--text-lg)/var(--line-heading) var(--font-heading); }
-.home__accion span { margin-top: 4px; color: #dfe2c8; font-size: var(--text-sm); line-height: var(--line-body); }
+.home ion-content {
+  --background: #606c38;
+}
+.home__contenido {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 520px;
+  min-height: 100%;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(clamp(14px, 3dvh, 28px), env(safe-area-inset-top)) 18px
+    max(14px, env(safe-area-inset-bottom));
+}
+.home__encabezado {
+  text-align: center;
+}
+.home__marca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--home-texto);
+  font: 800 36px/1.05 var(--font-heading);
+}
+.home__marca img {
+  box-sizing: border-box;
+  width: clamp(84px, 14dvh, 136px);
+  height: clamp(84px, 14dvh, 136px);
+  padding: clamp(10px, 1.6dvh, 14px);
+  border-radius: 50%;
+  background: var(--home-texto);
+  object-fit: contain;
+}
+.home__saludo {
+  margin: 0 0 clamp(10px, 2dvh, 20px);
+  color: var(--home-texto);
+  font: 400 clamp(21px, 3dvh, 25px) / 1.2 var(--font-body);
+}
+.home__aviso {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border-left: 4px solid var(--home-acento);
+  border-radius: 8px;
+  background: var(--home-tarjeta);
+  font-size: var(--text-sm);
+}
+.home__seccion {
+  margin-bottom: clamp(6px, 1dvh, 10px);
+}
+.home__seccion--principal {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.home__seccion h1,
+.home__seccion h2 {
+  margin: 0 0 12px;
+  font: 700 var(--text-xl) / var(--line-heading) var(--font-heading);
+}
+.home__seccion h2 {
+  font-size: var(--text-lg);
+}
+.home__acciones {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(min-content, 1fr);
+  gap: clamp(6px, 1dvh, 10px);
+}
+.home__accion {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  padding: 13px 10px;
+  border: 1px solid rgb(221 161 94 / 18%);
+  border-radius: 14px;
+  background: var(--home-tarjeta);
+  color: var(--home-texto);
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 5px 14px rgb(48 56 29 / 12%);
+}
+.home__accion--principal {
+  min-height: clamp(56px, 8dvh, 108px);
+}
+.home__accion--bloqueada {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+.home__accion--bloqueada:active {
+  transform: none;
+}
+.home__acciones .home__accion--principal:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  min-height: clamp(48px, 7dvh, 96px);
+}
+.home__accion svg {
+  width: 26px;
+  height: 26px;
+  margin-bottom: 6px;
+  fill: none;
+  stroke: var(--home-acento);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.home__accion strong {
+  font: 700 var(--text-lg) / var(--line-heading) var(--font-heading);
+}
+.home__accion span {
+  margin-top: 4px;
+  color: #dfe2c8;
+  font-size: var(--text-sm);
+  line-height: var(--line-body);
+}
 
-/* Tarjeta bloqueada: la acción existe y se ve, pero el rol actual todavía no
-   puede entrar (ver ACCIONES_HOME_EMPLEADOS/ROLES_POR_RUTA). Se atenúa en vez
-   de ocultarse -es justamente la idea: "está ahí, pero no para vos todavía"-. */
-.home__accion--bloqueada { cursor: not-allowed; opacity: .5; box-shadow: none; }
-.home__accion--bloqueada:active { transform: none; }
-.home__accion-candado { position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; display: grid; place-items: center; background: rgb(43 37 33 / 55%); border-radius: 50%; }
-.home__accion-candado svg { width: 12px; height: 12px; fill: none; stroke: var(--home-texto); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.home__acciones--secundarias .home__accion { min-height: clamp(60px, 8dvh, 76px); }
-.home__acciones--secundarias .home__accion svg { width: 28px; height: 28px; margin-bottom: 7px; }
-.home__perfil { display: flex; align-items: center; gap: 12px; margin-top: clamp(4px, 1dvh, 8px); padding: clamp(10px, 1.5dvh, 14px) 12px; border: 1px solid rgb(221 161 94 / 16%); border-radius: 14px; background: var(--home-tarjeta); box-shadow: 0 5px 14px rgb(48 56 29 / 12%); }
-.home__avatar { display: grid; flex: 0 0 48px; width: 48px; height: 48px; place-items: center; border-radius: 50%; background: var(--home-acento); color: var(--home-texto); font: 700 var(--text-lg)/1 var(--font-heading); }
-.home__perfil-datos { display: flex; flex: 1; min-width: 0; flex-direction: column; }
-.home__perfil-datos strong { overflow: hidden; font: 700 var(--text-md)/1.25 var(--font-heading); text-overflow: ellipsis; white-space: nowrap; }
-.home__perfil-datos small { overflow: hidden; margin-top: 3px; color: var(--home-acento); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
-.home__cerrar { display: grid; flex: 0 0 var(--touch-target); width: var(--touch-target); height: var(--touch-target); padding: 0; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--home-acento); }
-.home__cerrar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.home__error { min-height: 20px; color: #ffd0bf; font-size: var(--text-sm); text-align: center; }
-.home__lector .lector-qr { margin: 0 0 18px; padding: 16px; border-radius: 14px; background: #4a572c; }
-@media (max-height: 720px) { .home__marca img { width: 82px; height: 82px; padding: 11px; } .home__accion--principal { min-height: 132px; } .home__acciones .home__accion--principal:last-child:nth-child(odd) { min-height: 116px; } }
-@media (max-width: 360px) { .home__contenido { padding-inline: 14px; } .home__accion--principal { min-height: 145px; } }
+.home__acciones--secundarias .home__accion {
+  min-height: clamp(60px, 8dvh, 76px);
+}
+.home__acciones--secundarias .home__accion svg {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 7px;
+}
+.home__perfil {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: clamp(4px, 1dvh, 8px);
+  padding: clamp(10px, 1.5dvh, 14px) 12px;
+  border: 1px solid rgb(221 161 94 / 16%);
+  border-radius: 14px;
+  background: var(--home-tarjeta);
+  box-shadow: 0 5px 14px rgb(48 56 29 / 12%);
+}
+.home__avatar {
+  display: grid;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--home-acento);
+  color: var(--home-texto);
+  font: 700 var(--text-lg) / 1 var(--font-heading);
+}
+.home__perfil-datos {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+.home__perfil-datos strong {
+  color: white;
+  overflow: hidden;
+  font: 700 var(--text-md) / 1.25 var(--font-heading);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home__perfil-datos small {
+  overflow: hidden;
+  margin-top: 3px;
+  color: var(--home-acento);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home__cerrar {
+  display: grid;
+  flex: 0 0 var(--touch-target);
+  width: var(--touch-target);
+  height: var(--touch-target);
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--home-acento);
+}
+.home__cerrar svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.home__error {
+  min-height: 20px;
+  color: #ffd0bf;
+  font-size: var(--text-sm);
+  text-align: center;
+}
+.home__lector .lector-qr {
+  margin: 0 0 18px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #4a572c;
+}
+@media (max-width: 360px) {
+  .home__contenido {
+    padding-inline: 14px;
+  }
+}
+/* Pantallas muy bajas (celulares viejos, ~568px o menos de alto real): el
+   contenido de cada tarjeta (ícono + texto + padding) ya no entra sólo con
+   los min-height en dvh de arriba, hay que achicar el padding y la letra. */
+@media (max-height: 600px) {
+  .home__accion {
+    padding: 8px 10px;
+  }
+  .home__accion strong {
+    font-size: var(--text-md);
+  }
+  .home__accion svg {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 4px;
+  }
+}

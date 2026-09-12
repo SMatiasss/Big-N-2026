@@ -1,5 +1,5 @@
 import { getSupabase, getSupabaseAislado } from './supabase.client.js';
-import { obtenerMotivoBloqueo, puedeResolverClientes } from '../utils/acceso-perfil.js';
+import { obtenerMotivoBloqueo, puedeResolverClientes, puedeVerClientesActivos } from '../utils/acceso-perfil.js';
 import { ROLES } from '../config/constantes.js';
 
 // El perfil interviene en casi todas las navegaciones. Mantener una copia
@@ -128,6 +128,16 @@ export async function exigirAdministradorClientes() {
   const perfil = await obtenerPerfilActual();
   if (!puedeResolverClientes(perfil)) {
     throw new Error('Sólo dueño o supervisor aprobados y activos pueden administrar clientes.');
+  }
+  return perfil;
+}
+
+// Más permisivo que exigirAdministradorClientes: sólo para LEER la pestaña de
+// clientes ya aprobados (dueño/supervisor/metre), no para resolver pendientes.
+export async function exigirPermisoClientesActivos() {
+  const perfil = await obtenerPerfilActual();
+  if (!puedeVerClientesActivos(perfil)) {
+    throw new Error('No tenés permiso para ver esta lista de clientes.');
   }
   return perfil;
 }

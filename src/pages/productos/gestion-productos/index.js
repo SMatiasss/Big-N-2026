@@ -5,6 +5,7 @@
 import './index.css';
 import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { TIPOS_PRODUCTO } from '../../../config/constantes.js';
+import { PERMISOS_PESTANAS } from '../../../config/navegacion.js';
 import { puedeAltaBebida, puedeAltaPlato } from '../../../config/permisos.js';
 import { obtenerPermisos } from '../../../services/auth.service.js';
 import { listarCartaConFotos } from '../../../services/productos.service.js';
@@ -112,6 +113,7 @@ export function render(container) {
   ajustarLista(lista);
 
   let productos = [];
+  let cartaCargada = false;
   let tipoSeleccionado = TIPOS_PRODUCTO.PLATO;
   // Qué puede dar de alta este perfil. El permiso decide el botón "+", no el
   // acceso a la pantalla: todo el staff puede mirar la carta completa.
@@ -132,16 +134,25 @@ export function render(container) {
   const botonAlta = header.querySelector('.app-header__accion');
   botonAlta.hidden = true;
 
-  const pestanas = crearPestanas({
-    etiqueta: 'Filtrar productos',
-    opciones: Object.entries(PESTANAS).map(([valor, { etiqueta }]) => ({ valor, texto: etiqueta })),
-    seleccionInicial: tipoSeleccionado,
-    onCambio: (valor) => {
-      tipoSeleccionado = valor;
-      dibujar();
-    },
-  });
-  container.querySelector('[data-pestanas]').append(pestanas.elemento);
+  // Se arma primero con las dos pestañas habilitadas (todavía no se sabe el
+  // rol) y se reconstruye apenas resuelven los permisos si corresponde grisar
+  // alguna -así no hay que esperar la respuesta para mostrar algo en pantalla-.
+  function crearYMontarPestanas(deshabilitadas = {}) {
+    const nuevaPestanas = crearPestanas({
+      etiqueta: 'Filtrar productos',
+      opciones: Object.entries(PESTANAS).map(([valor, { etiqueta }]) => ({
+        valor, texto: etiqueta, deshabilitada: deshabilitadas[valor] === 'deshabilitada',
+      })),
+      seleccionInicial: tipoSeleccionado,
+      onCambio: (valor) => {
+        tipoSeleccionado = valor;
+        dibujar();
+      },
+    });
+    container.querySelector('[data-pestanas]').replaceChildren(nuevaPestanas.elemento);
+    return nuevaPestanas;
+  }
+  crearYMontarPestanas();
 
   function actualizarBotonAlta() {
     const puede = tipoSeleccionado === TIPOS_PRODUCTO.PLATO ? puedeCrearPlato : puedeCrearBebida;
@@ -178,13 +189,31 @@ export function render(container) {
     .then((permisos) => {
       puedeCrearPlato = puedeAltaPlato(permisos);
       puedeCrearBebida = puedeAltaBebida(permisos);
+
+      // Cocinero/cantinero ven las dos pestañas, pero una queda gris (pedido
+      // explícito: nunca ocultarla). Cualquier otro rol que llegue acá
+      // (jefe, o alguien por URL directa) sigue viendo las dos habilitadas.
+      const deshabilitadas = PERMISOS_PESTANAS.productos[permisos.rol];
+      if (deshabilitadas) {
+        if (deshabilitadas[tipoSeleccionado] === 'deshabilitada') {
+          tipoSeleccionado = tipoSeleccionado === TIPOS_PRODUCTO.PLATO ? TIPOS_PRODUCTO.BEBIDA : TIPOS_PRODUCTO.PLATO;
+        }
+        crearYMontarPestanas(deshabilitadas);
+      }
+
       actualizarBotonAlta();
+      // Si la carta ya cargó, hay que redibujar con la pestaña corregida; si
+      // todavía no, listarCartaConFotos() ya va a dibujar con el valor
+      // correcto de tipoSeleccionado apenas resuelva -evita mostrar el
+      // mensaje de "vacío" de una pestaña de más mientras se espera la carta-.
+      if (cartaCargada) dibujar();
     })
     .catch((error) => console.error('No se pudieron cargar los permisos de productos.', error));
 
   listarCartaConFotos()
     .then((cartaCompleta) => {
       productos = cartaCompleta;
+      cartaCargada = true;
       estadoCarga.hidden = true;
       dibujar();
     })

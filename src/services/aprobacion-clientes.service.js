@@ -1,5 +1,5 @@
 import { getSupabase } from './supabase.client.js';
-import { exigirAdministradorClientes } from './auth.service.js';
+import { exigirAdministradorClientes, exigirPermisoClientesActivos } from './auth.service.js';
 import { ESTADOS_PERFIL, ROLES, TABLAS } from '../config/constantes.js';
 import { enviarEmailAprobacion, enviarEmailRechazo } from './email.service.js';
 
@@ -28,17 +28,25 @@ export function observarClientesPendientes(onCambio, onEstado = () => {}) {
   };
 }
 
+// Ver pendientes exige poder resolverlos (sólo dueño/supervisor): esta lista
+// trae al cliente pendiente completo, con la acción de aceptar/rechazar.
 export async function listarClientesPendientes() {
+  await exigirAdministradorClientes();
   return listarClientesPorEstado(ESTADOS_PERFIL.PENDIENTE);
 }
 
+// Ver aceptados es más permisivo (dueño/supervisor/metre, ver
+// exigirPermisoClientesActivos): el metre la usa como referencia antes de
+// registrar un cliente nuevo, sin poder resolver nada acá.
 export async function listarClientesAceptados() {
+  await exigirPermisoClientesActivos();
   return listarClientesPorEstado(ESTADOS_PERFIL.APROBADO);
 }
 
 async function listarClientesPorEstado(estado) {
-  await exigirAdministradorClientes();
-  // El panel no necesita DNI, correo ni otros datos personales del cliente.
+  // El permiso ya lo validó quien llama (distinto según pendiente/aprobado);
+  // esta función sólo arma la consulta. El panel no necesita DNI, correo ni
+  // otros datos personales del cliente.
   const { data, error } = await getSupabase().from(TABLAS.PERFILES)
     .select(COLUMNAS_LISTADO)
     .eq('rol', ROLES.CLIENTE_REGISTRADO)

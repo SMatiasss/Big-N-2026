@@ -72,3 +72,12 @@
   cursor: wait;
   opacity: 0.6;
 }
+
+/* Permiso por rol, no un estado transitorio: se distingue del :disabled de
+   arriba (que es "esperá, se está guardando algo") con un gris más marcado y
+   cursor de "no permitido" en vez de "espera". Va después a propósito, para
+   ganarle en cascada al :disabled genérico cuando se aplican los dos juntos. */
+.pestanas-filtro .pestanas-filtro__boton.pestanas-filtro__boton--bloqueada {
+  cursor: not-allowed;
+  opacity: 0.35;
+}

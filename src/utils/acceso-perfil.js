@@ -16,3 +16,14 @@ export function puedeResolverClientes(perfil) {
     && perfil.estado === ESTADOS_PERFIL.APROBADO
     && [ROLES.DUENO, ROLES.SUPERVISOR].includes(perfil.rol));
 }
+
+// Ver la pestaña "Todos" (clientes ya aprobados) es más permisivo que
+// resolver pendientes: el metre también la usa para registrar un cliente
+// nuevo sin duplicarse (matriz de acceso, config/navegacion.js). RLS ya deja
+// leer perfiles a cualquier empleado (perfiles_staff_lee); esto sólo decide
+// qué pantalla se lo ofrece.
+export function puedeVerClientesActivos(perfil) {
+  return Boolean(perfil?.activo === true
+    && perfil.estado === ESTADOS_PERFIL.APROBADO
+    && [ROLES.DUENO, ROLES.SUPERVISOR, ROLES.METRE].includes(perfil.rol));
+}

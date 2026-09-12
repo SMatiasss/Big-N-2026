@@ -5,7 +5,9 @@ import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearPestanas } from '../../../components/pestanas-filtro/pestanas-filtro.js';
 import { crearModalConfirmacion } from '../../../components/modal-confirmacion/modal-confirmacion.js';
 import { listarClientesPendientes, listarClientesAceptados, resolverClientePendiente, observarClientesPendientes } from '../../../services/aprobacion-clientes.service.js';
-import { ESTADOS_PERFIL } from '../../../config/constantes.js';
+import { obtenerPermisos } from '../../../services/auth.service.js';
+import { PERMISOS_PESTANAS } from '../../../config/navegacion.js';
+import { ESTADOS_PERFIL, ROLES } from '../../../config/constantes.js';
 
 export async function render(container) {
   container.innerHTML = `
@@ -19,7 +21,7 @@ export async function render(container) {
         </div>
         <p class="aprobacion-clientes__resultado" role="status" aria-live="polite" data-decision></p>
         <section class="aprobacion-clientes__lista lista-ajustada" aria-label="Clientes pendientes"></section>
-        <p class="aprobacion-clientes__aviso">Al aprobar o rechazar, se intentará enviar un correo al cliente.</p>
+        <p class="aprobacion-clientes__aviso" data-aviso-email>Al aprobar o rechazar, se intentará enviar un correo al cliente.</p>
       </main>
     </ion-content>`;
   const raiz = container.firstElementChild;
@@ -28,9 +30,21 @@ export async function render(container) {
   const mensaje = raiz.querySelector('[data-mensaje]');
   const conexion = raiz.querySelector('[data-conexion]');
   const decision = raiz.querySelector('[data-decision]');
+
+  // Matriz de acceso: dueño/supervisor ven "Pendientes" habilitada y "Todos"
+  // ("Clientes - Activos" en la matriz) gris; metre es al revés y además
+  // puede registrar un cliente nuevo. La pestaña "Pendientes" para metre no
+  // sólo se muestra gris: ni siquiera se le pide el dato, porque el propio
+  // servicio (exigirAdministradorClientes) le tiraría error si se lo pidiera.
+  const permisos = await obtenerPermisos().catch(() => null);
+  const permisoTabs = permisos ? PERMISOS_PESTANAS.clientes[permisos.rol] : undefined;
+  const puedeVerPendientes = permisoTabs?.[ESTADOS_PERFIL.PENDIENTE] !== 'deshabilitada';
+  const puedeVerAceptados = permisoTabs?.[ESTADOS_PERFIL.APROBADO] !== 'deshabilitada';
+  const puedeAgregarCliente = permisos?.rol === ROLES.METRE;
+
   let ocupado = false;
   let clientes = [];
-  let estadoSeleccionado = ESTADOS_PERFIL.PENDIENTE;
+  let estadoSeleccionado = puedeVerPendientes ? ESTADOS_PERFIL.PENDIENTE : ESTADOS_PERFIL.APROBADO;
   let cerrado = false;
   let recargaPendiente = false;
   let detenerObservacion;
@@ -56,14 +70,27 @@ export async function render(container) {
     titulo: 'Clientes',
     etiquetaVolver: 'Volver al inicio',
     onVolver: () => navegarA('/home'),
+    // "Clientes - Activos: Ver + Agregar" del metre: la lectura de la matriz
+    // de acceso a config/navegacion.js, la ruta ya está gateada a metre.
+    accion: {
+      texto: '+',
+      etiqueta: 'Registrar un cliente',
+      onClick: () => navegarA('/clientes/alta'),
+    },
   });
   raiz.querySelector('[data-header]').append(header);
+  const botonAgregar = header.querySelector('.app-header__accion');
+  if (botonAgregar) botonAgregar.hidden = !puedeAgregarCliente;
+
+  // Al viewer que no puede resolver pendientes tampoco le corresponde el
+  // aviso de "se enviará un correo al aprobar/rechazar".
+  raiz.querySelector('[data-aviso-email]').hidden = !puedeVerPendientes;
 
   const pestanas = crearPestanas({
     etiqueta: 'Filtrar clientes',
     opciones: [
-      { valor: ESTADOS_PERFIL.APROBADO, texto: 'Todos' },
-      { valor: ESTADOS_PERFIL.PENDIENTE, texto: 'Pendientes' },
+      { valor: ESTADOS_PERFIL.APROBADO, texto: 'Todos', deshabilitada: !puedeVerAceptados },
+      { valor: ESTADOS_PERFIL.PENDIENTE, texto: 'Pendientes', deshabilitada: !puedeVerPendientes },
     ],
     seleccionInicial: estadoSeleccionado,
     permitirCambio: () => !ocupado && !cerrado,
@@ -152,7 +179,8 @@ export async function render(container) {
     if (!clientes.length) mensaje.textContent = 'Buscando solicitudes…';
     try {
       const [pendientes, aceptados] = await Promise.all([
-        listarClientesPendientes(), listarClientesAceptados(),
+        puedeVerPendientes ? listarClientesPendientes() : Promise.resolve([]),
+        puedeVerAceptados ? listarClientesAceptados() : Promise.resolve([]),
       ]);
       if (cerrado || !raiz.isConnected) return;
       clientes = [...pendientes, ...aceptados];
