@@ -1,15 +1,15 @@
-import { App } from '@capacitor/app';
-import '@ionic/core/css/ionic.bundle.css';
-import { initialize } from '@ionic/core/components';
-import { defineCustomElements } from '@ionic/core/loader';
-import './styles/variables.css';
-import './styles/tipografia.css';
-import './styles/globales.css';
-import { initSupabase } from './services/supabase.client.js';
-import { verificarSesionAnonimaAlArrancar } from './services/sesion-anonima.service.js';
-import { iniciarRouter } from './router.js';
-import { escucharAccionesPush } from './services/notificaciones.service.js';
-import { resolverRutaClienteAlArrancar } from './services/navegacion-inicial.service.js';
+import { App } from "@capacitor/app";
+import "@ionic/core/css/ionic.bundle.css";
+import { initialize } from "@ionic/core/components";
+import { defineCustomElements } from "@ionic/core/loader";
+import "./styles/variables.css";
+import "./styles/tipografia.css";
+import "./styles/globales.css";
+import { initSupabase } from "./services/supabase.client.js";
+import { verificarSesionAnonimaAlArrancar } from "./services/sesion-anonima.service.js";
+import { iniciarRouter } from "./router.js";
+import { escucharAccionesPush } from "./services/notificaciones.service.js";
+import { resolverRutaClienteAlArrancar } from "./services/navegacion-inicial.service.js";
 
 initialize();
 defineCustomElements(window);
@@ -23,36 +23,45 @@ void escucharAccionesPush();
 // nunca llegó a tener una), se cierra sola acá antes de mostrar cualquier
 // pantalla -ver sesion-anonima.service.js-. Para cualquier otro rol esto no
 // hace nada: mantienen su sesión persistente normal.
-verificarSesionAnonimaAlArrancar().then(async () => {
-  const rutaCliente = await resolverRutaClienteAlArrancar();
-  if (rutaCliente) location.hash = rutaCliente;
-}).catch((error) => {
-  console.error('No se pudo restaurar la pantalla operativa del cliente.', error);
-}).finally(() => {
-  iniciarRouter(document.querySelector('#app'));
-});
-
+verificarSesionAnonimaAlArrancar()
+  .then(async () => {
+    const rutaCliente = await resolverRutaClienteAlArrancar();
+    if (rutaCliente) location.hash = rutaCliente;
+  })
+  .catch((error) => {
+    console.error(
+      "No se pudo restaurar la pantalla operativa del cliente.",
+      error,
+    );
+  })
+  .finally(() => {
+    iniciarRouter(document.querySelector("#app"));
+  });
 
 // Splash screen con movimiento y sonido custom
-window.addEventListener('load', () => {
-    const sonido = new Audio('/assets/sonidos/sonido-inicio.mp3');
-    sonido.play().catch(e => console.log("Bloqueado en web PC, pero sonará en celular:", e));
+window.addEventListener("load", () => {
+  const sonido = new Audio("/assets/sonidos/sonido-inicio.mp3");
+  sonido
+    .play()
+    .catch((e) =>
+      console.log("Bloqueado en web PC, pero sonará en celular:", e),
+    );
 
-    setTimeout(() => {
-    const splash = document.getElementById('web-splash');
+  setTimeout(() => {
+    const splash = document.getElementById("web-splash");
     if (splash) {
-        splash.style.opacity = '0'; // Inicia el desvanecimiento
-        setTimeout(() => {
+      splash.style.opacity = "0"; // Inicia el desvanecimiento
+      setTimeout(() => {
         splash.remove(); // La borra para que puedas usar la app
-        }, 500);
+      }, 500);
     }
-    }, 4000); // 3.5 segundos en pantalla
+  }, 4000); // 3.5 segundos en pantalla
 });
 
 // El router cambia de pantalla vía location.hash, lo que apila entradas en el
 // historial del WebView. Por eso el botón "atrás" físico puede resolverse
 // simplemente retrocediendo ese historial en lugar de cerrar la app.
-App.addListener('backButton', ({ canGoBack }) => {
+App.addListener("backButton", ({ canGoBack }) => {
   if (canGoBack) window.history.back();
   else App.exitApp();
 });

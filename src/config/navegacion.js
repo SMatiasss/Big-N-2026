@@ -28,56 +28,9 @@ export const ROLES_POR_RUTA = {
   '/pedidos/confirmacion': [ROLES.MOZO],
 };
 
+// Home de clientes: se mantiene la lógica por rol (es un caso totalmente
+// distinto al de empleados, con una sola acción cada uno).
 const ACCIONES_HOME = {
-  [ROLES.DUENO]: {
-    principales: [
-      { id: 'mesas', titulo: 'Mesas', descripcion: 'Administrar las mesas del local', ruta: '/mesas' },
-      { id: 'empleados', titulo: 'Empleados', descripcion: 'Consultar y registrar personal', ruta: '/empleados' },
-      { id: 'clientes', titulo: 'Clientes', descripcion: 'Revisar solicitudes pendientes', ruta: '/clientes/aprobacion' },
-    ],
-    secundarias: [
-      { id: 'productos', titulo: 'Productos', ruta: '/productos' },
-      { id: 'espera', titulo: 'Lista de espera', ruta: '/lista-espera/metre' },
-    ],
-  },
-  [ROLES.SUPERVISOR]: {
-    principales: [
-      { id: 'mesas', titulo: 'Mesas', descripcion: 'Administrar las mesas del local', ruta: '/mesas' },
-      { id: 'empleados', titulo: 'Empleados', descripcion: 'Consultar y registrar personal', ruta: '/empleados' },
-      { id: 'clientes', titulo: 'Clientes', descripcion: 'Revisar solicitudes pendientes', ruta: '/clientes/aprobacion' },
-    ],
-    secundarias: [
-      { id: 'productos', titulo: 'Productos', ruta: '/productos' },
-      { id: 'espera', titulo: 'Lista de espera', ruta: '/lista-espera/metre' },
-    ],
-  },
-  [ROLES.COCINERO]: {
-    principales: [
-      { id: 'productos', titulo: 'Platos', descripcion: 'Consultar y administrar los platos', ruta: '/productos' },
-    ],
-    secundarias: [],
-  },
-  [ROLES.CANTINERO]: {
-    principales: [
-      { id: 'productos', titulo: 'Bebidas', descripcion: 'Consultar y administrar las bebidas', ruta: '/productos' },
-    ],
-    secundarias: [],
-  },
-  [ROLES.MOZO]: {
-    principales: [
-      { id: 'consultas', titulo: 'Consultas', descripcion: 'Leer y responder mensajes de las mesas', ruta: '/pedidos/consulta' },
-      { id: 'pedidos', titulo: 'Pedidos', descripcion: 'Revisar los pedidos pendientes', ruta: '/pedidos/confirmacion' },
-    ],
-    secundarias: [{ id: 'mesas', titulo: 'Mesas', ruta: '/mesas' }],
-  },
-  [ROLES.METRE]: {
-    principales: [
-      { id: 'espera', titulo: 'Lista de espera', descripcion: 'Asignar mesas a los clientes', ruta: '/lista-espera/metre' },
-      { id: 'mesas', titulo: 'Mesas', descripcion: 'Consultar disponibilidad y administrar mesas', ruta: '/mesas' },
-      { id: 'registrar-cliente', titulo: 'Registrar un cliente', descripcion: 'Dar de alta un cliente desde el local', ruta: '/clientes/alta' },
-    ],
-    secundarias: [],
-  },
   [ROLES.CLIENTE_REGISTRADO]: {
     principales: [
       { id: 'ingreso-local', titulo: 'Ingresar al local', descripcion: 'Escanear el QR de la entrada', accion: 'ingreso-local' },
@@ -87,8 +40,28 @@ const ACCIONES_HOME = {
   [ROLES.CLIENTE_ANONIMO]: { principales: [], secundarias: [] },
 };
 
+// Home de empleados: por ahora TODOS comparten esta misma pantalla con las
+// mismas 7 tarjetas (a diferencia de antes, que cada rol tenía su propia
+// lista curada en ACCIONES_HOME). Cuál queda habilitada para cada rol se
+// decide con ROLES_POR_RUTA -la misma tabla que ya protege la navegación
+// real-, así hay un solo lugar para corregir permisos en vez de dos listas
+// (acciones visibles + rutas permitidas) que se podían desincronizar.
+const ACCIONES_HOME_EMPLEADOS = [
+  { id: 'mesas', titulo: 'Mesas', ruta: '/mesas' },
+  { id: 'empleados', titulo: 'Empleados', ruta: '/empleados' },
+  { id: 'productos', titulo: 'Productos', ruta: '/productos' },
+  { id: 'pedidos', titulo: 'Pedidos', ruta: '/pedidos/confirmacion' },
+  { id: 'espera', titulo: 'Lista de espera', ruta: '/lista-espera/metre' },
+  { id: 'consultas', titulo: 'Consultas', ruta: '/pedidos/consulta' },
+  { id: 'clientes', titulo: 'Clientes', ruta: '/clientes/aprobacion' },
+];
+
 export function puedeAccederRuta(ruta, rol) {
   return Boolean(rol && ROLES_POR_RUTA[ruta]?.includes(rol));
+}
+
+export function esRolCliente(rol) {
+  return CLIENTES.includes(rol);
 }
 
 export function obtenerAccionesHome(rol) {
@@ -97,4 +70,14 @@ export function obtenerAccionesHome(rol) {
     principales: acciones.principales.map((accion) => ({ ...accion })),
     secundarias: acciones.secundarias.map((accion) => ({ ...accion })),
   };
+}
+
+// habilitada:false no le esconde la tarjeta al empleado -es la idea pedida,
+// "se vea pero no se pueda entrar todavía"-, sólo la deja marcada para que
+// home/index.js la dibuje bloqueada.
+export function obtenerAccionesHomeEmpleado(rol) {
+  return ACCIONES_HOME_EMPLEADOS.map((accion) => ({
+    ...accion,
+    habilitada: puedeAccederRuta(accion.ruta, rol),
+  }));
 }

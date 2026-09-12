@@ -15,3 +15,22 @@ body {
 [hidden] {
   display: none !important;
 }
+
+/* Contenido sólo para lectores de pantalla: oculto visualmente pero sigue en
+   el flujo de accesibilidad (display:none lo sacaría del todo). Faltaba esta
+   utilidad -se usa en login/index.js pero nunca quedó definida en ningún
+   lado, así que el texto se veía de más en pantalla. */
+.sr-only {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+
+  border: 0;
+}
