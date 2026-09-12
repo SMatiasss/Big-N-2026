@@ -2,7 +2,7 @@ import './index.css';
 import { crearLectorQr } from '../../components/lector-qr/lector-qr.js';
 import { mostrarToastError } from '../../components/toast-error/toast-error.js';
 import { ETIQUETAS_ROL } from '../../config/constantes.js';
-import { obtenerAccionesHome } from '../../config/navegacion.js';
+import { esRolCliente, obtenerAccionesHome, obtenerAccionesHomeEmpleado } from '../../config/navegacion.js';
 import { obtenerPerfilActual, signOut } from '../../services/auth.service.js';
 import { validarQrIngreso } from '../../services/qr.service.js';
 import {
@@ -26,10 +26,18 @@ function iconoAccion(id) {
     consultas: '<path d="M21 15a4 4 0 0 1-4 4H8l-5 3v-4.5A7 7 0 0 1 2 14V7a4 4 0 0 1 4-4h11a4 4 0 0 1 4 4z"/><path d="M7 9h10M7 13h6"/>',
     productos: '<path d="M4 11h16M6 11a6 6 0 0 1 12 0M3 20h18M5 16h14"/><path d="M12 5V3"/>',
     'ingreso-local': '<path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM18 18h3v3h-3z"/>',
+    mesas: '<rect x="3" y="5" width="18" height="4" rx="1"/><path d="M6 9v10M18 9v10"/>',
+    pedidos: '<path d="M6 2h12v19l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h4"/>',
+    espera: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
   };
   const grilla = '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>';
   return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${iconos[id] ?? grilla}</svg>`;
 }
+
+// El candado se agrega como marca aparte del ícono de la acción: así queda
+// claro que lo bloqueado es el ACCESO, no que la acción en sí tenga otro
+// significado (el ícono de "Empleados" sigue siendo el de "Empleados").
+const ICONO_CANDADO = '<span class="home__accion-candado" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>';
 
 function crearTarjetaAccion(accion, principal = false) {
   const boton = document.createElement('button');
@@ -45,6 +53,14 @@ function crearTarjetaAccion(accion, principal = false) {
     descripcion.textContent = accion.descripcion;
     boton.append(descripcion);
   }
+  // habilitada sólo la define obtenerAccionesHomeEmpleado; las acciones de
+  // cliente nunca la traen, así que ahí este bloque no hace nada distinto.
+  if (accion.habilitada === false) {
+    boton.disabled = true;
+    boton.classList.add('home__accion--bloqueada');
+    boton.title = 'Todavía no disponible para tu perfil';
+    boton.insertAdjacentHTML('beforeend', ICONO_CANDADO);
+  }
   return boton;
 }
 
@@ -55,7 +71,7 @@ export async function render(container) {
         <main class="home__contenido" aria-busy="true">
           <header class="home__encabezado">
             <div class="home__marca"><img src="/assets/logo/Icono Big N.svg" alt=""><span>Big N</span></div>
-            <h1 class="home__saludo">Bienvenido, <span data-rol>Usuario</span></h1>
+            <h1 class="home__saludo">Bienvenido <span data-nombre-saludo>Usuario</span></h1>
           </header>
           <p class="home__aviso" role="status" aria-live="polite" hidden></p>
           <section class="home__seccion home__seccion--principal" data-principales hidden>
@@ -88,12 +104,13 @@ export async function render(container) {
     if (!raiz.isConnected) return;
     const nombre = nombreVisible(perfil);
     const rol = ETIQUETAS_ROL[perfil.rol] ?? perfil.rol;
+    // El saludo usa sólo el primer nombre; el nombre completo queda para la
+    // barra de perfil de abajo (data-nombre), que es donde importa ser preciso.
+    raiz.querySelector('[data-nombre-saludo]').textContent = perfil?.nombres || nombre;
     raiz.querySelector('[data-nombre]').textContent = nombre;
-    raiz.querySelector('[data-rol]').textContent = rol;
     raiz.querySelector('[data-inicial]').textContent = nombre.charAt(0).toUpperCase();
     raiz.querySelector('[data-detalle]').textContent = [rol, perfil.email].filter(Boolean).join(' · ');
     raiz.querySelector('.home__perfil').hidden = false;
-    const acciones = obtenerAccionesHome(perfil.rol);
 
     const agregarAcciones = (selector, lista, principal) => {
       const seccion = raiz.querySelector(selector);
@@ -109,8 +126,18 @@ export async function render(container) {
         contenedor.append(boton);
       });
     };
-    agregarAcciones('[data-principales]', acciones.principales, true);
-    agregarAcciones('[data-secundarias]', acciones.secundarias, false);
+
+    // Empleados: todos comparten hoy las mismas 7 tarjetas en una sola grilla
+    // uniforme (ver ACCIONES_HOME_EMPLEADOS); las que su rol todavía no puede
+    // usar quedan visibles pero bloqueadas, no ocultas. Clientes siguen con
+    // su propia lista por rol, sin cambios.
+    if (esRolCliente(perfil.rol)) {
+      const acciones = obtenerAccionesHome(perfil.rol);
+      agregarAcciones('[data-principales]', acciones.principales, true);
+      agregarAcciones('[data-secundarias]', acciones.secundarias, false);
+    } else {
+      agregarAcciones('[data-principales]', obtenerAccionesHomeEmpleado(perfil.rol), true);
+    }
 
     function abrirIngresoLocal(boton) {
       boton.disabled = true;

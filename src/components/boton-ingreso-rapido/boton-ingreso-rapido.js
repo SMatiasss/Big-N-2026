@@ -2,21 +2,17 @@ import './boton-ingreso-rapido.css';
 
 // Tarjeta de acceso rápido a una de las cuentas de prueba del seed
 // (ver config/cuentas-demo.js). El login arma una por cada rol y las muestra
-// en una fila con scroll horizontal.
+// en un carrusel horizontal. Sólo el nombre del rol es visible -el mail queda
+// en el title/aria-label, no hace falta verlo para elegir la cuenta-, así el
+// botón puede ser grande y fácil de tocar en vez de una tarjeta con datos.
 export function crearBotonIngresoRapido({ etiqueta, email, onClick = () => {} } = {}) {
   const elemento = document.createElement('button');
   elemento.type = 'button';
   elemento.className = 'boton-ingreso-rapido';
-  // El mail completo no siempre entra en la tarjeta: queda en el title y en
-  // la etiqueta accesible para que no se pierda al recortarse.
   elemento.title = email;
   elemento.setAttribute('aria-label', `Completar credenciales de ${etiqueta} (${email})`);
   elemento.setAttribute('aria-pressed', 'false');
-  elemento.innerHTML = `
-    <span class="boton-ingreso-rapido__avatar" aria-hidden="true">${etiqueta.charAt(0)}</span>
-    <span class="boton-ingreso-rapido__rol">${etiqueta}</span>
-    <span class="boton-ingreso-rapido__email">${email}</span>
-  `;
+  elemento.innerHTML = `<span class="boton-ingreso-rapido__rol">${etiqueta}</span>`;
 
   elemento.addEventListener('click', () => onClick({ etiqueta, email }));
 

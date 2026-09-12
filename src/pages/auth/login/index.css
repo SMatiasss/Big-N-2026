@@ -36,9 +36,9 @@
   min-height: 100%;
 
   margin: 0 auto;
-  padding: max(28px, env(safe-area-inset-top)) 22px max(28px, env(safe-area-inset-bottom));
+  padding: max(30px, env(safe-area-inset-top)) 24px
+    max(24px, env(safe-area-inset-bottom));
 }
-
 
 /* =========================================================
    MARCA
@@ -56,11 +56,16 @@
 
   box-sizing: border-box;
 
-  width: 92px;
-  height: 92px;
+  /* clamp() en vez de un tamaño fijo + una segunda regla en un media query:
+     antes había otra declaración de width/height para pantallas bajas (ver
+     @media max-height: 760px) que ganaba la cascada ahí abajo y pisaba
+     cualquier edición hecha acá arriba. Con esto queda un solo lugar que
+     manda, para cualquier alto de pantalla (mismo patrón que .home__marca
+     img en pages/home/index.css). */
+  width: clamp(134px, calc(14dvh + 50px), 158px);
+  height: clamp(134px, calc(14dvh + 50px), 158px);
 
-  margin: 0 auto 10px;
-  padding: 14px;
+  margin: 0 auto 12px;
 
   /* El SVG del logo está dibujado en el mismo verde del fondo, así que
      necesita el disco claro atrás para poder leerse. */
@@ -79,38 +84,27 @@
   color: var(--texto-claro-login);
 
   font-family: var(--fuente-outfit);
-  font-size: 27px;
+  font-size: 32px;
   font-weight: 700;
-  line-height: 32px;
-  letter-spacing: -0.02em;
+  line-height: 1;
+  letter-spacing: -0.01em;
 }
-
 
 /* =========================================================
    ENCABEZADO
    ========================================================= */
 
 .login__titulo {
-  margin: 0 0 3px;
+  margin: 0 0 24px;
 
   color: var(--texto-claro-login);
 
   font-family: var(--fuente-outfit);
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
-  line-height: 35px;
+  line-height: 1.12;
   letter-spacing: -0.02em;
 }
-
-.login__subtitulo {
-  margin: 0 0 22px;
-
-  color: var(--texto-suave-login);
-
-  font-size: 14px;
-  line-height: 17px;
-}
-
 
 /* =========================================================
    CAMPOS
@@ -118,13 +112,13 @@
 
 .login .campo-formulario {
   width: 100%;
-  margin: 0 0 14px;
+  margin: 0 0 16px;
 }
 
 .login .campo-formulario label {
   display: block;
 
-  margin: 0 0 6px;
+  margin: 0 0 7px;
 
   color: var(--texto-claro-login);
 
@@ -145,10 +139,10 @@
   box-sizing: border-box;
 
   width: 100%;
-  height: 52px;
+  height: 56px;
 
   margin: 0;
-  padding: 0 14px 0 44px;
+  padding: 0 14px 0 48px;
 
   appearance: none;
   -webkit-appearance: none;
@@ -156,14 +150,14 @@
   background: transparent;
 
   border: 1px solid var(--acento-login);
-  border-radius: 12px;
+  border-radius: 13px;
 
   color: var(--texto-claro-login);
 
   font-family: var(--fuente-geist);
   font-size: var(--text-md);
   font-weight: 400;
-  line-height: 52px;
+  line-height: 56px;
 
   outline: none;
   box-shadow: none;
@@ -172,7 +166,7 @@
 }
 
 .login .campo-control--con-accion {
-  padding-right: 46px;
+  padding-right: 48px;
 }
 
 .login .campo-control::placeholder {
@@ -183,9 +177,8 @@
 .login .campo-control:focus {
   border-color: var(--texto-claro-login);
   outline: none;
-  box-shadow: none;
+  box-shadow: 0 0 0 1px var(--texto-claro-login);
 }
-
 
 /* Autofill: Chrome pinta fondo blanco y texto oscuro si no se lo frena. */
 
@@ -199,17 +192,16 @@
   caret-color: var(--texto-claro-login);
 }
 
-
 /* =========================================================
    ÍCONOS DEL FORMULARIO
    ========================================================= */
 
 .login__icono {
   position: absolute;
-  left: 14px;
+  left: 15px;
 
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
 
   color: var(--acento-login);
 
@@ -218,7 +210,7 @@
 
 .login__ver-password {
   position: absolute;
-  right: 8px;
+  right: 9px;
 
   display: flex;
   align-items: center;
@@ -241,10 +233,9 @@
 }
 
 .login__icono-ojo {
-  width: 21px;
-  height: 21px;
+  width: 22px;
+  height: 22px;
 }
-
 
 /* La barra tachada sólo aparece cuando la contraseña está a la vista. */
 
@@ -256,44 +247,16 @@
   opacity: 1;
 }
 
-
-/* =========================================================
-   ACCESO DE CLIENTES
-   ========================================================= */
-
-.login__clientes {
-  margin-top: 24px;
-  padding: 18px;
-  border-radius: 16px;
-  background: var(--fondo-card-login);
-}
-
-.login__clientes h2 { margin: 0 0 4px; color: var(--texto-claro-login); font-size: var(--text-lg); }
-.login__clientes p { margin: 0 0 14px; color: var(--texto-suave-login); font-size: var(--text-sm); line-height: var(--line-body); }
-.login__opciones-cliente { display: grid; grid-template-columns: 1fr 1.45fr; gap: 10px; }
-.login__opcion-cliente {
-  min-height: var(--touch-target);
-  padding: 9px 12px;
-  border: 1px solid var(--acento-login);
-  border-radius: 12px;
-  background: transparent;
-  color: var(--texto-claro-login);
-  font: 700 var(--text-sm)/var(--line-compact) var(--font-heading);
-}
-.login__opcion-cliente--destacada { background: var(--acento-login); color: #283618; }
-
-
 /* =========================================================
    BOTONES PRINCIPALES
    ========================================================= */
 
-.login__submit,
-.login__accion {
+.login__submit {
   width: 100%;
-  height: 52px;
-  min-height: 52px;
+  height: 56px;
+  min-height: 56px;
 
-  margin: 0;
+  margin: 6px 0 0;
 
   --background: var(--acento-login);
   --background-hover: var(--acento-login);
@@ -301,91 +264,87 @@
   --background-focused: var(--acento-fuerte-login);
 
   --color: var(--texto-claro-login);
-  --border-radius: 12px;
+  --border-radius: 13px;
   --box-shadow: var(--sombra-submit-login);
 
   font-family: var(--fuente-outfit);
-  font-size: 16px;
+  font-size: var(--text-md);
   font-weight: 700;
 
   text-transform: none;
   letter-spacing: 0;
 }
 
-.login__accion {
-  height: 45px;
-  min-height: 45px;
+/* "Crear una cuenta": variante outline del mismo tamaño, botón nativo (no
+   ion-button) para no cargar el shadow DOM de Ionic en un botón tan simple. */
+
+.login__crear-cuenta {
+  box-sizing: border-box;
+
+  display: block;
+
+  width: 100%;
+  height: 52px;
+  min-height: 52px;
+
+  margin: 10px 0 0;
+  padding: 0;
+
+  background: transparent;
+  border: 1.5px solid var(--acento-login);
+  border-radius: 13px;
+
+  color: var(--texto-claro-login);
+
+  font-family: var(--fuente-outfit);
+  font-size: var(--text-md);
+  font-weight: 700;
+
+  cursor: pointer;
 }
 
+.login__crear-cuenta:active {
+  background: rgb(254 250 224 / 8%);
+}
 
 /* =========================================================
-   SEPARADOR
+   CUENTAS DE PRUEBA
    ========================================================= */
 
-.login__separador {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  margin: 26px 0 14px;
-}
-
-.login__separador::before,
-.login__separador::after {
-  content: '';
-
-  flex: 1;
-  height: 1px;
-
-  background: rgb(254 250 224 / 22%);
-}
-
-.login__separador span {
-  color: var(--texto-suave-login);
-
-  font-size: var(--text-sm);
-  font-weight: 600;
-  line-height: var(--line-body);
-}
-
-
-/* =========================================================
-   ACCESO RÁPIDO
-   ========================================================= */
-
-.login__demo-toggle {
+.login__cuentas-encabezado {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  min-height: 64px;
-  padding: 12px 16px;
-  border: 1px solid rgb(254 250 224 / 28%);
-  border-radius: 14px;
-  background: transparent;
-  color: var(--texto-claro-login);
-  text-align: left;
-}
-.login__demo-toggle span:first-child { display: flex; flex-direction: column; gap: 3px; }
-.login__demo-toggle strong { font: 700 var(--text-md)/var(--line-heading) var(--font-heading); }
-.login__demo-toggle small { color: var(--texto-suave-login); font-size: var(--text-xs); line-height: var(--line-body); }
-.login__demo-flecha { font-size: 30px; transition: transform .2s ease; }
-.login__demo-toggle--abierto .login__demo-flecha { transform: rotate(90deg); }
-.login__demo { margin: 12px -22px 0; padding: 16px 22px 4px; background: rgb(40 54 24 / 32%); }
-.login__demo > p { margin: 0 0 12px; color: var(--texto-suave-login); font-size: var(--text-sm); line-height: var(--line-body); }
 
-/* Los márgenes negativos dejan que las tarjetas lleguen hasta el borde de la
-   pantalla al scrollear, sin sacarle el padding al resto del contenido. */
+  margin: 30px 0 12px;
+}
+
+.login__cuentas-titulo {
+  color: var(--texto-claro-login);
+
+  font-family: var(--fuente-outfit);
+  font-size: var(--text-md);
+  font-weight: 700;
+  line-height: var(--line-heading);
+}
+
+/* Exactamente 3 tarjetas visibles, sin ninguna asomando cortada: el ancho de
+   cada una sale de este mismo --carrusel-gap, así quedan siempre en sync
+   (ver el ancho de la tarjeta en boton-ingreso-rapido.css). Sin el bleed a
+   los bordes de pantalla que tenía antes -las 3 quedan dentro del mismo
+   ancho que el resto del formulario, por eso se ven centradas-.
+   scroll-snap-type "mandatory" (no "proximity") es lo que garantiza que
+   siempre termine encajada en una tarjeta, incluso en el primer y el último
+   tramo del scroll, en vez de poder quedar a mitad de camino. */
 
 .login__cuentas {
-  display: flex;
-  gap: 10px;
+  --carrusel-gap: 10px;
 
-  margin: 0 -22px;
-  padding: 4px 22px 14px;
+  display: flex;
+  gap: var(--carrusel-gap);
 
   overflow-x: auto;
-  scroll-snap-type: x proximity;
+  scroll-snap-type: x mandatory;
 
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -395,83 +354,39 @@
   display: none;
 }
 
-
 /* =========================================================
-   ERROR
+   ENTRAR COMO INVITADO
    ========================================================= */
 
-.login__error {
-  min-height: 16px;
+.login__invitado {
+  margin: 26px 0 0;
+  color: var(--texto-suave-login);
 
-  margin: 14px 0 0;
-
-  color: #ffd0bf;
-
-  font-size: var(--text-sm);
+  font-size: 18px;
   line-height: var(--line-body);
   text-align: center;
+  width: 100%;
 }
 
+.login__enlace {
+  padding: 0;
 
-/* =========================================================
-   SESIÓN INICIADA
-   ========================================================= */
-
-.login__sesion {
-  margin: 0 0 6px;
-}
-
-.login__sesion-email {
-  margin: 6px 0 0;
-
-  color: var(--texto-claro-login);
-
-  font-size: 15px;
-  line-height: 18px;
-}
-
-.login__sesion-rol {
-  margin: 2px 0 0;
+  background: none;
+  border: 0;
 
   color: var(--acento-login);
 
-  font-size: 13px;
-  line-height: 16px;
-}
-
-.login__acciones {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.login__cerrar {
-  width: 100%;
-  height: 46px;
-  min-height: 46px;
-
-  margin: auto 0 0;
-
-  --background: #b3392c;
-  --background-hover: #a13327;
-  --background-activated: #8f2d22;
-
-  --color: var(--texto-claro-login);
-  --border-radius: 12px;
-  --border-width: 0;
-  --box-shadow: 0 3px 3px rgb(42 49 19 / 42%);
-
-  font-family: var(--fuente-outfit);
-  font-size: 15px;
+  font-family: var(--fuente-geist);
+  font-size: 18px;
   font-weight: 700;
 
-  text-transform: none;
-  letter-spacing: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-
 /* =========================================================
-   LECTOR QR (INGRESO AL LOCAL)
+   LECTOR QR (INGRESO AL LOCAL, pantalla de sesión iniciada)
    ========================================================= */
 
 .login .lector-qr {
@@ -523,7 +438,6 @@
   text-transform: none;
 }
 
-
 /* =========================================================
    RESPONSIVE
    ========================================================= */
@@ -535,198 +449,26 @@
 }
 
 @media (max-height: 760px) {
-  .login__contenido { padding-top: max(18px, env(safe-area-inset-top)); }
-  .login__marca { margin-bottom: 16px; }
-  .login__logo { width: 72px; height: 72px; }
-  .login__separador { margin-top: 18px; }
+  .login__contenido {
+    padding-top: max(18px, env(safe-area-inset-top));
+  }
+  .login__marca {
+    margin-bottom: 16px;
+  }
+  .login__titulo {
+    margin-bottom: 16px;
+    font-size: 27px;
+  }
+  .login .campo-formulario {
+    margin-bottom: 12px;
+  }
+  .login__cuentas-encabezado {
+    margin-top: 20px;
+  }
 }
 
 @media (max-width: 360px) {
-  .login__opciones-cliente { grid-template-columns: 1fr; }
-}
-
-/* =========================================================
-   COMPOSICIÓN COMERCIAL 2026
-   ========================================================= */
-
-.login ion-content {
-  --background:
-    radial-gradient(circle at 50% 20%, rgb(133 151 72 / 28%), transparent 32%),
-    radial-gradient(circle at 5% 64%, rgb(221 161 94 / 9%), transparent 28%),
-    #53652f;
-}
-
-.login__contenido {
-  max-width: 480px;
-  padding: max(32px, env(safe-area-inset-top)) 28px max(22px, env(safe-area-inset-bottom));
-}
-
-.login__marca { margin-bottom: 25px; }
-.login__logo {
-  width: 128px;
-  height: 128px;
-  margin-bottom: 2px;
-  padding: 5px;
-  border: 0;
-  background: transparent;
-}
-.login__logo img { filter: brightness(0) invert(1); }
-.login__marca-nombre {
-  margin-top: -8px;
-  font-size: 46px;
-  line-height: 1;
-  letter-spacing: .01em;
-}
-.login__lema {
-  margin: 10px 0 0;
-  color: #e4dfbd;
-  font-size: 11px;
-  line-height: 1.2;
-  letter-spacing: .28em;
-  text-transform: uppercase;
-}
-.login__titulo {
-  margin-bottom: 6px;
-  font-size: 34px;
-  line-height: 1.1;
-  text-align: center;
-}
-.login__subtitulo {
-  margin-bottom: 24px;
-  color: #dedab9;
-  font-size: 17px;
-  line-height: 1.35;
-  text-align: center;
-}
-
-.login .campo-formulario { position: relative; margin-bottom: 12px; }
-.login .campo-formulario label {
-  position: absolute;
-  z-index: 2;
-  top: 9px;
-  left: 54px;
-  margin: 0;
-  color: #656851;
-  font-size: 13px;
-  font-weight: 400;
-  pointer-events: none;
-}
-.login .campo-control {
-  height: 64px;
-  padding: 20px 16px 0 54px;
-  border: 1px solid rgb(254 250 224 / 72%);
-  border-radius: 14px;
-  background: #fefae0;
-  color: #34421f;
-  font-size: 17px;
-  line-height: 64px;
-  caret-color: #bc6c25;
-}
-.login .campo-control--con-accion { padding-right: 54px; }
-.login .campo-control::placeholder { color: #45522d; opacity: 1; }
-.login .campo-control:focus { border-color: #dda15e; box-shadow: 0 0 0 2px rgb(221 161 94 / 25%); }
-.login .campo-control:-webkit-autofill,
-.login .campo-control:-webkit-autofill:hover,
-.login .campo-control:-webkit-autofill:focus {
-  -webkit-text-fill-color: #34421f;
-  -webkit-box-shadow: 0 0 0 1000px #fefae0 inset;
-  box-shadow: 0 0 0 1000px #fefae0 inset;
-  caret-color: #bc6c25;
-}
-.login__icono { left: 17px; width: 24px; height: 24px; color: #46562d; stroke-width: 1.9; }
-.login__ver-password { right: 10px; color: #46562d; }
-.login__icono-ojo { width: 25px; height: 25px; }
-
-.login__submit { height: 58px; min-height: 58px; margin-top: 10px; --background: #dd9141; --background-hover: #e29b50; --background-activated: #c9782d; --border-radius: 17px; --box-shadow: 0 7px 16px rgb(40 54 24 / 24%); font-size: 18px; }
-.login__flecha-submit { margin-left: 17px; font-size: 30px; font-weight: 300; line-height: 0; }
-
-.login__separador { margin: 24px 0 14px; gap: 12px; }
-.login__separador::before, .login__separador::after { background: rgb(254 250 224 / 58%); }
-.login__separador span { color: #fefae0; font-size: 14px; }
-.login__demo { margin: 0 -28px; padding: 0; background: transparent; }
-.login__cuentas { gap: 11px; margin: 0; padding: 4px 28px 10px; }
-
-.login__clientes { margin: 16px 0 0; padding: 0; background: transparent; }
-.login__opciones-cliente { display: flex; flex-direction: column; gap: 10px; }
-.login__opcion-cliente {
-  min-height: 52px;
-  border: 1.5px solid #dda15e;
-  border-radius: 14px;
-  color: #fefae0;
-  font-size: 15px;
-}
-.login__opcion-cliente--destacada { order: -1; background: transparent; color: #fefae0; }
-.login__opcion-cliente--destacada span { margin-right: 8px; font-size: 24px; }
-.login__pie {
-  margin-top: 24px;
-  color: rgb(254 250 224 / 66%);
-  font-size: 9px;
-  letter-spacing: .16em;
-  text-align: center;
-  text-transform: uppercase;
-}
-.login__error { margin-top: 10px; }
-
-@media (max-height: 800px) {
-  .login__contenido { padding-top: max(18px, env(safe-area-inset-top)); }
-  .login__marca { margin-bottom: 15px; }
-  .login__logo { width: 88px; height: 88px; }
-  .login__marca-nombre { font-size: 34px; }
-  .login__lema { margin-top: 6px; }
-  .login__titulo { font-size: 29px; }
-  .login__subtitulo { margin-bottom: 16px; font-size: 15px; }
-  .login .campo-control { height: 58px; }
-  .login__separador { margin-top: 18px; }
-  .login__pie { margin-top: 14px; }
-}
-
-@media (max-width: 360px) {
-  .login__contenido { padding-inline: 18px; }
-  .login__demo { margin-inline: -18px; }
-  .login__cuentas { padding-inline: 18px; }
-}
-
-/* Base visual de main con escala y espaciado mejorados. */
-.login ion-content { --background: #606c38; }
-.login__contenido { max-width: 440px; padding: max(34px, env(safe-area-inset-top)) 24px max(30px, env(safe-area-inset-bottom)); }
-.login__marca { margin-bottom: 34px; }
-.login__logo { width: 132px; height: 132px; margin-bottom: 14px; padding: 18px; border-radius: 50%; background: #fefae0; }
-.login__logo img { filter: none; }
-.login__marca-nombre { margin: 0; font-size: 38px; line-height: 1; }
-.login__titulo { margin: 0 0 28px; font-size: 36px; line-height: 1.12; text-align: left; }
-.login .campo-formulario { position: static; margin-bottom: 18px; }
-.login .campo-formulario label { position: static; display: block; margin: 0 0 8px; color: #fefae0; font-size: 15px; font-weight: 600; line-height: 1.3; pointer-events: auto; }
-.login .campo-control { height: 58px; padding: 0 16px 0 50px; border: 1px solid #dda15e; border-radius: 13px; background: transparent; color: #fefae0; font-size: 17px; line-height: 58px; caret-color: #fefae0; }
-.login .campo-control--con-accion { padding-right: 52px; }
-.login .campo-control::placeholder { color: #afb58c; }
-.login .campo-control:focus { border-color: #fefae0; box-shadow: 0 0 0 1px #fefae0; }
-.login .campo-control:-webkit-autofill,
-.login .campo-control:-webkit-autofill:hover,
-.login .campo-control:-webkit-autofill:focus { -webkit-text-fill-color: #fefae0; -webkit-box-shadow: 0 0 0 1000px #606c38 inset; box-shadow: 0 0 0 1000px #606c38 inset; caret-color: #fefae0; }
-.login__icono { left: 15px; width: 24px; height: 24px; color: #dda15e; }
-.login__ver-password { right: 9px; color: #dda15e; }
-.login__registro { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; margin: 2px 0 24px; color: #e4e4c4; font-size: 17px; line-height: 1.25; text-align: left; }
-.login__enlace { min-height: 30px; padding: 0; border: 0; background: none; color: #f0b36c; font-family: var(--fuente-geist); font-size: 18px; font-weight: 700; line-height: 1.25; text-decoration: underline; text-underline-offset: 3px; }
-.login__submit, .login__anonimo { height: 56px; min-height: 56px; --background: #dda15e; --background-hover: #dda15e; --background-activated: #bc6c25; --border-radius: 13px; font-size: 18px; }
-.login__separador { margin: 30px 0 17px; }
-.login__separador span { color: #d4d5b3; font-size: 14px; letter-spacing: .04em; text-transform: none; }
-.login__demo { margin: 0 -24px; padding: 0; background: transparent; }
-.login__cuentas { margin: 0; padding: 4px 24px 14px; }
-.login .boton-ingreso-rapido { width: 154px; min-height: 118px; border: 1px solid transparent; background: #4a572c; color: #fefae0; }
-.login .boton-ingreso-rapido__avatar { background: rgb(221 161 94 / 32%); color: #fefae0; }
-.login .boton-ingreso-rapido__email { color: #c8c8a0; font-size: 13px; }
-.login .boton-ingreso-rapido--activo { border-color: #dda15e; background: #fefae0; color: #283618; }
-.login .boton-ingreso-rapido--activo .boton-ingreso-rapido__avatar { background: #dda15e; color: #fefae0; }
-.login .boton-ingreso-rapido--activo .boton-ingreso-rapido__email { color: #bc6c25; }
-.login__anonimo { margin-top: 8px; }
-.login__error { font-size: 14px; }
-
-@media (max-height: 800px) {
-  .login__marca { margin-bottom: 24px; }
-  .login__logo { width: 108px; height: 108px; }
-  .login__marca-nombre { font-size: 34px; }
-  .login__titulo { margin-bottom: 20px; font-size: 32px; }
-  .login .campo-formulario { margin-bottom: 14px; }
-  .login__registro { margin-bottom: 18px; }
-  .login__separador { margin-top: 22px; }
+  .login__contenido {
+    padding-inline: 18px;
+  }
 }

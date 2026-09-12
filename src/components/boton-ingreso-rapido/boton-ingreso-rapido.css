@@ -1,30 +1,43 @@
 /* =========================================================
    TARJETA
+
+   Cuadrada y grande a propósito -"fácil de tocar" pedido explícitamente-,
+   no un pill angosto: sólo lleva el nombre del rol.
+
+   El ancho sale de --carrusel-gap (definido en .login__cuentas, el único
+   padre de este botón) para que siempre entren exactamente 3 por pantalla,
+   sin importar cuánto mida el teléfono. scroll-snap-stop:always evita que un
+   swipe rápido salte de largo una tarjeta sin frenar en ella.
    ========================================================= */
 
 .boton-ingreso-rapido {
   position: relative;
 
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
 
   box-sizing: border-box;
-  flex: 0 0 auto;
+  flex: 0 0 calc((100% - 2 * var(--carrusel-gap, 10px)) / 3);
 
-  width: 154px;
+  /* Sin esto, un nombre largo ("Supervisor") no entra en el ancho calculado
+     y flexbox agranda igual la tarjeta -por default un flex item no encoge
+     debajo del tamaño de su contenido-, corriendo a las siguientes y
+     rompiendo el "exactamente 3 por pantalla". */
+  min-width: 0;
+  min-height: 76px;
 
-  padding: 13px 10px 12px;
+  padding: 10px;
 
-  background: #4A572C;
-  border: 1px solid transparent;
+  background: #4a572c;
+  border: 1.5px solid rgb(254 250 224 / 14%);
   border-radius: 16px;
 
-  color: #FEFAE0;
+  color: #fefae0;
 
   cursor: pointer;
-  scroll-snap-align: center;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 
   transition:
     background 0.18s ease,
@@ -33,7 +46,7 @@
 }
 
 .boton-ingreso-rapido:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
 .boton-ingreso-rapido:disabled {
@@ -43,59 +56,21 @@
 
 
 /* =========================================================
-   AVATAR
-   ========================================================= */
-
-.boton-ingreso-rapido__avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  box-sizing: border-box;
-
-  width: 44px;
-  height: 44px;
-
-  background: rgb(221 161 94 / 32%);
-  border-radius: 50%;
-
-  color: #FEFAE0;
-
-  font-family: var(--fuente-outfit);
-  font-size: 19px;
-  font-weight: 700;
-  line-height: 1;
-
-  transition:
-    background 0.18s ease,
-    color 0.18s ease;
-}
-
-
-/* =========================================================
-   TEXTOS
+   TEXTO
    ========================================================= */
 
 .boton-ingreso-rapido__rol {
   font-family: var(--fuente-outfit);
   font-size: var(--text-md);
   font-weight: 700;
-  line-height: 17px;
-}
+  line-height: var(--line-heading);
+  text-align: center;
 
-.boton-ingreso-rapido__email {
-  max-width: 100%;
-
-  color: #C8C8A0;
-
-  font-family: var(--fuente-geist, 'Geist', sans-serif);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  line-height: var(--line-body);
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* "Supervisor"/"Cantinero" no tienen un espacio donde cortar: sin esto
+     desbordarían la tarjeta en vez de partirse a una segunda línea. */
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 
@@ -104,21 +79,11 @@
    ========================================================= */
 
 .boton-ingreso-rapido--activo {
-  background: #FEFAE0;
-  border-color: #DDA15E;
+  background: #fefae0;
+  border-color: #dda15e;
 
   color: #283618;
 }
-
-.boton-ingreso-rapido--activo .boton-ingreso-rapido__avatar {
-  background: #DDA15E;
-  color: #FEFAE0;
-}
-
-.boton-ingreso-rapido--activo .boton-ingreso-rapido__email {
-  color: #BC6C25;
-}
-
 
 /* PUNTO INDICADOR */
 
@@ -126,28 +91,12 @@
   content: '';
 
   position: absolute;
-  top: 9px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
 
   width: 8px;
   height: 8px;
 
-  background: #BC6C25;
+  background: #bc6c25;
   border-radius: 50%;
 }
-
-/* Apariencia clara usada por el carrusel comercial del inicio de sesión. */
-.login .boton-ingreso-rapido {
-  width: 128px;
-  min-height: 112px;
-  padding: 13px 9px 11px;
-  gap: 5px;
-  border-color: rgb(254 250 224 / 70%);
-  background: #fefae0;
-  color: #354421;
-  box-shadow: 0 5px 13px rgb(40 54 24 / 18%);
-}
-.login .boton-ingreso-rapido__avatar { background: #c4c679; color: #354421; }
-.login .boton-ingreso-rapido__email { color: #9f641f; font-size: 11px; }
-.login .boton-ingreso-rapido--activo { border: 2px solid #dda15e; }
-.login .boton-ingreso-rapido--activo .boton-ingreso-rapido__avatar { background: #efb15f; color: #354421; }
