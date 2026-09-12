@@ -68,6 +68,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 
 | Nombre de pantalla | Imágen de pantalla | Misceláneos |
 | :---: | :---: | :---: |
+| Login | <img src="assets/pages-samples/Login.png" alt="Login" width="240"> | <!-- agregar imagen --> |
 | Lista de empleados | <img src="assets/pages-samples/Lista%20empleados.png" alt="Lista de empleados" width="240"> | <!-- agregar imagen --> |
 | Agregar un empleado | <img src="assets/pages-samples/Agregar%20un%20empleado.png" alt="Agregar un empleado" width="240"> | <img src="assets/pages-samples/especiales/Ejemplo%20error.png" alt="Ejemplo error" width="280"> |
 | Lista de productos (platos) | <img src="assets/pages-samples/Lista%20productos%20%28platos%29.png" alt="Lista de productos (platos)" width="240"> | <!-- agregar imagen --> |
