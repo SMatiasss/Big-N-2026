@@ -4,7 +4,7 @@ import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
 import { ROLES, ESTADOS_PERFIL } from '../../../config/constantes.js';
-import { signUp } from '../../../services/auth.service.js';
+import { obtenerPermisos, signUp } from '../../../services/auth.service.js';
 import { altaPerfil, subirFotoPerfil } from '../../../services/perfiles.service.js';
 import { enviarEmailPendiente } from '../../../services/email.service.js';
 import { avisarNuevoClientePendiente } from '../../../services/notificaciones.service.js';
@@ -25,6 +25,7 @@ function datosFormulario(formulario) {
       'dni',
       'email',
       'password',
+      'confirmarPassword',
     ].map((campo) => {
       const control = formulario.querySelector(
         `#${campo}-cliente`
@@ -69,6 +70,12 @@ function validar(datos, foto) {
   ) {
     errores.password =
       'Usá al menos 8 caracteres, con mayúscula, minúscula y número.';
+  }
+
+  if (!datos.confirmarPassword) {
+    errores.confirmarPassword = 'Repetí la contraseña.';
+  } else if (datos.confirmarPassword !== datos.password) {
+    errores.confirmarPassword = 'Las contraseñas no coinciden.';
   }
 
   if (obtenerErrorArchivoImagen(foto)) {
@@ -213,14 +220,12 @@ export function render(container) {
             novalidate
           >
 
-            <!-- FOTO -->
+            <!-- FOTO Y LECTOR DNI, lado a lado -->
 
-            <div class="alta-cliente__foto"></div>
-
-
-            <!-- LECTOR DNI -->
-
-            <div class="alta-cliente__lector-qr"></div>
+            <div class="alta-cliente__medios">
+              <div class="alta-cliente__foto"></div>
+              <div class="alta-cliente__lector-qr"></div>
+            </div>
 
 
             <!-- RESULTADO DEL ESCANEO -->
@@ -292,6 +297,37 @@ export function render(container) {
             </div>
 
 
+            <!-- DNI -->
+
+            <div
+              class="campo-formulario"
+              data-campo="dni"
+            >
+
+              <label for="dni-cliente">
+                DNI
+              </label>
+
+              <input
+                class="campo-control"
+                id="dni-cliente"
+                name="dni"
+                type="text"
+                inputmode="numeric"
+                maxlength="8"
+                autocomplete="off"
+                placeholder="12.345.678"
+                required
+              >
+
+              <ion-note
+                color="danger"
+                data-error="dni"
+              ></ion-note>
+
+            </div>
+
+
             <!-- CORREO -->
 
             <div
@@ -322,41 +358,6 @@ export function render(container) {
             </div>
 
 
-            <!-- DNI -->
-
-            <div class="alta-cliente__fila">
-
-              <div
-                class="campo-formulario"
-                data-campo="dni"
-              >
-
-                <label for="dni-cliente">
-                  DNI
-                </label>
-
-                <input
-                  class="campo-control"
-                  id="dni-cliente"
-                  name="dni"
-                  type="text"
-                  inputmode="numeric"
-                  maxlength="8"
-                  autocomplete="off"
-                  placeholder="12.345.678"
-                  required
-                >
-
-                <ion-note
-                  color="danger"
-                  data-error="dni"
-                ></ion-note>
-
-              </div>
-
-            </div>
-
-
             <!-- CONTRASEÑA -->
 
             <div
@@ -381,6 +382,35 @@ export function render(container) {
               <ion-note
                 color="danger"
                 data-error="password"
+              ></ion-note>
+
+            </div>
+
+
+            <!-- CONFIRMAR CONTRASEÑA -->
+
+            <div
+              class="campo-formulario"
+              data-campo="confirmarPassword"
+            >
+
+              <label for="confirmarPassword-cliente">
+                Confirmar contraseña
+              </label>
+
+              <input
+                class="campo-control"
+                id="confirmarPassword-cliente"
+                name="confirmarPassword"
+                type="password"
+                autocomplete="new-password"
+                placeholder="••••••••••"
+                required
+              >
+
+              <ion-note
+                color="danger"
+                data-error="confirmarPassword"
               ></ion-note>
 
             </div>
@@ -472,12 +502,29 @@ export function render(container) {
 
   /* =========================================================
      HEADER
+
+     Esta pantalla se comparte entre dos entradas distintas: "Crear una
+     cuenta" del login (sin sesión, el cliente se registra a sí mismo) y el
+     "+" del metre en Clientes (con sesión, da de alta a otra persona). El
+     título por default corresponde al caso sin sesión; si hay una sesión de
+     metre activa, se corrige apenas se confirma.
      ========================================================= */
 
   const header = crearAppHeader({
-    titulo: 'Registrar un cliente nuevo',
+    titulo: 'Crear cuenta',
   });
   container.querySelector('[data-header]').append(header);
+
+  obtenerPermisos()
+    .then((permisos) => {
+      if (permisos.rol === ROLES.METRE) {
+        header.querySelector('.app-header__titulo').textContent = 'Registrar un cliente nuevo';
+      }
+    })
+    .catch(() => {
+      // Sin sesión: es el caso de "Crear una cuenta" desde el login, el
+      // título por default ya es el correcto.
+    });
 
 
   /* =========================================================
@@ -500,6 +547,7 @@ export function render(container) {
       'dni',
       'email',
       'password',
+      'confirmarPassword',
     ].forEach((campo) => {
       mostrarError(
         formulario,

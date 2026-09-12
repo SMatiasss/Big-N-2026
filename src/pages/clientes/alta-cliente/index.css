@@ -20,6 +20,12 @@
 
   --sombra-submit: 0 3px 3px rgb(42 49 19 / 42%);
 
+  /* Mismas proporciones que "crear empleado", pero con clamp() en vez del
+     factor --ae-ajuste medido por JS: esta pantalla tiene menos campos (sin
+     CUIL ni Perfil) y entra cómoda escalando directo contra el viewport. */
+  --ac-medio-icono: clamp(56px, 9dvh, 78px);
+  --ac-campo-alto: clamp(40px, 5.4dvh, 46px);
+
   background: var(--fondo-empleado);
   color: var(--texto-claro-empleado);
 
@@ -49,7 +55,7 @@
   min-height: 100%;
 
   margin: 0 auto;
-  padding: 25px 18px;
+  padding: clamp(14px, 3dvh, 25px) 18px;
 }
 
 
@@ -62,20 +68,30 @@
   flex-direction: column;
 
   width: 100%;
-  min-height: calc(100vh - 140px);
 }
 
 
 /* =========================================================
-   FOTO
+   FOTO Y LECTOR DNI (lado a lado)
    ========================================================= */
+
+.alta-cliente__medios {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  width: 100%;
+  max-width: 340px;
+
+  margin: 0 auto clamp(12px, 2.4dvh, 18px);
+}
 
 .alta-cliente .selector-avatar-foto {
   position: relative;
 
-  width: 142px;
-
-  margin: 2px auto 42px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
 }
 
 .alta-cliente .selector-avatar-foto :is(h2, p, ion-note) {
@@ -87,48 +103,20 @@
 
   box-sizing: border-box;
 
-  width: 140px;
-  height: 140px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
 
-  margin: 0 auto;
+  margin: 0;
 
-  background: var(--fondo-campo-empleado);
+  background: var(--fondo-campo-empleado)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fefae0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/%3E%3Ccircle cx='12' cy='13' r='4'/%3E%3C/svg%3E")
+    no-repeat center;
+  background-size: var(--ac-medio-icono) var(--ac-medio-icono);
   border: 2px dashed var(--acento-empleado);
-  border-radius: 50%;
+  border-radius: 16px;
 
   color: transparent;
-}
-
-.alta-cliente .selector-avatar-foto__preview::before {
-  content: '';
-
-  position: absolute;
-  top: calc(50% - 8px);
-  left: calc(50% - 11px);
-
-  box-sizing: border-box;
-
-  width: 20px;
-  height: 15px;
-
-  border: 2px solid var(--texto-claro-empleado);
-  border-radius: 4px;
-}
-
-.alta-cliente .selector-avatar-foto__preview::after {
-  content: '';
-
-  position: absolute;
-  top: calc(50% - 3px);
-  left: calc(50% - 4px);
-
-  box-sizing: border-box;
-
-  width: 5px;
-  height: 5px;
-
-  border: 2px solid var(--texto-claro-empleado);
-  border-radius: 50%;
 }
 
 .alta-cliente .selector-avatar-foto__preview img {
@@ -138,7 +126,7 @@
   width: 100%;
   height: 100%;
 
-  border-radius: 50%;
+  border-radius: 14px;
   object-fit: cover;
 }
 
@@ -149,7 +137,7 @@
 
 .alta-cliente .selector-avatar-foto ion-button {
   position: absolute;
-  right: 0;
+  right: -6px;
   bottom: -9px;
 
   width: 25px;
@@ -167,6 +155,15 @@
   --border-radius: 50%;
   --box-shadow: none;
   --color: transparent;
+
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.alta-cliente .selector-avatar-foto ion-button:focus,
+.alta-cliente .selector-avatar-foto ion-button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .alta-cliente .selector-avatar-foto ion-button::part(native) {
@@ -178,9 +175,17 @@
   padding: 0;
 
   border-radius: 50%;
+  outline: none;
+  box-shadow: none;
 
   color: transparent;
   font-size: 0;
+}
+
+.alta-cliente .selector-avatar-foto ion-button::part(native):focus,
+.alta-cliente .selector-avatar-foto ion-button::part(native):focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .alta-cliente .selector-avatar-foto ion-button::after {
@@ -215,103 +220,77 @@
    ========================================================= */
 
 .alta-cliente .lector-qr {
-  display: grid;
+  display: flex;
   align-items: center;
-  grid-template-columns: 40px 1fr;
-  grid-template-rows: auto auto;
+  justify-content: center;
 
   box-sizing: border-box;
 
   width: 100%;
-  min-height: 62px;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  height: auto;
 
-  margin: 0 0 10px;
-  padding: 0 10px;
+  margin: 0;
+  padding: 0;
 
   background: var(--fondo-campo-empleado) !important;
 
-  border: 1px solid var(--marco-dni-empleado) !important;
-  border-radius: 10px !important;
+  border: 2px dashed var(--acento-empleado) !important;
+  border-radius: 16px !important;
 
   overflow: hidden;
 }
 
-.alta-cliente .lector-qr h2 {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: end;
-
-  margin: 0 0 1px;
-
-  color: var(--texto-claro-empleado) !important;
-
-  font-family: var(--fuente-outfit) !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  line-height: 17px !important;
-}
-
-.alta-cliente .lector-qr p {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: start;
-
-  max-width: 230px;
-
-  margin: 0;
-
-  color: var(--texto-suave-empleado) !important;
-
-  font-family: var(--fuente-geist) !important;
-  font-size: 11px !important;
-  font-weight: 400 !important;
-  line-height: 13px !important;
+.alta-cliente .lector-qr :is(h2, p, ion-note) {
+  display: none !important;
 }
 
 .alta-cliente .lector-qr ion-button {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-
-  width: 31px !important;
-  height: 31px !important;
-  min-width: 31px !important;
-  min-height: 31px !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
 
   margin: 0 !important;
 
-  --background: var(--marco-dni-empleado) !important;
-  --background-hover: var(--marco-dni-empleado) !important;
-  --background-activated: var(--marco-dni-empleado) !important;
-  --background-focused: var(--marco-dni-empleado) !important;
+  --border-width: 0 !important;
+  --border-style: none !important;
+  --border-color: transparent !important;
 
-  --border-radius: 50% !important;
+  --background: transparent !important;
+  --background-hover: transparent !important;
+  --background-activated: transparent !important;
+  --background-focused: transparent !important;
+
   --box-shadow: none !important;
   --color: transparent !important;
 
-  background: var(--marco-dni-empleado) !important;
-  border-radius: 50% !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  outline: none !important;
 }
 
 .alta-cliente .lector-qr ion-button::part(native) {
   box-sizing: border-box;
 
-  width: 31px !important;
-  height: 31px !important;
-  min-width: 31px !important;
-  min-height: 31px !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
 
   padding: 0 !important;
 
-  background: var(--marco-dni-empleado) !important;
-  border-radius: 50% !important;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fefae0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7V4a1 1 0 0 1 1-1h3'/%3E%3Cpath d='M17 3h3a1 1 0 0 1 1 1v3'/%3E%3Cpath d='M21 17v3a1 1 0 0 1-1 1h-3'/%3E%3Cpath d='M7 21H4a1 1 0 0 1-1-1v-3'/%3E%3C/svg%3E")
+    no-repeat center !important;
+  background-size: var(--ac-medio-icono) var(--ac-medio-icono) !important;
+  border: none !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
+  outline: none !important;
 
   color: transparent !important;
   font-size: 0 !important;
-}
-
-.alta-cliente .lector-qr ion-note {
-  display: none;
 }
 
 
@@ -345,7 +324,7 @@
 
 .alta-cliente .campo-formulario {
   width: 100%;
-  margin: 0 0 8px;
+  margin: 0 0 clamp(7px, 1.4dvh, 9px);
 }
 
 .alta-cliente .campo-formulario label {
@@ -353,12 +332,12 @@
   box-sizing: border-box;
 
   width: 100%;
-  margin: 0 0 4px;
+  margin: 0 0 3px;
 
   color: var(--texto-claro-empleado);
 
-  font-size: 12px;
-  line-height: 14px;
+  font-size: clamp(12px, 1.6dvh, 13px);
+  line-height: 1.1;
   text-transform: uppercase;
 }
 
@@ -371,8 +350,8 @@
   box-sizing: border-box;
 
   width: 100%;
-  height: 40px;
-  min-height: 40px;
+  height: var(--ac-campo-alto);
+  min-height: var(--ac-campo-alto);
 
   margin: 0;
   padding: 0 10px;
@@ -385,7 +364,7 @@
   color: var(--texto-claro-empleado) !important;
 
   font-family: var(--fuente-geist) !important;
-  font-size: 14px !important;
+  font-size: clamp(14px, 1.9dvh, 15px) !important;
   font-weight: 400 !important;
 }
 
@@ -403,7 +382,7 @@
   outline: none;
   box-shadow: none;
 
-  line-height: 40px !important;
+  line-height: var(--ac-campo-alto) !important;
   text-align: left;
 
   caret-color: var(--texto-claro-empleado);
@@ -444,41 +423,10 @@
 
 
 /* =========================================================
-   SELECT ROL
-   ========================================================= */
-
-.alta-cliente ion-select.campo-control {
-  display: block;
-
-  --background: var(--fondo-campo-empleado);
-  --color: var(--texto-claro-empleado);
-  --placeholder-color: var(--texto-suave-empleado);
-  --placeholder-opacity: 1;
-
-  --highlight-color-focused: var(--marco-dni-empleado);
-  --highlight-color-valid: var(--marco-dni-empleado);
-
-  line-height: 40px !important;
-}
-
-
-/* =========================================================
-   FILA DNI / CUIL
-   ========================================================= */
-
-.alta-cliente__fila {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-
-  width: 100%;
-}
-
-
-/* =========================================================
    ERRORES
    ========================================================= */
 
+/* Son seis: aunque estén vacías, su padding superior se suma seis veces. */
 .alta-cliente .campo-formulario ion-note {
   display: block;
 
@@ -567,10 +515,10 @@
 
 .alta-cliente__submit {
   width: 100%;
-  height: 45px;
-  min-height: 45px;
+  height: clamp(44px, 6dvh, 50px);
+  min-height: clamp(44px, 6dvh, 50px);
 
-  margin: auto 0 0;
+  margin: clamp(14px, 2.6dvh, 20px) 0 0;
 
   --background: var(--acento-empleado) !important;
   --background-hover: var(--acento-empleado) !important;
@@ -582,7 +530,7 @@
   --box-shadow: var(--sombra-submit) !important;
 
   font-family: var(--fuente-outfit) !important;
-  font-size: 17px !important;
+  font-size: clamp(16px, 2.2dvh, 19px) !important;
   font-weight: 700 !important;
 
   text-transform: none !important;
@@ -592,7 +540,7 @@
   box-sizing: border-box;
 
   width: 100%;
-  height: 45px;
+  height: clamp(44px, 6dvh, 50px);
 
   padding: 0;
 
@@ -606,66 +554,12 @@
 
 
 /* =========================================================
-   MENÚ DESPLEGABLE - PERFIL
-   ========================================================= */
-
-ion-popover {
-  --background: #4a572c;
-  --color: #fefae0;
-}
-
-ion-popover::part(content) {
-  background: #4a572c !important;
-  border: 1px solid #6e6939 !important;
-  border-radius: 10px !important;
-}
-
-ion-popover ion-list,
-ion-popover ion-select-popover {
-  --background: #4a572c !important;
-  --color: #fefae0 !important;
-
-  background: #4a572c !important;
-}
-
-ion-popover ion-list {
-  padding: 4px 0 !important;
-}
-
-ion-popover ion-select-popover ion-item {
-  --background: #4a572c !important;
-  --background-hover: #53632f !important;
-  --background-activated: #53632f !important;
-  --background-focused: #53632f !important;
-  --color: #fefae0 !important;
-
-  font-size: 14px !important;
-}
-
-ion-popover ion-select-popover ion-item::part(native) {
-  background: #4a572c !important;
-  color: #fefae0 !important;
-}
-
-
-
-/* =========================================================
    RESPONSIVE
    ========================================================= */
-
-@media (max-width: 340px) {
-  .alta-cliente .lector-qr p {
-    font-size: 9px !important;
-  }
-}
 
 @media (min-width: 640px) {
   .alta-cliente__contenido {
     padding-top: 50px;
-  }
-
-  .alta-cliente .selector-avatar-foto {
-    margin-bottom: 50px;
   }
 
   .alta-cliente__formulario {
