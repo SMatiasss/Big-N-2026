@@ -4,9 +4,10 @@ import { obtenerMiEstadiaActiva } from '../../../services/estadias.service.js';
 import { validarQrMesaAsignada } from '../../../services/mesa-cliente.service.js';
 import { navegarA } from '../../../router.js';
 import '../../productos/carta/index.css';
+import './index.css';
 
 export async function render(container) {
-  container.innerHTML = '<ion-content class="hu11"><div data-header></div><main><p role="status"></p><div data-lector></div></main></ion-content>';
+  container.innerHTML = '<ion-content class="hu11 escanear-mesa"><div data-header></div><main><p role="status"></p><div data-lector></div></main></ion-content>';
   const raiz = container.firstElementChild;
   const estado = raiz.querySelector('[role="status"]');
   const header = crearAppHeader({

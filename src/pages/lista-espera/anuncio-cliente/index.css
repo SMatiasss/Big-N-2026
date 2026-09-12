@@ -27,13 +27,14 @@
 
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
 
   width: 100%;
   max-width: 440px;
-  min-height: 100%;
 
   margin: 0 auto;
-  padding: 26px 18px 32px;
+  padding: max(34px, env(safe-area-inset-top)) 24px max(22dvh, env(safe-area-inset-bottom));
 }
 
 
@@ -80,45 +81,18 @@
 /* Mesa ya asignada: el aviso pasa a ser la buena noticia de la pantalla. */
 
 .lista-espera-cliente__aviso--asignada {
-  background: var(--acento);
-  border-color: var(--acento-fuerte);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0 0 24px;
+  justify-content: center;
 }
 
 .lista-espera-cliente__aviso--asignada .lista-espera-cliente__aviso-texto {
   color: var(--texto-claro);
-}
-
-.lista-espera-cliente__boton-mesa {
-  flex-shrink: 0;
-
-  width: 42px;
-  height: 42px;
-
-  margin: 0;
-
-  --background: rgb(42 49 19 / 22%);
-  --background-hover: rgb(42 49 19 / 28%);
-  --background-activated: rgb(42 49 19 / 34%);
-
-  --border-radius: 50%;
-  --box-shadow: none;
-  --padding-start: 0;
-  --padding-end: 0;
-
-  font-size: 19px;
-}
-
-
-/* Indicación del paso siguiente, sólo con la mesa ya asignada. */
-
-.lista-espera-cliente__indicacion {
-  margin: -8px 0 22px;
-  padding: 0 4px;
-
-  color: var(--texto-suave);
-
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 24px;
+  line-height: 1.3;
   text-align: center;
 }
 
@@ -174,14 +148,13 @@
   flex-direction: column;
   gap: 10px;
 
-  /* auto arriba: los botones quedan apoyados al pie de la pantalla. */
-  margin: auto 0 0;
+  margin: 32px 0 0;
 }
 
 .lista-espera-cliente__ingresar {
   width: 100%;
-  height: 50px;
-  min-height: 50px;
+  height: 56px;
+  min-height: 56px;
 
   margin: 0;
 
@@ -191,15 +164,63 @@
   --background-focused: var(--acento-fuerte);
 
   --color: var(--texto-claro);
-  --border-radius: 12px;
-  --box-shadow: 0 3px 3px rgb(42 49 19 / 42%);
+  --border-radius: 13px;
+  --box-shadow: 0 7px 16px rgb(40 54 24 / 24%);
 
   font-family: var(--fuente-outfit);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
 
   text-transform: none;
   letter-spacing: 0;
+}
+
+.lista-espera-cliente__accion-mesa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  width: 100%;
+  max-width: 220px;
+  min-height: 200px;
+  
+  margin: 0 auto;
+  padding: 24px;
+  
+  border: 1px solid rgb(221 161 94 / 18%);
+  border-radius: 20px;
+  background: var(--fondo-card);
+  
+  color: var(--texto-claro);
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 5px 14px rgb(48 56 29 / 12%);
+  transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.lista-espera-cliente__accion-mesa:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px rgb(48 56 29 / 12%);
+}
+
+.lista-espera-cliente__accion-mesa svg {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 20px;
+  
+  fill: none;
+  stroke: var(--acento);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lista-espera-cliente__accion-mesa strong {
+  font-family: var(--fuente-outfit);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .lista-espera-cliente__cancelar {
@@ -214,7 +235,7 @@
   --background-activated: rgb(254 250 224 / 12%);
 
   --color: var(--texto-suave);
-  --border-radius: 12px;
+  --border-radius: 13px;
   --border-width: 1px;
   --border-style: solid;
   --border-color: rgb(254 250 224 / 25%);
