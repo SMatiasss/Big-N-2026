@@ -36,9 +36,13 @@ export const ROLES_POR_RUTA = {
   // opción de pedir la cuenta". Las pantallas son de los puntos 15, 20 y 21
   // (todavía sin implementar); acá sólo se abre el acceso, que es la parte que
   // le corresponde al 19.
-  '/juegos/1': CLIENTES,
-  '/juegos/2': CLIENTES,
-  '/juegos/3': CLIENTES,
+  // HU15 es exclusiva del cliente registrado. El cliente anónimo puede
+  // pedir y seguir su pedido, pero no participa por descuentos.
+  '/pedidos/aceptado': [ROLES.CLIENTE_REGISTRADO],
+  '/juegos': [ROLES.CLIENTE_REGISTRADO],
+  '/juegos/1': [ROLES.CLIENTE_REGISTRADO],
+  '/juegos/2': [ROLES.CLIENTE_REGISTRADO],
+  '/juegos/3': [ROLES.CLIENTE_REGISTRADO],
   '/encuesta': CLIENTES,
   '/cuenta/solicitar': CLIENTES,
 };

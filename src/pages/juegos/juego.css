@@ -1,0 +1,40 @@
+.juego-hu15 { --j-fondo: var(--form-fondo, #606c38); --j-card: var(--form-campo-fondo, #4a572c); --j-profundo: var(--form-texto-oscuro, #283618); --j-acento: var(--form-dorado, #dda15e); --j-texto: var(--form-texto-claro, #fefae0); color: var(--j-texto); }
+.juego-hu15 ion-content { --background: var(--j-fondo); }
+.juego-hu15 .app-header { --ah-bg: var(--j-fondo); --ah-escala: 1.42; }
+.juego-hu15__main { box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 520px); min-height: calc(100% - 8px); margin: 0 auto; padding: 0 18px calc(18px + env(safe-area-inset-bottom)); font-family: var(--fuente-geist); text-align: center; }
+.juego-hu15__intro { margin: 0 0 18px; color: rgb(254 250 224 / 82%); font-size: 15px; line-height: 1.4; }
+.juego-hu15__tablero { display: grid; flex: 1; align-content: center; gap: 14px; padding: 20px; border: 1px solid rgb(254 250 224 / 10%); border-radius: 20px; background: var(--j-card); }
+.juego-hu15__tablero button { min-height: 74px; border: 1px solid rgb(221 161 94 / 48%); border-radius: 14px; background: var(--j-profundo); color: var(--j-acento); font: 700 20px var(--fuente-outfit); }
+.juego-hu15__tablero button:disabled { opacity: .8; }
+.juego-hu15__resultado { min-height: 64px; margin: 16px 0 0; padding: 13px; border-radius: 14px; background: var(--j-profundo); color: var(--j-texto); font-size: 14px; line-height: 1.35; }
+.juego-hu15__resultado strong { display: block; margin-bottom: 3px; color: var(--j-acento); font: 700 18px var(--fuente-outfit); }
+.juego-hu15__repetir { min-height: 46px; margin-top: 12px; border: 0; border-radius: 12px; background: var(--j-acento); color: var(--j-profundo); font: 700 16px var(--fuente-outfit); }
+.juego-hu15__repetir[hidden] { display: none; }
+.juego-hu15__cartas { grid-template-columns: repeat(2, 1fr); }
+.juego-hu15__cartas button { min-height: 120px; font-size: 34px; }
+.juego-hu15__cartas button.seleccionada { background: var(--j-acento); color: var(--j-profundo); }
+.juego-hu15__cartas button.acertada { outline: 3px solid var(--j-texto); }
+.juego-hu15__cartas button span { display: grid; place-items: center; min-height: 52px; font-size: 38px; }
+.juego-hu15__cajas { grid-template-columns: repeat(3, 1fr); }
+.juego-hu15__cajas button { min-width: 0; min-height: 150px; padding: 6px; font-size: 34px; }
+.juego-hu15__cajas button small { display: block; margin-top: 8px; color: var(--j-texto); font-size: 14px; }
+.juego-hu15__cajas button.premiada { background: var(--j-acento); color: var(--j-profundo); opacity: 1; }
+.juego-hu15__cajas button.elegida { outline: 3px solid var(--j-texto); opacity: 1; }
+.juego-hu15__hamburguesa { display: block; font-size: clamp(42px, 13vw, 66px); filter: drop-shadow(0 4px 2px rgb(40 54 24 / 28%)); }
+.juego-hu15__ruleta { position: relative; place-items: center; overflow: hidden; }
+.juego-hu15__leyenda-ruleta { display: flex; justify-content: center; gap: 18px; width: 100%; margin-top: -12px; padding: 10px 12px; border-radius: 12px; background: rgb(40 54 24 / 42%); color: var(--j-texto); font: 600 14px var(--fuente-outfit); }
+.juego-hu15__leyenda-ruleta span { display: flex; align-items: center; gap: 7px; }
+.juego-hu15__leyenda-ruleta i { display: block; width: 18px; height: 18px; border: 2px solid rgb(254 250 224 / 55%); border-radius: 5px; }
+.juego-hu15__leyenda-ruleta .es-premio { background: var(--j-acento); }
+.juego-hu15__leyenda-ruleta .sin-premio { background: var(--j-profundo); }
+.juego-hu15__ruleta-contenedor { position: relative; display: grid; place-items: center; padding-top: 20px; }
+.juego-hu15__marcador { position: absolute; top: 8px; left: 50%; z-index: 4; width: 0; height: 0; transform: translateX(-50%); border-right: 18px solid transparent; border-left: 18px solid transparent; border-top: 34px solid var(--j-texto); filter: drop-shadow(0 3px 2px rgb(40 54 24 / 55%)); }
+.juego-hu15__tablero .juego-hu15__rueda { --giro-final: 0deg; box-sizing: border-box; position: relative; width: min(70vw, 300px); min-height: 0; height: auto; aspect-ratio: 1 / 1; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--j-texto); box-shadow: 0 8px 18px rgb(40 54 24 / 35%); transition: transform 1.45s cubic-bezier(.12,.68,.08,1); overflow: visible; }
+.juego-hu15__tablero .juego-hu15__rueda.girando { transform: rotate(var(--giro-final)); }
+.juego-hu15__tablero .juego-hu15__rueda.reiniciando { transition: none; }
+.juego-hu15__rueda-centro { position: absolute; top: 50%; left: 50%; z-index: 2; display: grid; place-items: center; width: 70px; height: 70px; transform: translate(-50%,-50%); border: 5px solid var(--j-acento); border-radius: 50%; background: var(--j-profundo); color: var(--j-texto); font: 700 17px var(--fuente-outfit); box-shadow: 0 3px 8px rgb(0 0 0 / 30%); }
+.ruleta-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ruleta-svg path { stroke: rgb(254 250 224 / 48%); stroke-width: 2; }
+.ruleta-svg__aro { fill: var(--j-profundo); stroke: var(--j-acento); stroke-width: 10; }
+.ruleta-svg__centro { fill: var(--j-profundo); stroke: var(--j-acento); stroke-width: 5; }
+@media (max-height: 720px) { .juego-hu15 .app-header { --ah-escala: 1.25; } .juego-hu15__intro { margin-bottom: 10px; } .juego-hu15__cartas button { min-height: 90px; } .juego-hu15__cajas button { min-height: 110px; } }

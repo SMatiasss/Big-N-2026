@@ -199,3 +199,66 @@ export function ajustarFormulario(contenido, { variable, minimo = 0.72, margen =
     },
   };
 }
+
+/**
+ * Escala una vista compacta para aprovechar el alto disponible sin provocar
+ * scroll. A diferencia de ajustarFormulario, también puede crecer cuando el
+ * dispositivo ofrece más espacio. El CSS de la vista decide qué dimensiones
+ * responden a la variable para preservar ancho, contraste y áreas táctiles.
+ */
+export function ajustarVista(contenido, {
+  variable,
+  minimo = 0.86,
+  maximo = 1.18,
+  margen = 8,
+} = {}) {
+  const ionContent = contenido.closest('ion-content');
+  const limitar = (valor) => Math.min(maximo, Math.max(minimo, valor));
+
+  function aplicar() {
+    const header = ionContent?.querySelector('.app-header');
+    const disponible = (ionContent?.clientHeight ?? 0) - (header?.offsetHeight ?? 0) - margen;
+    if (disponible <= 0) return false;
+
+    // Además del factor, se publica el alto real para que las vistas con
+    // flex/grid puedan repartir el espacio sobrante entre sus bloques.
+    contenido.style.setProperty('--vista-alto-disponible', `${disponible}px`);
+
+    contenido.style.setProperty(variable, '1');
+    const natural = contenido.scrollHeight;
+    if (!natural) return false;
+
+    let escala = limitar(disponible / natural);
+    contenido.style.setProperty(variable, String(escala));
+
+    // Un segundo pase compensa dimensiones que intencionalmente no escalan.
+    const medido = contenido.scrollHeight;
+    if (medido > 0) {
+      escala = limitar(escala * (disponible / medido));
+      contenido.style.setProperty(variable, String(escala));
+    }
+    return true;
+  }
+
+  let frames = 0;
+  function intentar() {
+    if (!contenido.isConnected || frames > 90) return;
+    frames += 1;
+    if (!aplicar()) requestAnimationFrame(intentar);
+  }
+  intentar();
+
+  const reintento = setTimeout(aplicar, 300);
+  window.addEventListener('resize', aplicar);
+  window.addEventListener('orientationchange', aplicar);
+  document.fonts?.ready.then(aplicar).catch(() => {});
+
+  return {
+    actualizar: aplicar,
+    destruir() {
+      clearTimeout(reintento);
+      window.removeEventListener('resize', aplicar);
+      window.removeEventListener('orientationchange', aplicar);
+    },
+  };
+}
