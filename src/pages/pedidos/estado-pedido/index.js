@@ -118,7 +118,7 @@ export function render(container) {
 
             <!-- Punto 19: se habilitan recién con el pedido recibido. -->
             <nav class="estado-pedido__siguientes" aria-label="Qué podés hacer ahora" hidden>
-              <button type="button" data-ruta="/juegos/1">Juegos</button>
+              <button type="button" data-ruta="/juegos">Juegos</button>
               <button type="button" data-ruta="/encuesta">Encuesta</button>
               <button type="button" data-ruta="/cuenta/solicitar">Pedir la cuenta</button>
             </nav>

@@ -1,0 +1,50 @@
+.juegos-hu15 {
+  --jh-fondo: var(--form-fondo, #606c38);
+  --jh-profundo: var(--form-texto-oscuro, #283618);
+  --jh-verde: var(--form-campo-fondo-hover, #53632f);
+  --jh-crema: var(--form-texto-claro, #fefae0);
+  --jh-dorado: var(--form-dorado, #dda15e);
+  color: var(--jh-crema);
+}
+
+.juegos-hu15 ion-content { --background: var(--jh-fondo); }
+.juegos-hu15 .app-header { --ah-bg: var(--jh-fondo); --ah-escala: 1.42; }
+.juegos-hu15__contenido { --jh-ajuste: 1; box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 560px); height: var(--vista-alto-disponible, auto); margin: 0 auto; padding: 0 16px calc(10px * var(--jh-ajuste) + env(safe-area-inset-bottom)); font-family: var(--fuente-geist); }
+
+.juegos-hu15__reglas { display: flex; align-items: center; gap: 11px; padding: calc(11px * var(--jh-ajuste)) 12px; border: 1px solid rgb(221 161 94 / 32%); border-radius: 14px; background: var(--jh-profundo); color: var(--jh-crema); }
+.juegos-hu15__reglas > span { display: grid; place-items: center; flex: 0 0 36px; height: 36px; border-radius: 50%; background: var(--jh-dorado); color: var(--jh-profundo); font: 700 20px var(--fuente-outfit); }
+.juegos-hu15__reglas h2 { margin: 0 0 2px; color: var(--jh-dorado); font: 700 clamp(14px, calc(15px * var(--jh-ajuste)), 18px)/1.2 var(--fuente-outfit); }
+.juegos-hu15__reglas p { margin: 0; color: rgb(254 250 224 / 80%); font-size: clamp(11px, calc(12px * var(--jh-ajuste)), 14px); line-height: 1.35; }
+
+.juegos-hu15__lista { display: grid; flex: 1; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: calc(9px * var(--jh-ajuste)); min-height: 0; margin-top: calc(10px * var(--jh-ajuste)); }
+.juegos-hu15__card { display: grid; grid-template-columns: calc(96px * var(--jh-ajuste)) 1fr; gap: 16px; min-height: 0; padding: calc(12px * var(--jh-ajuste)); border: 1px solid rgb(254 250 224 / 10%); border-radius: 15px; background: var(--jh-verde); color: var(--jh-crema); }
+.juegos-hu15__card--tragamonedas,
+.juegos-hu15__card--raspadita,
+.juegos-hu15__card--ruleta { border-color: rgb(254 250 224 / 10%); }
+.juegos-hu15__ilustracion { display: grid; place-items: center; min-width: 0; width: calc(96px * var(--jh-ajuste)); height: calc(96px * var(--jh-ajuste)); align-self: center; border-radius: 50%; background: var(--jh-profundo); color: var(--jh-dorado); overflow: hidden; }
+.juegos-hu15__ilustracion svg { width: calc(78px * var(--jh-ajuste)); height: calc(72px * var(--jh-ajuste)); fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.juegos-hu15__ilustracion text { fill: currentColor; stroke: none; font: 700 16px var(--fuente-outfit); }
+.juegos-hu15__datos { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.juegos-hu15__datos h2 { margin: 0 0 2px; font: 700 clamp(16px, calc(18px * var(--jh-ajuste)), 21px)/1.1 var(--fuente-outfit); }
+.juegos-hu15__datos p { margin: calc(4px * var(--jh-ajuste)) 0 calc(12px * var(--jh-ajuste)); color: rgb(254 250 224 / 78%); font-size: clamp(11px, calc(12px * var(--jh-ajuste)), 14px); line-height: 1.3; }
+.juegos-hu15__datos button { align-self: flex-start; min-width: calc(118px * var(--jh-ajuste)); min-height: calc(32px * var(--jh-ajuste)); margin: 0; padding: 5px 14px; border: 0; border-radius: 9px; background: var(--jh-dorado); color: var(--jh-profundo); font: 700 clamp(12px, calc(13px * var(--jh-ajuste)), 15px) var(--fuente-outfit); }
+
+.juegos-hu15__estado { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: calc(10px * var(--jh-ajuste)); padding: calc(9px * var(--jh-ajuste)) 12px; border-top: 1px solid rgb(254 250 224 / 14%); color: rgb(254 250 224 / 70%); }
+.juegos-hu15__estado > span { color: var(--jh-dorado); font-size: 9px; }
+.juegos-hu15__estado p { margin: 0; font-size: clamp(11px, calc(12px * var(--jh-ajuste)), 14px); line-height: 1.3; }
+
+@media (max-width: 360px) {
+  .juegos-hu15__card { grid-template-columns: 76px 1fr; gap: 10px; }
+  .juegos-hu15__ilustracion { width: 76px; height: 76px; }
+  .juegos-hu15__ilustracion svg { width: 62px; }
+  .juegos-hu15__datos h2 { font-size: 17px; }
+}
+
+@media (max-height: 740px) {
+  .juegos-hu15 .app-header { --ah-escala: 1.25; }
+  .juegos-hu15__reglas { padding-block: 8px; }
+  .juegos-hu15__card { min-height: 94px; }
+  .juegos-hu15__ilustracion { width: 60px; height: 60px; }
+  .juegos-hu15__ilustracion svg { width: 54px; height: 50px; }
+  .juegos-hu15__datos p { font-size: 11px; }
+}

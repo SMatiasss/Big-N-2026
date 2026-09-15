@@ -1,8 +1,14 @@
 /* -- estilos añadidos -- */
 .hu11__main-espaciado { padding-bottom: 20px !important; }
 .hu11 [data-mesa] { text-align: center; margin-top: 0; margin-bottom: 24px; font-size: 1.1rem; }
-.hu11__acciones-contenedor { display: flex; gap: 10px; margin-bottom: 24px; }
+.hu11__acciones-contenedor { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
 .hu11__acciones-contenedor button { flex: 1; width: 100%; }
+.hu11__acciones-contenedor .hu15-acceso-prueba {
+  flex-basis: 100%;
+  border: 1px dashed #dda15e;
+  background: #4a572c;
+  color: #fefae0;
+}
 
 /* Menú acordeón (Categorías) */
 .hu11__categoria { background: #283618; margin-bottom: 16px; border-radius: 12px; padding: 4px; }
