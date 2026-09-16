@@ -37,10 +37,10 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 11 | Visualizar productos y realizar consultas al mozo | Cespedes     | 04/09 | 06/09 | feature/hu11-carta-consulta-mozo-chat | Finalizado |
 | 12 | Realizar un pedido                                | Romero       | 09/09 | 09/09 | feature/hu12-realizar-pedido | Finalizada |
 | 13 | Rechazar y modificar un pedido                    | Terenghi Goy | - | - | - | Pendiente |
-| 14 | Confirmar y derivar un pedido                     | Romero       | - | - | - | Pendiente |
+| 14 | Confirmar y derivar un pedido                     | Romero       | 16/09 | - | feature/14-16-17 | Finalizada |
 | 15 | Acceder a juegos y obtener descuentos             | Cespedes     | - | - | - | Pendiente |
 | 16 | Recepción de productos en cocina                  | Terenghi Goy | - | - | - | Pendiente |
-| 17 | Recepción de productos en bar                     | Romero       | - | - | - | Pendiente |
+| 17 | Recepción de productos en bar                     | Romero       | - | - | - | feature/14-16-17 |
 | 18 | Finalizar la preparación del pedido               | Soria        | 12/09 | - | - | En curso |
 | 19 | Entregar y recibir el pedido                      | Soria        | 12/09 | - | - | En curso |
 | 20 | Realizar encuesta y visualizar resultados         | Cespedes     | - | - | - | Pendiente |
@@ -48,11 +48,12 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 22 | Confirmar el pago y liberar la mesa               | Soria        | - | - | - | Pendiente |
 
 
-## Cambios y reasignaciones
+## Reasignaciones
 
-| Fecha | Módulo | Cambio | Responsable anterior | Nuevo responsable | Nueva finalización |
-|---|---:|---|---|---|---|
-| — | — | — | — | — | — |
+| Fecha | Módulo | Responsable anterior | Nuevo responsable | Branch | Nueva finalización |
+|---|---|---|---|---|
+| 16/09 | 16 | Terenghi Goy | Romero | feature/14-16-17 | 16/09 |
+| 16/09 | 21 | Romero | Terenghi Goy | - | - |
 
 ## Códigos QR
 
