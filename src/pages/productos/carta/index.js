@@ -167,8 +167,8 @@ export async function render(container) {
         producto_id: item.producto.id,
         cantidad: item.cantidad,
         precio_unitario: item.producto.precio,
-        // Asignar sector según tipo: las bebidas van al bar, lo demás a cocina
-        sector: item.producto.tipo === 'bebida' ? 'bar' : 'cocina'
+        // Usar el sector real con el que el producto fue creado en la base de datos
+        sector: item.producto.sector || (item.producto.tipo === 'bebida' ? 'bar' : 'cocina')
       }));
 
       const pedidoCreado = await crearPedido(pedidoInfo, itemsInfo);
@@ -183,17 +183,19 @@ export async function render(container) {
       CarritoService.vaciarCarrito();
       statusCarrito.textContent = '';
       btnConfirmar.disabled = false;
-      actualizarUI(); // Esto cierra el carrito porque queda vacío
-      
-      const avisoExito = document.createElement('div');
-      avisoExito.textContent = '¡Pedido enviado con éxito! El mozo lo confirmará en breve.';
-      avisoExito.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #283618; color: #dda15e; padding: 16px; border-radius: 8px; font-weight: bold; z-index: 2000; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid #dda15e;';
-      document.body.appendChild(avisoExito);
-      
-      setTimeout(() => avisoExito.remove(), 4000);
-      
       // Emitimos el evento para que los números de las cards vuelvan a 0
       window.dispatchEvent(new Event('carrito-actualizado'));
+
+      if (contexto.rol === 'cliente_registrado') {
+        navegarA('/pedidos/aceptado');
+      } else {
+        const avisoExito = document.createElement('div');
+        avisoExito.textContent = '¡Pedido enviado con éxito! El mozo lo confirmará en breve.';
+        avisoExito.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #283618; color: #dda15e; padding: 16px; border-radius: 8px; font-weight: bold; z-index: 2000; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid #dda15e;';
+        document.body.appendChild(avisoExito);
+        setTimeout(() => avisoExito.remove(), 4000);
+        navegarA('/pedidos/estado');
+      }
       
     } catch (error) {
       console.error(error);

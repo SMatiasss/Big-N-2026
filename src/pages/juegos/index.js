@@ -67,8 +67,8 @@ export function render(container) {
 
   container.querySelector('[data-header]').append(crearAppHeader({
     titulo: 'Juegos y descuentos',
-    etiquetaVolver: 'Volver al pedido aceptado',
-    onVolver: () => navegarA('/pedidos/aceptado'),
+    etiquetaVolver: 'Volver a la carta',
+    onVolver: () => navegarA('/mesa/carta'),
   }));
 
   container.querySelectorAll('[data-ruta]').forEach((boton) => {
