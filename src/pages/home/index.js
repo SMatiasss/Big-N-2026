@@ -15,6 +15,7 @@ import {
   iniciarPushCliente,
   iniciarPushConsultasMozo,
   iniciarPushListaEspera,
+  iniciarPushSectores,
 } from "../../services/notificaciones.service.js";
 import {
   consumirAvisoNavegacion,
@@ -209,6 +210,7 @@ export async function render(container) {
       iniciarPushListaEspera(perfil),
       iniciarPushCliente(perfil),
       iniciarPushConsultasMozo(perfil),
+      iniciarPushSectores(perfil),
     ]);
   } catch (e) {
     error.textContent = e.message ?? "No se pudo cargar tu inicio.";

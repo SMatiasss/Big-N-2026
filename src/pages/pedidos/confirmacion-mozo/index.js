@@ -1,5 +1,6 @@
 import './index.css';
 import { listarPedidosPendientes, confirmarPedido, rechazarPedido } from '../../../services/pedidos.service.js';
+import { avisarSectoresPedido } from '../../../services/notificaciones.service.js';
 import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { navegarA } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
@@ -88,6 +89,8 @@ export async function render(container) {
           btnAceptar.disabled = true;
           btnRechazar.disabled = true;
           await confirmarPedido(pedido.id);
+          // 14. Avisar a los sectores correspondientes (cocina y bar)
+          await avisarSectoresPedido(pedido.id).catch(e => console.error('No se pudo enviar push a sectores', e));
           actualizacion.actualizar();
         } catch (err) {
           aviso.textContent = 'Error al confirmar: ' + err.message;

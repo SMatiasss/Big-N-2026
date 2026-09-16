@@ -28,6 +28,8 @@ export const ROLES_POR_RUTA = {
   '/mesa/carta': CLIENTES,
   '/pedidos/consulta': [ROLES.MOZO, ...CLIENTES],
   '/pedidos/confirmacion': [ROLES.MOZO],
+  '/pedidos/cocina': [ROLES.COCINERO],
+  '/pedidos/bar': [ROLES.CANTINERO],
   // Puntos 18 y 19: el mozo ve los pedidos completos y los entrega; el cliente
   // sigue el estado del suyo y confirma que lo recibió.
   '/pedidos/entrega': [ROLES.MOZO],
@@ -76,11 +78,11 @@ const PERMISOS_HOME = {
     listaEspera: false, clientes: true, consultas: false,
   },
   [ROLES.COCINERO]: {
-    empleados: false, mesas: false, productos: true, pedidos: false,
+    empleados: false, mesas: false, productos: true, pedidos: true,
     listaEspera: false, clientes: false, consultas: false,
   },
   [ROLES.CANTINERO]: {
-    empleados: false, mesas: false, productos: true, pedidos: false,
+    empleados: false, mesas: false, productos: true, pedidos: true,
     listaEspera: false, clientes: false, consultas: false,
   },
   [ROLES.METRE]: {
@@ -149,8 +151,16 @@ export function obtenerAccionesHome(rol) {
 // la pantalla las dibuja todas y grisa las que tengan habilitada:false.
 export function obtenerAccionesHomeEmpleado(rol) {
   const permisos = PERMISOS_HOME[rol] ?? {};
-  return ORDEN_ACCIONES_HOME.map((clave) => ({
-    ...METADATA_ACCIONES_HOME[clave],
-    habilitada: Boolean(permisos[clave]),
-  }));
+  return ORDEN_ACCIONES_HOME.map((clave) => {
+    let ruta = METADATA_ACCIONES_HOME[clave].ruta;
+    if (clave === 'pedidos') {
+      if (rol === ROLES.COCINERO) ruta = '/pedidos/cocina';
+      if (rol === ROLES.CANTINERO) ruta = '/pedidos/bar';
+    }
+    return {
+      ...METADATA_ACCIONES_HOME[clave],
+      ruta,
+      habilitada: Boolean(permisos[clave]),
+    };
+  });
 }

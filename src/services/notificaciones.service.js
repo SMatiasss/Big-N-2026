@@ -17,6 +17,7 @@ const CLAVE_TOKEN_PUSH = 'big-n.push-token-actual';
 let inicializadoListaEspera = false;
 let inicializadoCliente = false;
 let inicializadoConsultasMozo = false;
+let inicializadoSectores = false;
 const CLAVE_ESTADIA_PUSH = 'big-n.push-estadia-hu11';
 
 // El token se conserva también en el almacenamiento local. La variable en
@@ -47,6 +48,7 @@ function reiniciarEstadoPush() {
   inicializadoListaEspera = false;
   inicializadoCliente = false;
   inicializadoConsultasMozo = false;
+  inicializadoSectores = false;
 }
 
 async function prepararDispositivoParaPerfil(usuarioId) {
@@ -369,6 +371,33 @@ export async function iniciarPushConsultasMozo(perfil) {
   return true;
 }
 
+export async function iniciarPushSectores(perfil) {
+  const autorizado = [ROLES.COCINERO, ROLES.CANTINERO].includes(perfil?.rol) && perfil.activo && perfil.estado === 'aprobado';
+  if (!autorizado || inicializadoSectores || Capacitor.getPlatform() !== 'android') return false;
+  await prepararDispositivoParaPerfil(perfil.id);
+  inicializadoSectores = true;
+  await escucharAccionesPush();
+  await PushNotifications.addListener('registration', async ({ value }) => {
+    tokenActual = value;
+    try { await guardarPushToken(perfil.id, value, 'android'); }
+    catch (error) { console.error('No se pudo registrar el dispositivo del sector.', error); }
+  });
+  await PushNotifications.addListener('registrationError', error => {
+    console.error('Android no pudo registrar las notificaciones de sectores.', error);
+  });
+  await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
+  const permiso = await PushNotifications.checkPermissions();
+  const estado = permiso.receive === 'prompt' ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
+  if (estado !== 'granted') { return false; }
+  await PushNotifications.createChannel({
+    id: 'pedidos-sectores', name: 'Pedidos por preparar',
+    description: 'Avisos de nuevos pedidos derivados al sector.', importance: 5,
+    visibility: 1, vibration: true,
+  });
+  await PushNotifications.register();
+  return true;
+}
+
 export async function avisarMensajeHu11(mensajeId) {
   const { data, error } = await getSupabase().functions.invoke('avisar-mensaje-hu11', { body: { mensajeId } });
   if (error) throw error;
@@ -405,6 +434,12 @@ export async function avisarNuevoPedido(pedidoId) {
 // relee el pedido y sólo avisa si de verdad quedó en estado 'listo'.
 export async function avisarPedidoListo(pedidoId) {
   const { data, error } = await getSupabase().functions.invoke('avisar-pedido-listo', { body: { pedidoId } });
+  if (error) throw error;
+  return data;
+}
+
+export async function avisarSectoresPedido(pedidoId) {
+  const { data, error } = await getSupabase().functions.invoke('avisar-sectores-pedido', { body: { pedidoId } });
   if (error) throw error;
   return data;
 }

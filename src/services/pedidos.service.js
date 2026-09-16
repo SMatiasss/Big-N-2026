@@ -1,6 +1,6 @@
 // Crear, confirmar, rechazar pedidos e ítems (puntos 12-19).
 import { getSupabase } from './supabase.client.js';
-import { TABLAS, ESTADOS_PEDIDO, ESTADOS_ESTADIA } from '../config/constantes.js';
+import { TABLAS, ESTADOS_PEDIDO, ESTADOS_ESTADIA, ESTADOS_ITEM } from '../config/constantes.js';
 
 export async function crearPedido(pedido, items) {
   const { data: pedidoCreado, error: errorPedido } = await getSupabase()
@@ -223,6 +223,30 @@ export async function listarPedidosPendientes() {
     .eq('estado', ESTADOS_PEDIDO.CREADO)
     .order('creado_en', { ascending: true });
     
+  if (error) throw error;
+  return data;
+}
+
+export async function listarPedidosPorSector(sector) {
+  const { data, error } = await getSupabase()
+    .from(TABLAS.PEDIDOS)
+    .select(`
+      id,
+      creado_en,
+      estado,
+      estadias ( mesas ( numero ), cliente:perfiles!cliente_id ( nombres, apellidos ) ),
+      pedido_items!inner (
+        id,
+        cantidad,
+        estado,
+        sector,
+        productos ( nombre )
+      )
+    `)
+    .eq('estado', ESTADOS_PEDIDO.EN_PREPARACION)
+    .eq('pedido_items.sector', sector)
+    .neq('pedido_items.estado', ESTADOS_ITEM.LISTO)
+    .order('creado_en', { ascending: true });
   if (error) throw error;
   return data;
 }
