@@ -33,13 +33,15 @@ function observar(elemento, aplicar) {
  * conserva el suyo natural en vez de estirarse para llenar la pantalla.
  *
  * @param {HTMLElement} lista - El contenedor con la clase .lista-ajustada.
+ * @param {object} [opciones]
+ * @param {number} [opciones.paddingInferior] - Píxeles extra a reservar al final (ej. para sombras).
  */
-export function ajustarLista(lista) {
+export function ajustarLista(lista, { paddingInferior = 0 } = {}) {
   function aplicar() {
     const estilos = getComputedStyle(lista);
     const items = leerNumero(estilos, '--la-items', 0);
     const gap = leerNumero(estilos, '--la-gap', 0);
-    const alto = lista.clientHeight;
+    const alto = lista.clientHeight - paddingInferior;
 
     // Con pocos elementos no hace falta encajarlos: sin scroll no hay nada
     // que se pueda cortar, y forzarles un alto sólo los estiraría.
