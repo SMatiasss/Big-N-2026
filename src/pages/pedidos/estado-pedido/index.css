@@ -300,10 +300,17 @@
 /* Punto 19: juegos, encuesta y cuenta, disponibles recién con el pedido
    ya recibido. */
 
+/* Flex y no una grilla de tres columnas fijas: al cliente anónimo se le saca
+   el botón de juegos (ver index.js) y los dos que quedan tienen que repartirse
+   el ancho completo, sin dejar un hueco. */
 .estado-pedido__siguientes {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 8px;
+}
+
+.estado-pedido__siguientes button {
+  flex: 1;
+  min-width: 0;
 }
 
 .estado-pedido__siguientes button {

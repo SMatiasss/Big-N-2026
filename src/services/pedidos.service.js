@@ -87,6 +87,27 @@ const SELECT_PEDIDO_EN_CURSO = `
   )
 `;
 
+// Punto 18: "cada sector realiza las tareas correspondientes y avisa cuando
+// todos los productos están listos". Marca como 'listo' todos los ítems de ESE
+// sector dentro de ESE pedido (es lo que hace el botón ✅ de las pantallas de
+// cocina y bar, que muestran el pedido agrupado por mesa).
+//
+// El pedido completo NO se marca acá: lo deja en 'listo' el trigger
+// trg_estado_pedido, y sólo cuando ya no queda ningún ítem pendiente en
+// ningún sector. Así "la cocina terminó pero el bar no" queda representado
+// solo, sin que ninguna pantalla tenga que saber del otro sector.
+export async function marcarSectorListo(pedidoId, sector) {
+  const { data, error } = await getSupabase()
+    .from(TABLAS.ITEMS_PEDIDO)
+    .update({ estado: ESTADOS_ITEM.LISTO })
+    .eq('pedido_id', pedidoId)
+    .eq('sector', sector)
+    .neq('estado', ESTADOS_ITEM.LISTO)
+    .select('id');
+  if (error) throw error;
+  return data;
+}
+
 // Punto 18: lo que ve el mozo en su listado de pedidos pendientes. Incluye los
 // que todavía se están preparando (para que vea "cada parte del pedido") y los
 // que ya están completos. Los 'entregado' quedan afuera: ésos ya se cerraron

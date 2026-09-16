@@ -1,5 +1,6 @@
 import './index.css';
-import { listarPedidosPorSector } from '../../../services/pedidos.service.js';
+import { listarPedidosPorSector, marcarSectorListo } from '../../../services/pedidos.service.js';
+import { avisarPedidoListo } from '../../../services/notificaciones.service.js';
 import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { navegarA } from '../../../router.js';
@@ -75,7 +76,28 @@ export async function render(container) {
           <button type="button" class="btn-aceptar" aria-label="Marcar como listo">✅</button>
         </div>
       `;
-      
+
+      // Punto 18: la cocina avisa que terminó su parte. Si con esto el pedido
+      // queda completo (el trigger trg_estado_pedido lo pasa a 'listo'), se le
+      // avisa al mozo para que lo entregue. avisar-pedido-listo revalida el
+      // estado en el servidor, así que si todavía falta el bar no manda nada.
+      const btnListo = tarjeta.querySelector('.btn-aceptar');
+      btnListo.onclick = async () => {
+        btnListo.disabled = true;
+        try {
+          await marcarSectorListo(pedido.id, 'cocina');
+          try {
+            await avisarPedidoListo(pedido.id);
+          } catch (err) {
+            console.warn('El pedido quedó listo pero no se pudo enviar el push al mozo:', err);
+          }
+          actualizacion.actualizar();
+        } catch (err) {
+          aviso.textContent = 'No se pudo marcar como listo: ' + err.message;
+          btnListo.disabled = false;
+        }
+      };
+
       lista.appendChild(tarjeta);
     }
     

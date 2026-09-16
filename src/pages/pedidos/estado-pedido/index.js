@@ -9,7 +9,8 @@ import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
-import { ESTADOS_ITEM, ESTADOS_PEDIDO } from '../../../config/constantes.js';
+import { ESTADOS_ITEM, ESTADOS_PEDIDO, ROLES } from '../../../config/constantes.js';
+import { obtenerPerfilActual } from '../../../services/auth.service.js';
 import {
   confirmarRecepcionPedido,
   obtenerMiPedidoEnCurso,
@@ -154,6 +155,19 @@ export function render(container) {
   siguientes.querySelectorAll('button').forEach((boton) => {
     boton.addEventListener('click', () => navegarA(boton.dataset.ruta));
   });
+
+  // Los juegos son sólo para el cliente registrado (el anónimo no participa por
+  // descuentos, ver la nota del punto 14), y /juegos está restringido a ese rol
+  // en config/navegacion.js: si le dejáramos el botón al anónimo, tocarlo lo
+  // devolvería al home con un aviso de "no disponible para tu perfil".
+  // La encuesta y la cuenta sí son para los dos.
+  void obtenerPerfilActual()
+    .then((perfil) => {
+      if (perfil?.rol !== ROLES.CLIENTE_REGISTRADO) {
+        siguientes.querySelector('[data-ruta="/juegos"]')?.remove();
+      }
+    })
+    .catch(() => {});
 
   let pedido = null;
   let desuscribir = null;
