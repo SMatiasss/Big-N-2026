@@ -38,7 +38,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 12 | Realizar un pedido                                | Romero       | 09/09 | 09/09 | feature/hu12-realizar-pedido | Finalizada |
 | 13 | Rechazar y modificar un pedido                    | Terenghi Goy | - | - | - | Pendiente |
 | 14 | Confirmar y derivar un pedido                     | Romero       | 16/09 | - | feature/14-16-17 | Finalizada |
-| 15 | Acceder a juegos y obtener descuentos             | Cespedes     | - | - | - | Pendiente |
+| 15 | Acceder a juegos y obtener descuentos             | Cespedes     | 15/06 | 15/06 | feature/hu15-juegos-descuentos | Finalizado |
 | 16 | Recepción de productos en cocina                  | Terenghi Goy | - | - | - | Pendiente |
 | 17 | Recepción de productos en bar                     | Romero       | - | - | - | feature/14-16-17 |
 | 18 | Finalizar la preparación del pedido               | Soria        | 12/09 | - | - | En curso |
