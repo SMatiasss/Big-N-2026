@@ -83,7 +83,7 @@ const SELECT_PEDIDO_EN_CURSO = `
     cantidad,
     sector,
     estado,
-    productos ( nombre )
+    productos ( id, nombre, precio, tipo, sector, tiempo_elaboracion_min, activo )
   )
 `;
 
@@ -136,6 +136,12 @@ export async function marcarPedidoEntregado(pedidoId) {
 }
 
 // Punto 19 (lado cliente): el pedido de su estadía activa, para ver el estado.
+// Punto 13: ya no se excluye 'rechazado' -el pedido nunca se borra, es el
+// mismo criterio de "historial" que el resto de la tabla (ver
+// 03_baja_logica.sql)-, así el más reciente de la estadía puede ser uno que
+// el mozo rechazó. La pantalla (estado-pedido) es la que decide qué mostrar
+// según el estado: progreso normal, o el aviso de rechazo con el botón para
+// modificarlo y reenviarlo.
 export async function obtenerMiPedidoEnCurso() {
   const supabase = getSupabase();
   const { data: { session } } = await supabase.auth.getSession();
@@ -154,7 +160,6 @@ export async function obtenerMiPedidoEnCurso() {
     .from(TABLAS.PEDIDOS)
     .select(SELECT_PEDIDO_EN_CURSO)
     .eq('estadia_id', estadia.id)
-    .neq('estado', ESTADOS_PEDIDO.RECHAZADO)
     .order('creado_en', { ascending: false })
     .limit(1)
     .maybeSingle();

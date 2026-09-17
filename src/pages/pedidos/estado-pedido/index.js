@@ -1,5 +1,8 @@
-// Puntos 18 y 19 (lado cliente).
+// Puntos 13, 18 y 19 (lado cliente).
 //
+// 13: si el mozo rechaza el pedido, el cliente lo ve acá (ya no desaparece:
+//     el pedido nunca se borra, ver 03_baja_logica.sql) y puede modificarlo
+//     -parcial o totalmente- y volver a enviarlo.
 // 18: "El cliente verifica el cambio de estado en su pedido" — el progreso se
 //     actualiza solo por realtime a medida que cocina y bar terminan.
 // 19: "El cliente confirma la recepción de su pedido" y recién entonces se le
@@ -16,6 +19,7 @@ import {
   obtenerMiPedidoEnCurso,
   suscribirseAMiPedido,
 } from '../../../services/pedidos.service.js';
+import { precargarCarritoDesdePedido } from '../../../utils/carrito-desde-pedido.js';
 import { navegarA } from '../../../router.js';
 
 const ETIQUETAS_SECTOR = {
@@ -36,6 +40,9 @@ function pasoActual(pedido) {
 
 // El texto grande que explica, en criollo, qué está pasando.
 function mensajeEstado(pedido) {
+  if (pedido.estado === ESTADOS_PEDIDO.RECHAZADO) {
+    return 'El mozo rechazó tu pedido. Modificalo y volvé a enviarlo cuando quieras.';
+  }
   if (pedido.estado === ESTADOS_PEDIDO.ENTREGADO) {
     return 'Recibiste tu pedido. ¡Buen provecho!';
   }
@@ -71,6 +78,9 @@ function plantillaPasos(pedido) {
 }
 
 function plantillaItems(pedido) {
+  // Rechazado: el sector/"Listo" no dice nada útil -nunca llegó a prepararse-,
+  // así que la lista sólo muestra qué había pedido.
+  const rechazado = pedido.estado === ESTADOS_PEDIDO.RECHAZADO;
   return (pedido.pedido_items ?? [])
     .map((item) => {
       const listo = item.estado === ESTADOS_ITEM.LISTO || item.estado === ESTADOS_ITEM.ENTREGADO;
@@ -78,9 +88,10 @@ function plantillaItems(pedido) {
         <li class="estado-pedido__item ${listo ? 'estado-pedido__item--listo' : ''}">
           <span class="estado-pedido__cantidad">${item.cantidad}×</span>
           <span class="estado-pedido__producto">${item.productos?.nombre ?? 'Producto'}</span>
+          ${rechazado ? '' : `
           <span class="estado-pedido__sector">
             ${listo ? 'Listo' : ETIQUETAS_SECTOR[item.sector] ?? item.sector}
-          </span>
+          </span>`}
         </li>
       `;
     })
@@ -117,6 +128,12 @@ export function render(container) {
               Confirmar recepción
             </button>
 
+            <!-- Punto 13: el mozo rechazó el pedido. Se precarga el carrito
+                 con lo que tenía y se lo lleva a la carta a modificarlo. -->
+            <button type="button" class="estado-pedido__confirmar estado-pedido__modificar" hidden>
+              Modificar y volver a enviar
+            </button>
+
             <!-- Punto 19: se habilitan recién con el pedido recibido. -->
             <nav class="estado-pedido__siguientes" aria-label="Qué podés hacer ahora" hidden>
               <button type="button" data-ruta="/juegos">Juegos</button>
@@ -140,7 +157,8 @@ export function render(container) {
   const items = container.querySelector('.estado-pedido__items');
   const vacio = container.querySelector('.estado-pedido__vacio');
   const pie = container.querySelector('.estado-pedido__pie');
-  const botonConfirmar = container.querySelector('.estado-pedido__confirmar');
+  const botonConfirmar = container.querySelector('.estado-pedido__confirmar:not(.estado-pedido__modificar)');
+  const botonModificar = container.querySelector('.estado-pedido__modificar');
   const siguientes = container.querySelector('.estado-pedido__siguientes');
 
   const ajusteLista = ajustarLista(items);
@@ -198,7 +216,11 @@ export function render(container) {
     const mesa = pedido.estadias?.mesas?.numero;
     textoMesa.textContent = mesa ? `Mesa ${mesa}` : 'Tu pedido';
 
-    pasos.innerHTML = plantillaPasos(pedido);
+    // Punto 13: rechazado no es un paso más del progreso normal -no llegó a
+    // cocina/bar-, así que la barra de pasos no aplica acá.
+    const rechazado = pedido.estado === ESTADOS_PEDIDO.RECHAZADO;
+    pasos.hidden = rechazado;
+    if (!rechazado) pasos.innerHTML = plantillaPasos(pedido);
     mensajeEstadoEl.textContent = mensajeEstado(pedido);
 
     items.innerHTML = plantillaItems(pedido);
@@ -207,11 +229,13 @@ export function render(container) {
     const recibido = pedido.estado === ESTADOS_PEDIDO.ENTREGADO;
     const puedeConfirmar = pedido.estado === ESTADOS_PEDIDO.LISTO && Boolean(pedido.entregado_en);
 
-    botonConfirmar.hidden = recibido;
+    botonConfirmar.hidden = recibido || rechazado;
     botonConfirmar.disabled = !puedeConfirmar;
     botonConfirmar.textContent = puedeConfirmar
       ? 'Confirmar recepción'
       : 'Esperando que el mozo lo entregue';
+
+    botonModificar.hidden = !rechazado;
 
     siguientes.hidden = !recibido;
   }
@@ -228,7 +252,19 @@ export function render(container) {
     }
   }
 
+  // Punto 13: precarga el carrito con lo que tenía el pedido rechazado -así
+  // no arranca de cero, y puede sumar, sacar o cambiar cantidades- y lo manda
+  // a la carta a terminarlo. El pedido rechazado en sí no se toca: sigue
+  // existiendo como historial (03_baja_logica.sql); al confirmar de nuevo en
+  // la carta se crea un pedido nuevo (crearPedido + avisarNuevoPedido, ya
+  // existente), que es el que va a ver el mozo.
+  function modificar() {
+    precargarCarritoDesdePedido(pedido);
+    navegarA('/mesa/carta');
+  }
+
   botonConfirmar.addEventListener('click', () => void confirmar());
+  botonModificar.addEventListener('click', modificar);
 
   async function cargar() {
     try {

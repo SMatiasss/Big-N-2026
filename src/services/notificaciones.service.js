@@ -64,7 +64,7 @@ async function prepararDispositivoParaPerfil(usuarioId) {
 
 // Rutas a las que puede llevar un toque sobre la notificación (o el botón
 // "Ver" mientras la app está en primer plano). Cada HU agrega la suya acá.
-const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta', '/pedidos/confirmacion', '/pedidos/entrega'];
+const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta', '/pedidos/confirmacion', '/pedidos/entrega', '/pedidos/estado'];
 
 function guardarContextoNotificacion(notification) {
   const estadiaId = notification?.data?.estadia_id;
@@ -330,6 +330,12 @@ export async function iniciarPushCliente(perfil) {
     description: 'Mensajes de la conversación de tu mesa.', importance: 5,
     visibility: 1, vibration: true,
   });
+  // Punto 13: si el mozo rechaza el pedido, el aviso usa este canal.
+  await PushNotifications.createChannel({
+    id: 'pedidos-cliente', name: 'Tu pedido',
+    description: 'Avisos sobre el estado de tu pedido.', importance: 5,
+    visibility: 1, vibration: true,
+  });
   await PushNotifications.register();
   return true;
 }
@@ -440,6 +446,14 @@ export async function avisarPedidoListo(pedidoId) {
 
 export async function avisarSectoresPedido(pedidoId) {
   const { data, error } = await getSupabase().functions.invoke('avisar-sectores-pedido', { body: { pedidoId } });
+  if (error) throw error;
+  return data;
+}
+
+// Punto 13: avisa al cliente que el mozo rechazó su pedido. El backend relee
+// el pedido y sólo avisa si de verdad quedó en 'rechazado'.
+export async function avisarPedidoRechazado(pedidoId) {
+  const { data, error } = await getSupabase().functions.invoke('avisar-pedido-rechazado', { body: { pedidoId } });
   if (error) throw error;
   return data;
 }

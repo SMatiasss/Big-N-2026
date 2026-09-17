@@ -3,6 +3,10 @@ import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { ajustarVista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { formatearMoneda } from '../../../utils/formato.js';
 import { navegarA } from '../../../router.js';
+import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
+import { ESTADOS_PEDIDO } from '../../../config/constantes.js';
+import { precargarCarritoDesdePedido } from '../../../utils/carrito-desde-pedido.js';
+import { obtenerMiPedidoEnCurso, suscribirseAMiPedido } from '../../../services/pedidos.service.js';
 
 const PEDIDO_DEMO = {
   mesa: 1,
@@ -85,5 +89,44 @@ export function render(container) {
     minimo: 0.88,
     maximo: 1.16,
   });
-  window.addEventListener('hashchange', () => ajusteVista.destruir(), { once: true });
+
+  // Punto 13: esta pantalla es la primera parada del cliente registrado
+  // apenas confirma (ver ROLES_POR_RUTA['/pedidos/aceptado']); si el mozo
+  // rechaza mientras sigue acá -no tiene por qué haberse ido a "Estado de tu
+  // pedido"-, lo mandamos de vuelta a la carta con el carrito ya cargado con
+  // lo que había pedido, en vez de dejarlo mirando un pedido que ya no existe.
+  let desuscribirRechazo = null;
+  let redirigiendoPorRechazo = false;
+
+  function reaccionarSiRechazado(pedido) {
+    if (!pedido || pedido.estado !== ESTADOS_PEDIDO.RECHAZADO || redirigiendoPorRechazo) return;
+    redirigiendoPorRechazo = true;
+    desuscribirRechazo?.();
+    precargarCarritoDesdePedido(pedido);
+    mostrarToastNormal('El mozo rechazó tu pedido. Modificalo y volvé a enviarlo.');
+    navegarA('/mesa/carta');
+  }
+
+  obtenerMiPedidoEnCurso()
+    .then((pedido) => {
+      if (!container.isConnected || redirigiendoPorRechazo) return;
+      if (pedido?.estado === ESTADOS_PEDIDO.RECHAZADO) {
+        reaccionarSiRechazado(pedido);
+        return;
+      }
+      if (pedido) {
+        desuscribirRechazo = suscribirseAMiPedido(pedido.id, async () => {
+          const actualizado = await obtenerMiPedidoEnCurso().catch(() => null);
+          if (container.isConnected && actualizado?.id === pedido.id) reaccionarSiRechazado(actualizado);
+        });
+      }
+    })
+    .catch(() => {
+      // Silencioso: esta vigilancia es un accesorio, no debe romper la pantalla.
+    });
+
+  window.addEventListener('hashchange', () => {
+    ajusteVista.destruir();
+    desuscribirRechazo?.();
+  }, { once: true });
 }
