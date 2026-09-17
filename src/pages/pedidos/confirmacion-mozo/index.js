@@ -1,6 +1,6 @@
 import './index.css';
 import { listarPedidosPendientes, confirmarPedido, rechazarPedido } from '../../../services/pedidos.service.js';
-import { avisarSectoresPedido } from '../../../services/notificaciones.service.js';
+import { avisarSectoresPedido, avisarPedidoRechazado } from '../../../services/notificaciones.service.js';
 import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { navegarA } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
@@ -103,9 +103,11 @@ export async function render(container) {
         try {
           btnAceptar.disabled = true;
           btnRechazar.disabled = true;
-          // Según el punto 13, si el mozo rechaza podría haber un motivo de rechazo.
-          // Por ahora solo lo rechazamos directamente.
+          // Punto 13: sin motivo. El pedido no se borra (queda en 'rechazado',
+          // ver 03_baja_logica.sql); el cliente lo ve en su pantalla de "Mi
+          // pedido" con un botón para modificarlo y reenviarlo.
           await rechazarPedido(pedido.id);
+          await avisarPedidoRechazado(pedido.id).catch((e) => console.error('No se pudo enviar push de rechazo al cliente', e));
           actualizacion.actualizar();
         } catch (err) {
           aviso.textContent = 'Error al rechazar: ' + err.message;
