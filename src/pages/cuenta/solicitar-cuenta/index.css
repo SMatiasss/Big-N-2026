@@ -1,0 +1,371 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Outfit:wght@700&display=swap');
+
+/* =========================================================
+   TU CUENTA (punto 21, lado cliente)
+
+   Misma cáscara que "Mi pedido": ion-content no scrollea, lo único
+   elástico es la lista de consumos y lo fijo se mide con clamp()
+   contra el alto de pantalla. El bloque de abajo cambia de contenido
+   según el estado (propina / total / esperando) pero siempre ocupa
+   lugar: la pantalla nunca queda con un hueco vacío.
+   ========================================================= */
+
+.cuenta {
+  --fondo: #606c38;
+  --fondo-card: #4a572c;
+  --acento: #dda15e;
+  --acento-fuerte: #bc6c25;
+  --texto-claro: #fefae0;
+  --texto-suave: #c8c8a0;
+  --texto-oscuro: #283618;
+
+  --fuente-geist: 'Geist', sans-serif;
+  --fuente-outfit: 'Outfit', sans-serif;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+}
+
+.cuenta ion-content { --background: var(--fondo); }
+
+.cuenta__contenido {
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 480px;
+
+  margin: 0 auto;
+  padding: clamp(10px, 2vh, 18px) 16px max(16px, env(safe-area-inset-bottom));
+}
+
+
+/* =========================================================
+   DETALLE DE CONSUMO
+   ========================================================= */
+
+/* El detalle mide lo que necesita (no se estira): con pocos consumos queda
+   compacto arriba en vez de dejar un hueco entre los ítems y los totales. Si
+   hay muchos, encoge y la lista pasa a scrollear con el ajuste de siempre. */
+.cuenta__detalle {
+  display: flex;
+  flex: 0 1 auto;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.cuenta__titulo-detalle {
+  margin: 0 0 clamp(6px, 1.2vh, 10px);
+
+  color: var(--texto-claro);
+
+  font: 700 clamp(15px, 2.4vh, 20px)/1.15 var(--fuente-outfit);
+}
+
+.cuenta__items {
+  --la-items: 4;
+  --la-gap: 8px;
+
+  /* Pisa el flex:1 de .lista-ajustada: acá la lista no tiene que absorber el
+     espacio sobrante, sólo el suyo (y scrollear si no entra). */
+  flex: 0 1 auto;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+@media (max-height: 700px) { .cuenta__items { --la-items: 3; } }
+@media (min-height: 900px) { .cuenta__items { --la-items: 5; } }
+
+.cuenta__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  box-sizing: border-box;
+
+  padding: clamp(7px, 1.3vh, 12px) clamp(10px, 2vw, 14px);
+
+  background: var(--fondo-card);
+  border-radius: 12px;
+}
+
+.cuenta__item--vacio {
+  justify-content: center;
+  color: var(--texto-suave);
+  font-size: clamp(12px, 1.8vh, 15px);
+}
+
+.cuenta__item-cantidad {
+  flex-shrink: 0;
+
+  color: var(--acento);
+
+  font: 700 clamp(14px, 2.1vh, 18px) var(--fuente-outfit);
+}
+
+.cuenta__item-datos {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.cuenta__item-nombre {
+  overflow: hidden;
+
+  color: var(--texto-claro);
+
+  font-size: clamp(13px, 1.9vh, 16px);
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El precio unitario va debajo del nombre: el punto 21 pide que se vea, pero
+   el importe de la línea es lo que el cliente busca al revisar la cuenta. */
+.cuenta__item-unitario {
+  color: var(--texto-suave);
+
+  font-size: clamp(10px, 1.4vh, 12px);
+  line-height: 1.3;
+}
+
+.cuenta__item-importe {
+  flex-shrink: 0;
+
+  color: var(--texto-claro);
+
+  font: 700 clamp(13px, 1.9vh, 16px) var(--fuente-geist);
+}
+
+
+/* =========================================================
+   TOTALES (subtotal, descuento de juegos, propina)
+   ========================================================= */
+
+.cuenta__totales {
+  flex-shrink: 0;
+
+  margin: clamp(8px, 1.5vh, 14px) 0 0;
+  padding: clamp(8px, 1.5vh, 13px) clamp(10px, 2vw, 14px);
+
+  background: rgb(40 54 24 / 28%);
+  border-radius: 12px;
+}
+
+.cuenta__linea {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+
+  font-size: clamp(12px, 1.8vh, 15px);
+}
+
+.cuenta__linea + .cuenta__linea { margin-top: 5px; }
+
+.cuenta__linea dt { color: var(--texto-suave); }
+.cuenta__linea dd { margin: 0; font-weight: 600; }
+
+/* El descuento ganado en los juegos (punto 15) se muestra aparte y en verde:
+   es una línea a favor del cliente, no un cargo más. */
+.cuenta__linea--descuento dd { color: #a7d489; }
+
+
+/* =========================================================
+   PIE: PROPINA / TOTAL / ESPERANDO
+   ========================================================= */
+
+/* Anclado abajo: es el bloque con el que el cliente interactúa en los tres
+   estados, y así el sobrante de pantalla queda entre el detalle y la acción,
+   nunca partiendo el detalle al medio. */
+.cuenta__pie {
+  flex-shrink: 0;
+
+  margin: auto 0 0;
+  padding-top: clamp(10px, 1.8vh, 16px);
+}
+
+.cuenta__paso {
+  box-sizing: border-box;
+
+  padding: clamp(11px, 2vh, 16px) clamp(12px, 2.5vw, 16px);
+
+  background: var(--fondo-card);
+  border: 1px solid rgb(221 161 94 / 30%);
+  border-radius: 16px;
+}
+
+
+/* — Estado 1: lector de QR de propina — */
+
+.cuenta .lector-qr {
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+  border: 0;
+  text-align: center;
+}
+
+.cuenta .lector-qr h2 {
+  margin: 0 0 4px;
+
+  color: var(--texto-claro);
+
+  font: 700 clamp(14px, 2.1vh, 18px)/1.25 var(--fuente-outfit);
+}
+
+.cuenta .lector-qr p {
+  margin: 0 0 clamp(8px, 1.4vh, 12px);
+
+  color: var(--texto-suave);
+
+  font-size: clamp(11px, 1.6vh, 13px);
+  line-height: 1.35;
+}
+
+.cuenta .lector-qr ion-button {
+  margin: 0;
+
+  --background: var(--acento-fuerte);
+  --background-hover: var(--acento-fuerte);
+  --background-activated: var(--acento-fuerte);
+  --border-color: var(--acento);
+  --color: var(--texto-claro);
+  --border-radius: 12px;
+
+  font-family: var(--fuente-outfit);
+  font-size: clamp(13px, 1.9vh, 16px);
+  font-weight: 700;
+  text-transform: none;
+}
+
+.cuenta .lector-qr ion-note {
+  display: block;
+  margin-top: 6px;
+  font-size: clamp(11px, 1.5vh, 13px);
+}
+
+
+/* — Estado 2: el total, en grande y sin ambigüedad — */
+
+.cuenta__paso--total { text-align: center; }
+
+.cuenta__nivel {
+  margin: 0;
+
+  color: var(--acento);
+
+  font: 700 clamp(13px, 1.9vh, 16px)/1.2 var(--fuente-outfit);
+}
+
+.cuenta__total-etiqueta {
+  margin: clamp(6px, 1.2vh, 10px) 0 0;
+
+  color: var(--texto-suave);
+
+  font-size: clamp(11px, 1.6vh, 13px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* El número es lo más importante de la pantalla: grande, alto contraste y
+   solo, sin nada que compita al lado. */
+.cuenta__total {
+  display: block;
+
+  margin: 2px 0 clamp(10px, 1.8vh, 16px);
+
+  color: var(--texto-claro);
+
+  font: 700 clamp(34px, 6.4vh, 54px)/1.05 var(--fuente-outfit);
+  letter-spacing: -0.01em;
+}
+
+.cuenta__pagar {
+  width: 100%;
+  height: clamp(44px, 6.4vh, 56px);
+
+  margin: 0;
+  padding: 0;
+
+  background: var(--acento);
+  border: none;
+  border-radius: 14px;
+
+  color: var(--texto-oscuro);
+
+  font: 700 clamp(16px, 2.4vh, 20px) var(--fuente-outfit);
+
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgb(42 49 19 / 35%);
+  transition: transform 0.1s;
+}
+
+.cuenta__pagar:active:not(:disabled) { transform: scale(0.98); }
+
+.cuenta__pagar:disabled {
+  background: rgb(254 250 224 / 12%);
+  color: var(--texto-suave);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+
+/* — Estado 3: pagado, esperando al mozo. Sin botones: no hay vuelta atrás — */
+
+.cuenta__paso--esperando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  text-align: left;
+}
+
+.cuenta__esperando-spinner { flex-shrink: 0; color: var(--acento); }
+
+.cuenta__esperando-texto {
+  color: var(--texto-claro);
+
+  font-size: clamp(13px, 1.9vh, 16px);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   CARGANDO / SIN CUENTA
+   ========================================================= */
+
+.cuenta__cargando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+
+.cuenta__cargando ion-spinner { color: var(--acento); }
+
+.cuenta__vacio {
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+
+  font-size: 15px;
+  line-height: 20px;
+  text-align: center;
+}
+
+@media (max-width: 390px) {
+  .cuenta__contenido { padding-inline: 12px; }
+}

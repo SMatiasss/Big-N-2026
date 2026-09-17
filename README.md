@@ -36,15 +36,15 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 10 | Asignar una mesa a un cliente registrado          | Terenghi Goy | 01/09 | 03/09 | feature/09-10 | Finalizada |
 | 11 | Visualizar productos y realizar consultas al mozo | Cespedes     | 04/09 | 06/09 | feature/hu11-carta-consulta-mozo-chat | Finalizada |
 | 12 | Realizar un pedido                                | Romero       | 09/09 | 09/09 | feature/hu12-realizar-pedido | Finalizada |
-| 13 | Rechazar y modificar un pedido                    | Terenghi Goy | 17/09 | 17/09 | feature/13 | Finalizada |
+| 13 | Rechazar y modificar un pedido                    | Terenghi Goy | 16/09 | 16/09 | feature/13 | Finalizada |
 | 14 | Confirmar y derivar un pedido                     | Romero       | 16/09 | - | feature/14-16-17 | Finalizada |
 | 15 | Acceder a juegos y obtener descuentos             | Cespedes     | 15/06 | 15/06 | feature/hu15-juegos-descuentos | Finalizada |
-| 16 | Recepción de productos en cocina                  | Terenghi Goy | 16/09 | 16/09 | feature/14-16-17 | Finalizada |
+| 16 | Recepción de productos en cocina                  | Romero | 16/09 | 16/09 | feature/14-16-17 | Finalizada |
 | 17 | Recepción de productos en bar                     | Romero       | 16/09 | 16/09 | feature/14-16-17 | Finalizada |
 | 18 | Finalizar la preparación del pedido               | Soria        | 12/09 | - | - | En curso |
 | 19 | Entregar y recibir el pedido                      | Soria        | 12/09 | - | - | En curso |
 | 20 | Realizar encuesta y visualizar resultados         | Cespedes     | - | - | - | Pendiente |
-| 21 | Solicitar y generar la cuenta                     | Romero       | - | - | - | Pendiente |
+| 21 | Solicitar y generar la cuenta                     | Terenghi Goy       | 17/09 | 17/09 | feature/21-solicitar-cuenta | Finalizada |
 | 22 | Confirmar el pago y liberar la mesa               | Soria        | - | - | - | Pendiente |
 
 

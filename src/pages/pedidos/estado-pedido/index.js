@@ -19,8 +19,11 @@ import {
   obtenerMiPedidoEnCurso,
   suscribirseAMiPedido,
 } from '../../../services/pedidos.service.js';
+import { solicitarCuenta } from '../../../services/cuentas.service.js';
 import { precargarCarritoDesdePedido } from '../../../utils/carrito-desde-pedido.js';
 import { navegarA } from '../../../router.js';
+
+const RUTA_CUENTA = '/cuenta/solicitar';
 
 const ETIQUETAS_SECTOR = {
   cocina: 'Cocina',
@@ -171,8 +174,28 @@ export function render(container) {
   container.querySelector('[data-header]').append(header);
 
   siguientes.querySelectorAll('button').forEach((boton) => {
+    // Punto 21: "Pedir la cuenta" no es sólo navegar. Primero se crea la
+    // cuenta y se le avisa al mozo, y recién con eso hecho se entra a la
+    // pantalla, que así abre con la fila ya existente.
+    if (boton.dataset.ruta === RUTA_CUENTA) {
+      boton.addEventListener('click', () => void pedirCuenta(boton));
+      return;
+    }
     boton.addEventListener('click', () => navegarA(boton.dataset.ruta));
   });
+
+  // solicitarCuenta es idempotente: si el cliente vuelve a tocar el botón (o
+  // ya había pedido la cuenta antes) no duplica la fila ni reavisa al mozo.
+  async function pedirCuenta(boton) {
+    boton.disabled = true;
+    try {
+      await solicitarCuenta();
+      navegarA(RUTA_CUENTA);
+    } catch (error) {
+      mostrarToastError(`No se pudo pedir la cuenta: ${error.message ?? 'error desconocido'}`);
+      boton.disabled = false;
+    }
+  }
 
   // Los juegos son sólo para el cliente registrado (el anónimo no participa por
   // descuentos, ver la nota del punto 14), y /juegos está restringido a ese rol
