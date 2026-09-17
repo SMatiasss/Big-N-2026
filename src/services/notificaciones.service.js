@@ -233,6 +233,13 @@ export async function iniciarPushAdministracion(perfil) {
     visibility: 1,
     vibration: true,
   });
+  // Punto 21: el dueño y el supervisor reciben el aviso de pago (no el de
+  // "pidió la cuenta", que es sólo del mozo).
+  await PushNotifications.createChannel({
+    id: 'cuentas', name: 'Cuentas',
+    description: 'Avisos de cuentas pedidas y pagos de los clientes.',
+    importance: 5, visibility: 1, vibration: true,
+  });
   await PushNotifications.register();
   return true;
 }
@@ -373,6 +380,12 @@ export async function iniciarPushConsultasMozo(perfil) {
     description: 'Pedidos nuevos por confirmar y pedidos completos por entregar.',
     importance: 5, visibility: 1, vibration: true,
   });
+  // Punto 21: el mozo recibe los dos avisos de la cuenta (pedida y pagada).
+  await PushNotifications.createChannel({
+    id: 'cuentas', name: 'Cuentas',
+    description: 'Clientes que piden la cuenta y pagos registrados.',
+    importance: 5, visibility: 1, vibration: true,
+  });
   await PushNotifications.register();
   return true;
 }
@@ -454,6 +467,18 @@ export async function avisarSectoresPedido(pedidoId) {
 // el pedido y sólo avisa si de verdad quedó en 'rechazado'.
 export async function avisarPedidoRechazado(pedidoId) {
   const { data, error } = await getSupabase().functions.invoke('avisar-pedido-rechazado', { body: { pedidoId } });
+  if (error) throw error;
+  return data;
+}
+
+// Punto 21: los dos avisos de la cuenta, resueltos por la misma Edge Function
+// porque sólo cambian el destinatario y el texto (ver EVENTOS_CUENTA):
+//   'solicitada' -> SÓLO el mozo.
+//   'pagada'     -> mozo + dueño + supervisor, a propósito con más alcance.
+// El backend relee la cuenta y sólo avisa si el estado real coincide con el
+// evento, así el cliente no puede anunciar un pago que no hizo.
+export async function avisarCuenta(estadiaId, evento) {
+  const { data, error } = await getSupabase().functions.invoke('avisar-cuenta', { body: { estadiaId, evento } });
   if (error) throw error;
   return data;
 }

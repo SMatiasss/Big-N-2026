@@ -95,6 +95,22 @@ export const ESTADOS_ESTADIA = {
   CERRADA: 'cerrada',
 };
 
+// Coincide con el enum estado_cuenta del schema (01_schema.sql).
+// 'confirmada' la escribe el mozo al confirmar el pago, que es el punto 22.
+export const ESTADOS_CUENTA = {
+  PENDIENTE: 'pendiente',
+  PAGADA: 'pagada',
+  CONFIRMADA: 'confirmada',
+};
+
+// Punto 21: los dos avisos de la cuenta tienen alcance distinto a propósito
+// -uno es sólo para el mozo y el otro suma al dueño y al supervisor-, y los
+// resuelve la misma Edge Function (avisar-cuenta) según este valor.
+export const EVENTOS_CUENTA = {
+  SOLICITADA: 'solicitada',
+  PAGADA: 'pagada',
+};
+
 // Coincide con el enum estado_espera del schema (01_schema.sql).
 export const ESTADOS_ESPERA = {
   ESPERANDO: 'esperando',
@@ -122,6 +138,9 @@ export const TABLAS = {
   ENCUESTAS: 'encuestas',
   RESPUESTAS_ENCUESTA: 'respuestas_encuesta',
   CUENTAS: 'cuentas',
+  // Punto 21: los cinco niveles con su qr_token, para validar contra la base
+  // el QR de propina que escanea el cliente.
+  NIVELES_PROPINA: 'niveles_propina',
   CONFIGURACION: 'configuracion',
   NOTIFICACIONES: 'notificaciones',
 };
