@@ -29,12 +29,11 @@ export function render(container) {
           </section>
 
           <section class="lista-espera-cliente__encuestas">
-            <h2>Encuestas anteriores</h2>
-            <!-- Placeholder: el componente real de gráficos es tarea de HU20
-                 (todavía no definida). No se toca v_resultados_encuestas acá. -->
-            <div class="lista-espera-cliente__placeholder-encuestas">
-              Acá van los gráficos de encuestas previas (HU20)
-            </div>
+            <button class="lista-espera-cliente__resultados" type="button">
+              <span class="lista-espera-cliente__resultados-icono" aria-hidden="true">↗</span>
+              <span><strong>Resultados de satisfacción</strong><small>Conocé las opiniones de visitas anteriores</small></span>
+              <b aria-hidden="true">›</b>
+            </button>
           </section>
 
           <div class="lista-espera-cliente__acciones">
@@ -67,6 +66,10 @@ export function render(container) {
   const botonIngresar = container.querySelector('.lista-espera-cliente__ingresar');
   const botonIngresarMesa = container.querySelector('.lista-espera-cliente__accion-mesa');
   const botonCancelar = container.querySelector('.lista-espera-cliente__cancelar');
+
+  container.querySelector('.lista-espera-cliente__resultados').addEventListener('click', () => {
+    navegarA('/encuesta/resultados');
+  });
 
   botonIngresarMesa.addEventListener('click', () => {
     navegarA('/mesa/escanear');

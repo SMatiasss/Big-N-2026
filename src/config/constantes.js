@@ -142,7 +142,9 @@ export const TABLAS = {
   MENSAJES: 'mensajes',
   PARTIDAS: 'partidas',
   ENCUESTAS: 'encuestas',
-  RESPUESTAS_ENCUESTA: 'respuestas_encuesta',
+  PREGUNTAS: 'preguntas',
+  RESPUESTAS_ENCUESTA: 'respuestas',
+  RESPUESTA_ITEMS: 'respuesta_items',
   CUENTAS: 'cuentas',
   // Punto 21: los cinco niveles con su qr_token, para validar contra la base
   // el QR de propina que escanea el cliente.

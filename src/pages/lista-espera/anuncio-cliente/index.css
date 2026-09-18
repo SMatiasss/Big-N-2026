@@ -98,45 +98,33 @@
 
 
 /* =========================================================
-   ENCUESTAS (placeholder de HU20)
+   RESULTADOS HISTÓRICOS (HU20)
    ========================================================= */
 
 .lista-espera-cliente__encuestas {
   margin: 0 0 24px;
 }
 
-.lista-espera-cliente__encuestas h2 {
-  margin: 0 0 12px;
-
-  color: var(--texto-claro);
-
-  font-family: var(--fuente-outfit);
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 21px;
-}
-
-.lista-espera-cliente__placeholder-encuestas {
+.lista-espera-cliente__resultados {
   display: flex;
   align-items: center;
-  justify-content: center;
-
+  gap: 13px;
   box-sizing: border-box;
-
-  min-height: 168px;
-
-  padding: 28px 22px;
-
-  background: rgb(74 87 44 / 55%);
-  border: 1px dashed var(--acento);
+  width: 100%;
+  min-height: 112px;
+  padding: 16px;
+  background: var(--fondo-card);
+  border: 1px solid rgb(221 161 94 / 34%);
   border-radius: 16px;
-
-  color: var(--texto-suave);
-
-  font-size: 13px;
-  line-height: 18px;
-  text-align: center;
+  color: var(--texto-claro);
+  text-align: left;
 }
+.lista-espera-cliente__resultados-icono { display:grid; place-items:center; flex:0 0 48px; height:48px; border-radius:50%; background:#283618; color:var(--acento); font-size:28px; font-weight:800; }
+.lista-espera-cliente__resultados > span:nth-child(2) { display:flex; flex:1; min-width:0; flex-direction:column; gap:5px; }
+.lista-espera-cliente__resultados strong { color:var(--acento); font:700 18px/1.15 var(--fuente-outfit); }
+.lista-espera-cliente__resultados small { color:var(--texto-suave); font-size:13px; line-height:1.35; }
+.lista-espera-cliente__resultados b { color:var(--acento); font-size:34px; font-weight:400; }
+.lista-espera-cliente__resultados:active { transform:scale(.98); }
 
 
 /* =========================================================
