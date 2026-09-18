@@ -45,7 +45,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 19 | Entregar y recibir el pedido                      | Soria        | 12/09 | - | - | En curso |
 | 20 | Realizar encuesta y visualizar resultados         | Cespedes     | - | - | - | Pendiente |
 | 21 | Solicitar y generar la cuenta                     | Terenghi Goy       | 17/09 | 17/09 | feature/21-solicitar-cuenta | Finalizada |
-| 22 | Confirmar el pago y liberar la mesa               | Soria        | - | - | - | Pendiente |
+| 22 | Confirmar el pago y liberar la mesa               | Soria        | 17/09 | - | - | En curso |
 
 
 ## Reasignaciones
