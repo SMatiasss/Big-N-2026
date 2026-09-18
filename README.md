@@ -58,6 +58,8 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 ## Códigos QR
 
 - **QR de ingreso al local**
+- 
+-<img width="200" height="200" alt="Ingresar al local" src="https://github.com/user-attachments/assets/69139bad-1889-46d5-ba2a-7f969289ff75" />
 - **QR de mesas**
 - MESA 1
 -
