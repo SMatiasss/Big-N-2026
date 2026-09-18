@@ -57,29 +57,14 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 
 ## Códigos QR
 
-- **QR de ingreso al local**
 | Item | QR |
-| QR de ingreso al local | <img width="77" height="75" alt="Ingresar al local" src="https://github.com/user-attachments/assets/290bbcb4-4eab-4f76-b24e-fad6f53ece3e" /> |
-| :---: | :---: |
-| :---: | :---: |
-| :---: | :---: |
-| :---: | :---: |
-| :---: | :---: |
- 
-- 
-- **QR de mesas**
-- MESA 1
--
--   <img width="200" height="200" alt="qr-mesa-1" src="https://github.com/user-attachments/assets/450d0864-29d8-41ba-bf33-ffbbc8ee2621"/>
-- MESA 2
--
--   <img width="200" height="200" alt="qr-mesa-2" src="https://github.com/user-attachments/assets/8e527e13-d228-4767-b297-c02b75119fd7"/>
-- MESA 3
--
--   <img width="200" height="200" alt="qr-mesa-3" src="https://github.com/user-attachments/assets/0e107fab-478c-49c0-a71d-6792af92b66d"/>
-- MESA 4
--
--   <img width="200" height="200" alt="qr-mesa-4" src="https://github.com/user-attachments/assets/6960397f-7975-4883-8df2-65876cb3d320" />
+|------|----|
+| Ingreso al local | <img width="200" height="200" alt="Ingresar al local" src="https://github.com/user-attachments/assets/290bbcb4-4eab-4f76-b24e-fad6f53ece3e" /> |
+| Mesa 1 | <img width="200" height="200" alt="qr-mesa-1" src="https://github.com/user-attachments/assets/450d0864-29d8-41ba-bf33-ffbbc8ee2621"/> |
+| Mesa 2 | <img width="200" height="200" alt="qr-mesa-2" src="https://github.com/user-attachments/assets/8e527e13-d228-4767-b297-c02b75119fd7"/> |
+| Mesa 3 | <img width="200" height="200" alt="qr-mesa-3" src="https://github.com/user-attachments/assets/0e107fab-478c-49c0-a71d-6792af92b66d"/> |
+| Mesa 4 | <img width="200" height="200" alt="qr-mesa-4" src="https://github.com/user-attachments/assets/6960397f-7975-4883-8df2-65876cb3d320" /> |
+
 - **QR de propina — Excelente — 20 %**
 - **QR de propina — Muy Bueno — 15 %**
 - **QR de propina — Bueno — 10 %**
