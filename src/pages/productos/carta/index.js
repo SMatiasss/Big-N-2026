@@ -315,17 +315,6 @@ export async function render(container) {
         estadoPedido.onclick = () => navegarA('/pedidos/estado');
 
         acciones.append(consulta, estadoPedido);
-
-        // Acceso temporal de la primera iteración de HU15. No registra
-        // partidas ni aplica descuentos: permite validar las dos pantallas
-        // en un dispositivo real antes de integrar la lógica de los juegos.
-        if (contexto.rol === 'cliente_registrado') {
-          const probarHu15 = document.createElement('button');
-          probarHu15.className = 'hu15-acceso-prueba';
-          probarHu15.textContent = 'Probar juegos HU15';
-          probarHu15.onclick = () => navegarA('/pedidos/aceptado');
-          acciones.append(probarHu15);
-        }
       }
     }
     const productos = await listarCartaConFotos();

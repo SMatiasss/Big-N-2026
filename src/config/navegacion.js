@@ -46,6 +46,7 @@ export const ROLES_POR_RUTA = {
   '/juegos/2': [ROLES.CLIENTE_REGISTRADO],
   '/juegos/3': [ROLES.CLIENTE_REGISTRADO],
   '/encuesta': CLIENTES,
+  '/encuesta/resultados': CLIENTES,
   '/cuenta/solicitar': CLIENTES,
   // Punto 22: cobrar es del mozo. El dueño y el supervisor reciben el aviso de
   // la confirmación, pero no confirman ellos, así que no entran acá.

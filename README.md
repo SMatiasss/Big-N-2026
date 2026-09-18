@@ -43,7 +43,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 17 | Recepción de productos en bar                     | Romero       | 16/09 | 16/09 | feature/14-16-17 | Finalizada |
 | 18 | Finalizar la preparación del pedido               | Soria        | 12/09 | - | - | En curso |
 | 19 | Entregar y recibir el pedido                      | Soria        | 12/09 | - | - | En curso |
-| 20 | Realizar encuesta y visualizar resultados         | Cespedes     | - | - | - | Pendiente |
+| 20 | Realizar encuesta y visualizar resultados         | Cespedes     | 18/09 | - | feature/hu20-encuestas-resultados | En curso |
 | 21 | Solicitar y generar la cuenta                     | Terenghi Goy       | 17/09 | 17/09 | feature/21-solicitar-cuenta | Finalizada |
 | 22 | Confirmar el pago y liberar la mesa               | Soria        | 17/09 | - | - | En curso |
 
@@ -64,6 +64,29 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 - **QR de propina — Bueno — 10 %**
 - **QR de propina — Regular — 5 %**
 - **QR de propina — Malo — 0 %**
+
+## Datos simulados de encuestas
+
+El entorno externo de Supabase contiene actividad histórica de demostración para HU20. El seed genera visitas, pedidos, cuentas y encuestas durante 28 días consecutivos, con entre dos y cuatro visitas por día y una probabilidad aproximada del 70 % de respuesta.
+
+Verificación realizada el 18/09/2026 sobre el proyecto externo de Big N:
+
+- 64 encuestas simuladas.
+- Período desde el 29/07/2026 hasta el 25/08/2026.
+- Respuestas distribuidas en 27 días y 5 semanas calendario.
+- Las respuestas están vinculadas a estadías cerradas de demostración y no interfieren con estadías activas.
+
+Consulta de control:
+
+```sql
+select
+  count(*) as total,
+  min(creado_en)::date as primera,
+  max(creado_en)::date as ultima,
+  count(distinct creado_en::date) as dias_con_respuestas,
+  count(distinct date_trunc('week', creado_en)) as semanas_calendario
+from public.respuestas;
+```
 
 ## Pantallas
 
