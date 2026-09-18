@@ -47,6 +47,9 @@ export const ROLES_POR_RUTA = {
   '/juegos/3': [ROLES.CLIENTE_REGISTRADO],
   '/encuesta': CLIENTES,
   '/cuenta/solicitar': CLIENTES,
+  // Punto 22: cobrar es del mozo. El dueño y el supervisor reciben el aviso de
+  // la confirmación, pero no confirman ellos, así que no entran acá.
+  '/cuenta/confirmar-pago': [ROLES.MOZO],
 };
 
 // Home de clientes: se mantiene la lógica por rol (es un caso totalmente
@@ -71,27 +74,30 @@ const ACCIONES_HOME = {
 const PERMISOS_HOME = {
   [ROLES.DUENO]: {
     empleados: true, mesas: true, productos: false, pedidos: false,
-    listaEspera: false, clientes: true, consultas: false,
+    listaEspera: false, clientes: true, consultas: false, cuentas: false,
   },
   [ROLES.SUPERVISOR]: {
     empleados: true, mesas: true, productos: false, pedidos: false,
-    listaEspera: false, clientes: true, consultas: false,
+    listaEspera: false, clientes: true, consultas: false, cuentas: false,
   },
   [ROLES.COCINERO]: {
     empleados: false, mesas: false, productos: true, pedidos: true,
-    listaEspera: false, clientes: false, consultas: false,
+    listaEspera: false, clientes: false, consultas: false, cuentas: false,
   },
   [ROLES.CANTINERO]: {
     empleados: false, mesas: false, productos: true, pedidos: true,
-    listaEspera: false, clientes: false, consultas: false,
+    listaEspera: false, clientes: false, consultas: false, cuentas: false,
   },
   [ROLES.METRE]: {
     empleados: false, mesas: false, productos: false, pedidos: false,
-    listaEspera: true, clientes: true, consultas: false,
+    listaEspera: true, clientes: true, consultas: false, cuentas: false,
   },
+  // Punto 22: cobrar es una función propia del mozo, al mismo nivel que
+  // Pedidos y Consultas, así que entra como tarjeta y no escondida adentro de
+  // otra pantalla.
   [ROLES.MOZO]: {
     empleados: false, mesas: false, productos: false, pedidos: true,
-    listaEspera: false, clientes: false, consultas: true,
+    listaEspera: false, clientes: false, consultas: true, cuentas: true,
   },
 };
 
@@ -105,11 +111,15 @@ const METADATA_ACCIONES_HOME = {
   listaEspera: { id: 'espera', titulo: 'Lista de espera', ruta: '/lista-espera/metre' },
   consultas: { id: 'consultas', titulo: 'Consultas', ruta: '/pedidos/consulta' },
   clientes: { id: 'clientes', titulo: 'Clientes', ruta: '/clientes/aprobacion' },
+  cuentas: { id: 'cuentas', titulo: 'Cuentas', ruta: '/cuenta/confirmar-pago' },
 };
 
-// Orden fijo de dibujado: Mesas/Empleados, Productos/Pedidos,
-// Lista de espera/Consultas, Clientes sola en la última fila.
-const ORDEN_ACCIONES_HOME = ['mesas', 'empleados', 'productos', 'pedidos', 'listaEspera', 'consultas', 'clientes'];
+// Orden fijo de dibujado, en filas de a dos: Mesas/Empleados,
+// Productos/Pedidos, Lista de espera/Consultas, Clientes/Cuentas.
+// Con "Cuentas" (punto 22) la grilla queda en cuatro filas completas: antes
+// Clientes quedaba sola ocupando el ancho entero, así que la tarjeta nueva no
+// agrega ninguna fila ni cambia el alto del home.
+const ORDEN_ACCIONES_HOME = ['mesas', 'empleados', 'productos', 'pedidos', 'listaEspera', 'consultas', 'clientes', 'cuentas'];
 
 // Pestañas internas de las dos pantallas que hoy comparten dos roles cada
 // una: se muestran SIEMPRE las dos, pero una queda deshabilitada según el rol

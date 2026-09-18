@@ -1,10 +1,12 @@
-// Punto 21: los avisos de la cuenta. Una sola función para los dos eventos
-// porque entre ellos sólo cambian el destinatario y el texto:
+// Puntos 21 y 22: los avisos de la cuenta. Una sola función para los tres
+// eventos porque entre ellos sólo cambian el destinatario y el texto:
 //
 //   solicitada -> SÓLO el mozo. "El cliente de la mesa X pidió la cuenta."
 //   pagada     -> mozo + dueño + supervisor, JUNTOS. Es deliberadamente de
 //                 mayor alcance que el anterior: el pago le interesa también a
 //                 la administración, no sólo a quien atiende la mesa.
+//   confirmada -> dueño y supervisor (punto 22). No incluye al mozo: es quien
+//                 acaba de confirmar, ya lo sabe.
 //
 // Como en avisar-pedido-listo / avisar-pedido-rechazado, no se confía en el
 // llamador: se relee la cuenta y sólo se avisa si su estado real coincide con
@@ -16,13 +18,17 @@ const responder = (body: unknown, status = 200) => new Response(JSON.stringify(b
 
 // Estado que tiene que tener la cuenta para que el aviso sea legítimo, a quién
 // le llega y con qué texto. Todo lo que distingue un evento del otro está acá.
-const EVENTOS: Record<string, { estado: string; roles: string[]; titulo: string; cuerpo: (mesa: string) => string; tipo: string }> = {
+// `ruta` sólo se pone en los eventos cuyos destinatarios son TODOS mozos: la
+// pantalla de cobro (punto 22) es exclusiva de ese rol, así que mandar ahí a un
+// dueño lo rebotaría al home con un aviso de "no disponible para tu perfil".
+const EVENTOS: Record<string, { estado: string; roles: string[]; titulo: string; cuerpo: (mesa: string) => string; tipo: string; ruta?: string }> = {
   solicitada: {
     estado: 'pendiente',
     roles: ['mozo'],
     titulo: 'Cuenta solicitada',
     cuerpo: (mesa) => `El cliente de la mesa ${mesa} pidió la cuenta.`,
     tipo: 'cuenta_solicitada',
+    ruta: '/cuenta/confirmar-pago',
   },
   pagada: {
     estado: 'pagada',
@@ -30,6 +36,13 @@ const EVENTOS: Record<string, { estado: string; roles: string[]; titulo: string;
     titulo: 'Pago registrado',
     cuerpo: (mesa) => `El cliente de la mesa ${mesa} confirmó el pago de su cuenta.`,
     tipo: 'cuenta_pagada',
+  },
+  confirmada: {
+    estado: 'confirmada',
+    roles: ['dueno', 'supervisor'],
+    titulo: 'Pago confirmado',
+    cuerpo: (mesa) => `El mozo confirmó el pago de la mesa ${mesa}. La mesa quedó libre.`,
+    tipo: 'cuenta_confirmada',
   },
 };
 
@@ -60,7 +73,7 @@ Deno.serve(async (req) => {
     if (!body.estadiaId) return responder({ error: 'estadiaId es obligatorio.' }, 400);
 
     const evento = EVENTOS[body.evento ?? ''];
-    if (!evento) return responder({ error: 'evento debe ser "solicitada" o "pagada".' }, 400);
+    if (!evento) return responder({ error: 'evento debe ser "solicitada", "pagada" o "confirmada".' }, 400);
 
     etapa = 'buscar_cuenta';
     const cuentaResp = await fetch(
@@ -92,9 +105,6 @@ Deno.serve(async (req) => {
 
     // El historial en base se guarda SIEMPRE, aunque nadie tenga un dispositivo
     // registrado: es lo que le permite al personal ver el aviso al abrir la app.
-    // Sin "ruta": la pantalla donde el mozo confirma el pago es del punto 22 y
-    // todavía no existe, así que el toque de la notificación no debe llevar a
-    // ningún lado (ver RUTAS_NOTIFICACION en notificaciones.service.js).
     etapa = 'guardar_notificacion';
     const guardado = await fetch(`${url}/rest/v1/notificaciones`, {
       method: 'POST',
@@ -104,7 +114,7 @@ Deno.serve(async (req) => {
         titulo,
         cuerpo,
         tipo: evento.tipo,
-        datos: { estadia_id: body.estadiaId, mesa: numeroMesa },
+        datos: { estadia_id: body.estadiaId, mesa: numeroMesa, ...(evento.ruta ? { ruta: evento.ruta } : {}) },
       }))),
     });
     if (!guardado.ok) throw new Error(`No se pudo guardar la notificación (${guardado.status}).`);
@@ -138,7 +148,7 @@ Deno.serve(async (req) => {
           message: {
             token,
             notification: { title: titulo, body: cuerpo },
-            data: { tipo: evento.tipo, estadia_id: String(body.estadiaId) },
+            data: { tipo: evento.tipo, estadia_id: String(body.estadiaId), ...(evento.ruta ? { ruta: evento.ruta } : {}) },
             android: { priority: 'high', notification: { channel_id: 'cuentas' } },
           },
         }),

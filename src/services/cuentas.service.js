@@ -178,8 +178,8 @@ export async function pagarCuenta(estadiaId) {
   return data;
 }
 
-// Punto 22 (todavía sin implementar): cuando el mozo confirme el pago, la fila
-// pasa a 'confirmada' y la pantalla del cliente se entera por acá sin recargar.
+// Cuando el mozo confirma el pago (punto 22) la fila pasa a 'confirmada' y la
+// pantalla del cliente se entera por acá sin recargar.
 export function suscribirseAMiCuenta(estadiaId, onCambio) {
   const canal = getSupabase()
     .channel(`cuenta-cliente-${estadiaId}`)
@@ -191,4 +191,99 @@ export function suscribirseAMiCuenta(estadiaId, onCambio) {
     .subscribe();
 
   return () => { getSupabase().removeChannel(canal); };
+}
+
+
+/* =========================================================
+   PUNTO 22 — el mozo confirma el pago y se libera la mesa
+
+   Liberar la mesa NO se hace desde acá: lo hace el trigger trg_cerrar_estadia
+   cuando la cuenta pasa a 'confirmada' (cierra la estadía y deja la mesa
+   'libre' en la misma operación, ver 01_schema.sql). Así no hay forma de que
+   una cuenta quede confirmada con la mesa todavía ocupada.
+   ========================================================= */
+
+// Igual que SELECT_CUENTA pero con la mesa y el cliente, que es lo que el mozo
+// necesita para saber de qué mesa está hablando cada fila.
+const SELECT_CUENTA_SALON = `
+  id,
+  estadia_id,
+  subtotal,
+  descuento_pct,
+  propina_pct,
+  total,
+  estado,
+  solicitada_en,
+  pagada_en,
+  nivel:niveles_propina ( etiqueta, porcentaje ),
+  estadias (
+    mesas ( numero ),
+    cliente:perfiles!cliente_id ( nombres, apellidos )
+  )
+`;
+
+// Las cuentas abiertas del salón: las que el cliente pidió y todavía no pagó, y
+// las pagadas esperando la confirmación del mozo. Las 'confirmada' ya se
+// cerraron y quedan afuera.
+export async function listarCuentasDelSalon() {
+  const { data, error } = await getSupabase()
+    .from(TABLAS.CUENTAS)
+    .select(SELECT_CUENTA_SALON)
+    .neq('estado', ESTADOS_CUENTA.CONFIRMADA)
+    .order('solicitada_en', { ascending: true });
+  if (error) throw error;
+  return data ?? [];
+}
+
+// El "and estado = pagada" no es decorativo: evita confirmar una cuenta que el
+// cliente todavía no pagó, y también resuelve el caso de dos mozos tocando el
+// botón a la vez (el segundo no encuentra fila y se entera de que ya estaba
+// hecho, en vez de pisar la confirmación del primero).
+export async function confirmarPago(estadiaId) {
+  const supabase = getSupabase();
+  const { data: { session }, error: errorSesion } = await supabase.auth.getSession();
+  if (errorSesion) throw errorSesion;
+  if (!session) throw new Error('Necesitás iniciar sesión para confirmar el pago.');
+
+  const { data, error } = await supabase
+    .from(TABLAS.CUENTAS)
+    .update({
+      estado: ESTADOS_CUENTA.CONFIRMADA,
+      confirmada_por: session.user.id,
+      confirmada_en: new Date().toISOString(),
+    })
+    .eq('estadia_id', estadiaId)
+    .eq('estado', ESTADOS_CUENTA.PAGADA)
+    .select(SELECT_CUENTA_SALON)
+    .single();
+
+  // PGRST116 = la consulta no devolvió exactamente una fila: la cuenta ya no
+  // estaba en 'pagada'.
+  if (error?.code === 'PGRST116') {
+    throw new Error('Esa cuenta ya no está pendiente de confirmación. Actualizá el listado.');
+  }
+  if (error) throw error;
+
+  // Punto 22: el aviso va al dueño y al supervisor. Best-effort, igual que los
+  // otros dos: la mesa ya quedó libre aunque el push falle.
+  await avisarCuenta(estadiaId, EVENTOS_CUENTA.CONFIRMADA)
+    .catch((errorPush) => console.error('El pago se confirmó, pero no se pudo avisar a la administración.', errorPush));
+
+  return data;
+}
+
+// Realtime para el listado del mozo: que un cliente pague o pida la cuenta se
+// ve solo, sin recargar.
+export function suscribirseACuentasDelSalon(onCambio) {
+  const supabase = getSupabase();
+  const canal = supabase
+    .channel('cuentas-salon')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: TABLAS.CUENTAS },
+      (payload) => onCambio(payload.new ?? null),
+    )
+    .subscribe();
+
+  return () => { supabase.removeChannel(canal); };
 }

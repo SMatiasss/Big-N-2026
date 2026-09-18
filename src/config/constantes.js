@@ -103,12 +103,18 @@ export const ESTADOS_CUENTA = {
   CONFIRMADA: 'confirmada',
 };
 
-// Punto 21: los dos avisos de la cuenta tienen alcance distinto a propósito
-// -uno es sólo para el mozo y el otro suma al dueño y al supervisor-, y los
-// resuelve la misma Edge Function (avisar-cuenta) según este valor.
+// Puntos 21 y 22: los tres avisos de la cuenta tienen alcance distinto a
+// propósito, y los resuelve la misma Edge Function (avisar-cuenta) según este
+// valor:
+//   solicitada -> sólo el mozo.
+//   pagada     -> mozo + dueño + supervisor.
+//   confirmada -> dueño y supervisor (punto 22: "verificar que luego de la
+//                 confirmación de pago, la notificación llegue al dueño y al
+//                 supervisor"). No incluye al mozo: es quien la disparó.
 export const EVENTOS_CUENTA = {
   SOLICITADA: 'solicitada',
   PAGADA: 'pagada',
+  CONFIRMADA: 'confirmada',
 };
 
 // Coincide con el enum estado_espera del schema (01_schema.sql).

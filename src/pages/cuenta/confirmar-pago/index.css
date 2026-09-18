@@ -1,0 +1,296 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Outfit:wght@700&display=swap');
+
+/* =========================================================
+   COBRAR MESAS (punto 22, lado mozo)
+
+   Misma cáscara que el resto de los listados: ion-content no scrollea
+   (pantalla-lista) y la única parte elástica es la lista, que además
+   hace snap para no dejar ninguna tarjeta cortada. Lo de adentro de
+   cada tarjeta se mide con clamp() contra --la-alto, el alto que le
+   asignó lista-ajustada.
+   ========================================================= */
+
+.confirmar-pago {
+  --fondo: #606c38;
+  --fondo-card: #4a572c;
+  --acento: #dda15e;
+  --acento-fuerte: #bc6c25;
+  --texto-claro: #fefae0;
+  --texto-suave: #c8c8a0;
+  --texto-oscuro: #283618;
+
+  --color-pagada: #22c55e;
+  --color-pendiente: #eab308;
+
+  --fuente-geist: 'Geist', sans-serif;
+  --fuente-outfit: 'Outfit', sans-serif;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+}
+
+.confirmar-pago ion-content {
+  --background: var(--fondo);
+}
+
+.confirmar-pago__contenido {
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 480px;
+
+  margin: 0 auto;
+  padding: 20px 16px max(16px, env(safe-area-inset-bottom));
+}
+
+
+/* =========================================================
+   LISTA
+   ========================================================= */
+
+.confirmar-pago__lista {
+  --la-items: 2;
+  --la-gap: 14px;
+}
+
+@media (max-height: 700px) {
+  .confirmar-pago__lista { --la-items: 1; }
+}
+
+@media (min-height: 900px) {
+  .confirmar-pago__lista { --la-items: 3; }
+}
+
+
+/* =========================================================
+   TARJETA DE CUENTA
+   ========================================================= */
+
+.cobro {
+  --tarjeta-alto: var(--la-alto, 250px);
+
+  display: flex;
+  flex-direction: column;
+  gap: clamp(5px, calc(var(--tarjeta-alto) * 0.025), 9px);
+
+  box-sizing: border-box;
+
+  padding: clamp(11px, calc(var(--tarjeta-alto) * 0.055), 16px);
+
+  background: var(--fondo-card);
+  border: 2px solid var(--color-pendiente);
+  border-radius: 16px;
+}
+
+/* La que ya pagó es la accionable: se distingue de un vistazo. */
+.cobro--pagada {
+  border-color: var(--color-pagada);
+}
+
+
+/* — Cabecera: mesa + estado — */
+
+.cobro__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cobro__mesa {
+  margin: 0;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: clamp(17px, calc(var(--tarjeta-alto) * 0.09), 24px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.cobro__estado {
+  flex-shrink: 0;
+
+  padding: clamp(3px, calc(var(--tarjeta-alto) * 0.016), 5px)
+           clamp(8px, calc(var(--tarjeta-alto) * 0.04), 12px);
+
+  background: var(--color-pendiente);
+  border-radius: 999px;
+
+  color: var(--texto-oscuro);
+
+  font-size: clamp(10px, calc(var(--tarjeta-alto) * 0.05), 13px);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.cobro__estado--pagada {
+  background: var(--color-pagada);
+}
+
+
+/* — Cliente y hora — */
+
+.cobro__datos {
+  margin: 0;
+
+  color: var(--texto-suave);
+
+  font-size: clamp(11px, calc(var(--tarjeta-alto) * 0.05), 14px);
+  line-height: 1.3;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* — Desglose: las mismas líneas que ve el cliente — */
+
+.cobro__lineas {
+  flex: 1;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1px, calc(var(--tarjeta-alto) * 0.008), 3px);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.cobro__lineas li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+
+  color: var(--texto-suave);
+
+  font-size: clamp(11px, calc(var(--tarjeta-alto) * 0.048), 14px);
+  line-height: 1.35;
+}
+
+.cobro__linea--descuento {
+  color: var(--color-pagada);
+}
+
+/* Todavía no escaneó el QR de propina: sin eso la base no deja pagar
+   (ck_propina_obligatoria), así que conviene que se vea. */
+.cobro__linea--falta {
+  color: var(--color-pendiente);
+  font-style: italic;
+}
+
+
+/* — Total: es el número que el mozo cobra, va grande — */
+
+.cobro__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+
+  margin: 0;
+  padding-top: clamp(4px, calc(var(--tarjeta-alto) * 0.02), 8px);
+
+  border-top: 1px solid rgb(254 250 224 / 18%);
+}
+
+.cobro__total-etiqueta {
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-geist);
+  font-size: clamp(12px, calc(var(--tarjeta-alto) * 0.05), 15px);
+  font-weight: 600;
+}
+
+.cobro__total strong {
+  color: var(--acento);
+
+  font-family: var(--fuente-outfit);
+  font-size: clamp(18px, calc(var(--tarjeta-alto) * 0.1), 26px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+
+/* — Botón de confirmación — */
+
+.cobro__accion {
+  flex-shrink: 0;
+
+  width: 100%;
+  height: clamp(34px, calc(var(--tarjeta-alto) * 0.16), 46px);
+
+  margin: 0;
+  padding: 0 8px;
+
+  background: var(--acento-fuerte);
+  border: none;
+  border-radius: 11px;
+
+  color: var(--texto-claro);
+
+  font-family: var(--fuente-outfit);
+  font-size: clamp(12px, calc(var(--tarjeta-alto) * 0.058), 16px);
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.cobro__accion:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.cobro__accion:disabled {
+  background: rgb(254 250 224 / 12%);
+  color: var(--texto-suave);
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   ESTADOS: CARGANDO / VACÍO / ERROR
+   ========================================================= */
+
+.confirmar-pago__estado-carga {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+  font-size: 14px;
+}
+
+.confirmar-pago__estado-carga ion-spinner {
+  color: var(--acento);
+}
+
+.confirmar-pago__mensaje {
+  margin: 40px 0 0;
+
+  color: var(--texto-suave);
+
+  font-size: 15px;
+  line-height: 19px;
+  text-align: center;
+}
+
+
+@media (max-width: 390px) {
+  .confirmar-pago__contenido {
+    padding-inline: 12px;
+  }
+}

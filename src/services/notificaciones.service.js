@@ -64,7 +64,7 @@ async function prepararDispositivoParaPerfil(usuarioId) {
 
 // Rutas a las que puede llevar un toque sobre la notificación (o el botón
 // "Ver" mientras la app está en primer plano). Cada HU agrega la suya acá.
-const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta', '/pedidos/confirmacion', '/pedidos/entrega', '/pedidos/estado'];
+const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta', '/pedidos/confirmacion', '/pedidos/entrega', '/pedidos/estado', '/cuenta/confirmar-pago'];
 
 function guardarContextoNotificacion(notification) {
   const estadiaId = notification?.data?.estadia_id;
