@@ -34,9 +34,9 @@
 
 .panel-sector__vacio {
   text-align: center;
-  margin-top: 40px;
+  margin-top: clamp(20px, 5dvh, 40px);
   color: var(--texto-suave);
-  font-size: 1.1rem;
+  font-size: clamp(16px, 4.6vw, 20px);
 }
 
 .panel-sector__lista {
@@ -82,13 +82,13 @@
   margin: 0;
   color: var(--acento);
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 1.4rem;
+  font-size: clamp(20px, 5.8vw, 25px);
 }
 
 .pedido-card__cliente {
   margin: 4px 0 0 0;
   color: var(--texto-claro);
-  font-size: 1rem;
+  font-size: clamp(14px, 4.1vw, 18px);
 }
 
 .pedido-card__cuerpo {
@@ -105,7 +105,7 @@
 
 .pedido-card__cuerpo li {
   color: var(--texto-claro);
-  font-size: 1.1rem;
+  font-size: clamp(16px, 4.6vw, 20px);
   margin-bottom: 4px;
 }
 
@@ -120,7 +120,7 @@
   height: 48px;
   border-radius: 8px;
   border: none;
-  font-size: 1.5rem;
+  font-size: clamp(21px, 6vw, 27px);
   display: flex;
   align-items: center;
   justify-content: center;

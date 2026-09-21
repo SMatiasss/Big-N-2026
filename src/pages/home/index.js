@@ -97,6 +97,7 @@ export async function render(container) {
             <h1 class="home__saludo">Bienvenido <span data-nombre-saludo>Usuario</span></h1>
           </header>
           <p class="home__aviso" role="status" aria-live="polite" hidden></p>
+          <p class="home__error" role="alert" hidden></p>
           <section class="home__seccion home__seccion--principal" data-principales hidden>
             <div class="home__acciones" aria-label="Acciones principales"></div>
           </section>
@@ -147,6 +148,7 @@ export async function render(container) {
       if (!lista.length) return;
       seccion.hidden = false;
       const contenedor = seccion.querySelector(".home__acciones");
+      contenedor.dataset.cantidad = String(lista.length);
       lista.forEach((accion) => {
         const boton = crearTarjetaAccion(accion, principal);
         boton.addEventListener("click", () => {
@@ -217,6 +219,7 @@ export async function render(container) {
     ]);
   } catch (e) {
     error.textContent = e.message ?? "No se pudo cargar tu inicio.";
+    error.hidden = false;
   } finally {
     raiz.setAttribute("aria-busy", "false");
   }

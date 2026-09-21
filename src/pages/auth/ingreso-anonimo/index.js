@@ -12,6 +12,7 @@ import { crearClienteAnonimo } from '../../../services/perfiles.service.js';
 import { validarQrIngreso } from '../../../services/qr.service.js';
 import { navegarA } from '../../../router.js';
 import { esArchivoImagen, esNombrePersonaValido } from '../../../utils/validadores.js';
+import { ajustarFormulario, ajustarVista } from '../../../components/lista-ajustada/lista-ajustada.js';
 
 function validarFormulario(nombre, foto) {
   const errores = {};
@@ -121,6 +122,13 @@ export function render(container) {
   });
   container.querySelector('[data-header]').append(header);
   const controlVolver = header.querySelector('.app-header__volver');
+  const contenido = container.querySelector('.ingreso-anonimo__contenido');
+  const ajusteFormulario = ajustarFormulario(contenido, {
+    variable: '--ia-ajuste',
+    minimo: 0.78,
+    margen: 4,
+  });
+  let ajusteQr = null;
 
   formulario.querySelector('#nombre-anonimo').addEventListener('input', revalidar);
 
@@ -189,6 +197,13 @@ export function render(container) {
         },
       });
       container.querySelector('.ingreso-anonimo__lector-qr').append(lector.elemento);
+      ajusteFormulario.destruir();
+      ajusteQr = ajustarVista(contenido, {
+        variable: '--ia-ajuste',
+        minimo: 0.84,
+        maximo: 1.12,
+        margen: 4,
+      });
     } catch (error) {
       console.error('No se pudo completar el ingreso anónimo.', error);
       mostrarToastError(`No se pudo completar el ingreso: ${error.message ?? 'error desconocido'}`);
@@ -196,5 +211,9 @@ export function render(container) {
     }
   });
 
-  window.addEventListener('hashchange', () => selectorFoto.destruir(), { once: true });
+  window.addEventListener('hashchange', () => {
+    selectorFoto.destruir();
+    ajusteFormulario.destruir();
+    ajusteQr?.destruir();
+  }, { once: true });
 }

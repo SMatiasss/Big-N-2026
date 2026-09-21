@@ -16,9 +16,12 @@ function horaMensaje(fecha) {
 }
 
 export async function render(container) {
-  container.innerHTML = `<ion-content class="hu11 consulta-mozo"><div data-header></div><main>
+  container.innerHTML = `<ion-content class="hu11 consulta-mozo" scroll-y="false"><div data-header></div><main>
     <p class="consulta-mozo__subtitulo" data-subtitulo>Atención clientes</p>
-    <p role="status" aria-live="polite">Verificando acceso…</p>
+    <div class="consulta-mozo__estado consulta-mozo__estado--cargando" role="status" aria-live="polite">
+      <span class="consulta-mozo__estado-icono" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+      <span data-estado-texto>Verificando acceso…</span>
+    </div>
     <label class="sr-only" data-salas hidden>Conversación<select aria-label="Seleccionar mesa"></select></label>
     <section class="consulta-mozo__bandeja" data-bandeja hidden aria-label="Conversaciones"></section>
     <section class="consulta-mozo__conversacion" data-conversacion>
@@ -30,7 +33,7 @@ export async function render(container) {
     </section>
   </main></ion-content>`;
   const raiz = container.firstElementChild;
-  const estado = raiz.querySelector('[role="status"]');
+  const estado = raiz.querySelector('[data-estado-texto]');
   const salas = raiz.querySelector('select');
   const chat = raiz.querySelector('[role="log"]');
   const form = raiz.querySelector('form');
@@ -254,8 +257,9 @@ export async function render(container) {
       if (!raiz.isConnected) return;
       seleccion = ctx.estadia_id;
     }
+    raiz.querySelector('.consulta-mozo__estado').classList.remove('consulta-mozo__estado--cargando');
     actualizacion.alSalir(suscribirseAMensajes(mozo ? null : seleccion,
       () => { void actualizacion.actualizar(); }, estadoCanal => { conectado = estadoCanal === 'SUBSCRIBED'; }));
     await actualizacion.actualizar();
-  } catch (error) { if (raiz.isConnected) { perfil = null; fallar(error); } }
+  } catch (error) { if (raiz.isConnected) { perfil = null; raiz.querySelector('.consulta-mozo__estado').classList.remove('consulta-mozo__estado--cargando'); fallar(error); } }
 }
