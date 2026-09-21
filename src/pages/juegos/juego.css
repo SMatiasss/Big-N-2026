@@ -1,7 +1,7 @@
 .juego-hu15 { --j-fondo: var(--form-fondo, #606c38); --j-card: var(--form-campo-fondo, #4a572c); --j-profundo: var(--form-texto-oscuro, #283618); --j-acento: var(--form-dorado, #dda15e); --j-texto: var(--form-texto-claro, #fefae0); color: var(--j-texto); }
 .juego-hu15 ion-content { --background: var(--j-fondo); }
 .juego-hu15 .app-header { --ah-bg: var(--j-fondo); --ah-escala: 1.42; }
-.juego-hu15__main { box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 520px); min-height: calc(100% - 8px); margin: 0 auto; padding: 0 18px calc(18px + env(safe-area-inset-bottom)); font-family: var(--fuente-geist); text-align: center; }
+.juego-hu15__main { box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 520px); height: var(--vista-alto-disponible, calc(100dvh - 118px)); min-height: 0; margin: 0 auto; padding: 0 18px calc(18px + env(safe-area-inset-bottom)); font-family: var(--fuente-geist); text-align: center; }
 .juego-hu15__intro { margin: 0 0 clamp(10px, 2.2dvh, 18px); color: rgb(254 250 224 / 82%); font-size: clamp(14px, 3.8vw, 17px); line-height: 1.4; }
 .juego-hu15__tablero { display: grid; flex: 1; align-content: center; gap: 14px; padding: 20px; border: 1px solid rgb(254 250 224 / 10%); border-radius: 20px; background: var(--j-card); }
 .juego-hu15__tablero button { min-height: 74px; border: 1px solid rgb(221 161 94 / 48%); border-radius: 14px; background: var(--j-profundo); color: var(--j-acento); font: 700 20px var(--fuente-outfit); }

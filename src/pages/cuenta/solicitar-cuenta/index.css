@@ -183,9 +183,10 @@
    estados, y así el sobrante de pantalla queda entre el detalle y la acción,
    nunca partiendo el detalle al medio. */
 .cuenta__pie {
-  flex-shrink: 0;
-
-  margin: auto 0 0;
+  display:flex;
+  flex: 1 1 auto;
+  min-height:0;
+  margin: clamp(10px, 1.8vh, 16px) 0 0;
   padding-top: clamp(10px, 1.8vh, 16px);
 }
 
@@ -197,6 +198,11 @@
   background: var(--fondo-card);
   border: 1px solid rgb(221 161 94 / 30%);
   border-radius: 16px;
+  flex:1;
+  display:flex;
+  min-height:0;
+  flex-direction:column;
+  justify-content:center;
 }
 
 
@@ -210,6 +216,7 @@
   border: 0;
   text-align: center;
 }
+.cuenta .lector-qr::before{content:'⌗';display:grid;width:clamp(68px,10dvh,94px);height:clamp(68px,10dvh,94px);margin:0 auto clamp(8px,1.5dvh,14px);place-items:center;border-radius:18px;background:#283618;color:var(--acento);font:700 clamp(38px,6dvh,54px)/1 var(--fuente-outfit)}
 
 .cuenta .lector-qr h2 {
   margin: 0 0 4px;

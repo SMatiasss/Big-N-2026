@@ -26,6 +26,7 @@ export const ROLES_POR_RUTA = {
   '/lista-espera/metre': [...JEFES, ROLES.METRE],
   '/mesa/escanear': CLIENTES,
   '/mesa/carta': CLIENTES,
+  '/pedidos/carrito': CLIENTES,
   '/pedidos/consulta': [ROLES.MOZO, ...CLIENTES],
   '/pedidos/confirmacion': [ROLES.MOZO],
   '/pedidos/cocina': [ROLES.COCINERO],

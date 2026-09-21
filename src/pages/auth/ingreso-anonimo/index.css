@@ -424,21 +424,7 @@
 /* Marco de visor: los tramos punteados dejan las esquinas marcadas. */
 
 .ingreso-anonimo .lector-qr::before {
-  content: '';
-
-  display: block;
-
-  box-sizing: border-box;
-
-  /* Igual que el avatar: se mide contra el ancho y el alto disponibles. */
-  width: clamp(150px, min(55vw, 27dvh), 225px);
-  height: clamp(150px, min(55vw, 27dvh), 225px);
-
-  margin: 0 auto clamp(14px, 2dvh, 22px);
-
-  border: 5px solid var(--acento);
-  border-radius: 22px;
-  border-style: solid dashed;
+  display: none;
 }
 
 .ingreso-anonimo .lector-qr h2 {

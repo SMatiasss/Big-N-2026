@@ -45,7 +45,12 @@ export async function render(container) {
     if (!vigente()) return;
 
     if (pedidos.length === 0) {
-      lista.innerHTML = '<p class="confirmacion-mozo__vacio">No hay pedidos pendientes de confirmación.</p>';
+      lista.innerHTML = `<section class="confirmacion-mozo__vacio">
+        <span class="confirmacion-mozo__vacio-icono" aria-hidden="true">✓</span>
+        <strong>Todo al día</strong>
+        <p>No hay pedidos pendientes de confirmación.</p>
+        <small>Los nuevos pedidos aparecerán automáticamente.</small>
+      </section>`;
       aviso.textContent = '';
       return;
     }
