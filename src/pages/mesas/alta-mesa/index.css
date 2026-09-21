@@ -290,7 +290,7 @@
 
   color: var(--texto-claro);
   font-family: var(--fuente-geist);
-  font-size: 13px;
+  font-size: clamp(13px, 3.5vw, 15px);
   font-weight: 600;
 }
 
@@ -351,7 +351,7 @@
 /* ERRORES */
 .campo-error {
   display: none;
-  font-size: 13px;
+  font-size: clamp(13px, 3.5vw, 15px);
   margin-top: 3px;
   font-family: var(--fuente-geist);
   color: #ef4444;

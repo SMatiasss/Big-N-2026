@@ -134,6 +134,7 @@ export function ajustarFormulario(contenido, { variable, minimo = 0.72, margen =
   function aplicar() {
     const disponible = altoDisponible();
     if (disponible <= 0) return false;
+    contenido.style.setProperty('--vista-alto-disponible', `${disponible}px`);
 
     // Se mide siempre partiendo de la escala completa: si no se resetea acá,
     // un ajuste previo (ej. de antes de rotar la pantalla) falsea la medición.

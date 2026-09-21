@@ -316,7 +316,7 @@
 
   color: var(--texto-claro-empleado);
 
-  font-size: 11px;
+  font-size: clamp(11px, 3vw, 13px);
   line-height: 14px;
 }
 
@@ -437,7 +437,7 @@
 
   padding: 2px 3px 0;
 
-  font-size: 10px;
+  font-size: clamp(11px, 2.8vw, 12px);
 }
 
 .alta-cliente .campo-formulario--invalido input {

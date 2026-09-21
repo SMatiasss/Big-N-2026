@@ -2,7 +2,7 @@
 // escanear el QR de ingreso al local, tanto desde el ingreso anónimo como
 // desde "Ingresar al local" para un cliente registrado ya logueado.
 import './index.css';
-import { navegarA } from '../../../router.js';
+import { navegarA, reemplazarRuta } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { avisarNuevaEspera } from '../../../services/notificaciones.service.js';
@@ -15,6 +15,9 @@ import {
   suscribirseAMiEspera,
 } from '../../../services/lista-espera.service.js';
 import { vigilarMiEstadiaSiSoyAnonima } from '../../../services/sesion-anonima.service.js';
+import { ajustarVista } from '../../../components/lista-ajustada/lista-ajustada.js';
+import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
+import { validarQrMesaAsignada } from '../../../services/mesa-cliente.service.js';
 
 export function render(container) {
   container.innerHTML = `
@@ -24,14 +27,27 @@ export function render(container) {
         <main class="lista-espera-cliente__contenido">
 
           <section class="lista-espera-cliente__aviso" role="status" aria-live="polite" hidden>
-            <ion-spinner class="lista-espera-cliente__aviso-spinner" name="crescent" aria-hidden="true"></ion-spinner>
-            <span class="lista-espera-cliente__aviso-texto"></span>
+            <span class="lista-espera-cliente__aviso-icono" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+            </span>
+            <span class="lista-espera-cliente__aviso-cuerpo">
+              <ion-spinner class="lista-espera-cliente__aviso-spinner" name="crescent" aria-hidden="true"></ion-spinner>
+              <span class="lista-espera-cliente__aviso-texto"></span>
+            </span>
           </section>
 
           <section class="lista-espera-cliente__encuestas">
             <button class="lista-espera-cliente__resultados" type="button">
-              <span class="lista-espera-cliente__resultados-icono" aria-hidden="true">↗</span>
-              <span><strong>Resultados de satisfacción</strong><small>Conocé las opiniones de visitas anteriores</small></span>
+              <span class="lista-espera-cliente__resultados-icono" aria-hidden="true">
+                <svg viewBox="0 0 64 64" focusable="false">
+                  <path d="M10 52V30h11v22M27 52V18h11v34M44 52V8h11v44M7 52h50"/>
+                </svg>
+              </span>
+              <span class="lista-espera-cliente__resultados-contenido">
+                <strong>Resultados de satisfacción</strong>
+                <small>Conocé las opiniones de visitas anteriores.</small>
+                <em>Ver gráficos anteriores</em>
+              </span>
               <b aria-hidden="true">›</b>
             </button>
           </section>
@@ -53,7 +69,9 @@ export function render(container) {
 
   const header = crearAppHeader({
     titulo: 'Lista de espera',
-    onVolver: () => navegarA('/home'),
+    // Reemplazar evita el ciclo Lista -> Home -> atrás -> Lista tanto para
+    // el cliente registrado como para la sesión anónima.
+    onVolver: () => reemplazarRuta('/home'),
   });
   container.querySelector('[data-header]').append(header);
 
@@ -66,13 +84,52 @@ export function render(container) {
   const botonIngresar = container.querySelector('.lista-espera-cliente__ingresar');
   const botonIngresarMesa = container.querySelector('.lista-espera-cliente__accion-mesa');
   const botonCancelar = container.querySelector('.lista-espera-cliente__cancelar');
+  const contenido = container.querySelector('.lista-espera-cliente__contenido');
+  const ajusteVista = ajustarVista(contenido, {
+    variable: '--le-ajuste',
+    minimo: 0.88,
+    maximo: 1.16,
+  });
+  contenido.dataset.estado = 'inicial';
+
+  function establecerEstado(estado) {
+    contenido.dataset.estado = estado;
+    requestAnimationFrame(() => ajusteVista.actualizar());
+  }
 
   container.querySelector('.lista-espera-cliente__resultados').addEventListener('click', () => {
     navegarA('/encuesta/resultados');
   });
 
-  botonIngresarMesa.addEventListener('click', () => {
-    navegarA('/mesa/escanear');
+  botonIngresarMesa.addEventListener('click', async () => {
+    if (botonIngresarMesa.disabled) return;
+    botonIngresarMesa.disabled = true;
+    botonIngresarMesa.setAttribute('aria-busy', 'true');
+
+    const lector = crearLectorQr({
+      titulo: 'Escanear mesa',
+      descripcion: 'Usá el QR de la mesa que te asignó el metre.',
+      textoBoton: 'Escanear QR',
+      nombreObjeto: 'QR de mesa',
+      onLectura: async (contenidoQr) => {
+        try {
+          await validarQrMesaAsignada(contenidoQr);
+          if (botonIngresarMesa.isConnected) navegarA('/mesa/carta');
+        } catch (error) {
+          mostrarToastError(error.message ?? 'El QR no corresponde a la mesa asignada.');
+        }
+      },
+    });
+
+    try {
+      await lector.escanear();
+    } finally {
+      lector.destruir?.();
+      if (botonIngresarMesa.isConnected) {
+        botonIngresarMesa.disabled = false;
+        botonIngresarMesa.removeAttribute('aria-busy');
+      }
+    }
   });
 
   let cancelarSuscripcion = null;
@@ -80,6 +137,7 @@ export function render(container) {
 
   // ---- Estado de espera ----
   function mostrarEsperando() {
+    establecerEstado('esperando');
     botonIngresar.hidden = true;
     botonIngresarMesa.hidden = true;
     botonCancelar.hidden = false;
@@ -90,6 +148,7 @@ export function render(container) {
   }
 
   function mostrarInicial() {
+    establecerEstado('inicial');
     botonIngresar.hidden = false;
     botonIngresar.disabled = false;
     botonIngresarMesa.hidden = true;
@@ -99,6 +158,7 @@ export function render(container) {
   }
 
   function mostrarAsignada(numeroMesa) {
+    establecerEstado('asignada');
     aviso.hidden = false;
     botonIngresar.disabled = true;
     avisoTexto.textContent = `¡Solicitud aceptada para la mesa ${numeroMesa}!`;
@@ -200,5 +260,6 @@ export function render(container) {
 
   window.addEventListener('hashchange', () => {
     cancelarSuscripcion?.();
+    ajusteVista.destruir();
   }, { once: true });
 }

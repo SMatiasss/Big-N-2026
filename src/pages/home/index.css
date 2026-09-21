@@ -17,7 +17,6 @@
   width: 100%;
   max-width: 520px;
   min-height: 100%;
-  min-height: 100dvh;
   margin: 0 auto;
   padding: max(clamp(14px, 3dvh, 28px), env(safe-area-inset-top)) 18px
     max(14px, env(safe-area-inset-bottom));
@@ -79,6 +78,10 @@
   grid-auto-rows: minmax(min-content, 1fr);
   gap: clamp(6px, 1dvh, 10px);
 }
+.home__acciones[data-cantidad="1"] { grid-template-columns:1fr; }
+.home__acciones[data-cantidad="1"] .home__accion { min-height:clamp(260px, 45dvh, 430px); padding:clamp(24px, 5dvh, 44px); }
+.home__acciones[data-cantidad="1"] .home__accion svg { width:clamp(72px, 14dvh, 118px); height:clamp(72px, 14dvh, 118px); margin-bottom:clamp(18px, 3dvh, 28px); }
+.home__acciones[data-cantidad="1"] .home__accion strong { font-size:clamp(24px, 6vw, 32px); }
 .home__accion {
   position: relative;
   display: flex;
@@ -111,8 +114,8 @@
   min-height: clamp(48px, 7dvh, 96px);
 }
 .home__accion svg {
-  width: 26px;
-  height: 26px;
+  width: clamp(26px, 5dvh, 42px);
+  height: clamp(26px, 5dvh, 42px);
   margin-bottom: 6px;
   fill: none;
   stroke: var(--home-acento);
@@ -121,7 +124,7 @@
   stroke-linejoin: round;
 }
 .home__accion strong {
-  font: 700 var(--text-lg) / var(--line-heading) var(--font-heading);
+  font: 700 clamp(16px, 4.4vw, 21px) / var(--line-heading) var(--font-heading);
 }
 .home__accion span {
   margin-top: 4px;
@@ -177,7 +180,7 @@
   overflow: hidden;
   margin-top: 3px;
   color: var(--home-acento);
-  font-size: 12px;
+  font-size: clamp(12px, 3.2vw, 14px);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
