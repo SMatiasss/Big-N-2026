@@ -96,7 +96,10 @@ export async function render(container) {
     const alFinal = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 50;
     firma = proximaFirma;
     chat.replaceChildren(...mensajes.map(m => crearBurbujaChat(m, perfil.id)));
-    if (!mensajes.length) chat.textContent = 'Todavía no hay mensajes. Podés iniciar la conversación.';
+    if (!mensajes.length) chat.innerHTML = `<section class="consulta-mozo__chat-vacio">
+      <span aria-hidden="true">✦</span><strong>Iniciá la conversación</strong>
+      <p>Escribí tu consulta y el mozo recibirá el mensaje.</p>
+    </section>`;
     if (alFinal) chat.scrollTop = chat.scrollHeight;
   }
 

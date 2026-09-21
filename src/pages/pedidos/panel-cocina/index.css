@@ -33,13 +33,18 @@
 }
 
 .panel-sector__vacio {
-  text-align: center;
-  margin-top: clamp(20px, 5dvh, 40px);
+  box-sizing:border-box; display:flex; flex:1; min-height:0; flex-direction:column; align-items:center; justify-content:center; gap:clamp(10px,2dvh,18px); padding:clamp(28px,6dvh,56px) clamp(20px,6vw,36px); border:1px solid rgb(221 161 94 / 28%); border-radius:22px; background:var(--fondo-card); text-align:center;
   color: var(--texto-suave);
   font-size: clamp(16px, 4.6vw, 20px);
 }
+.panel-sector__vacio-icono{display:grid;width:clamp(100px,18dvh,148px);height:clamp(100px,18dvh,148px);place-items:center;border-radius:50%;background:#283618;color:var(--acento);font:700 clamp(52px,10dvh,78px)/1 var(--font-heading)}
+.panel-sector__vacio strong{color:var(--texto-claro);font:700 clamp(28px,7vw,38px)/1.1 var(--font-heading)}
+.panel-sector__vacio p,.panel-sector__vacio small{margin:0;line-height:1.4}.panel-sector__vacio small{max-width:300px;font-size:clamp(14px,4vw,18px)}
 
 .panel-sector__lista {
+  display:flex;
+  flex:1;
+  flex-direction:column;
   /* Cuántas tarjetas mostramos completas en la pantalla */
   --la-items: 2;
   --la-gap: 16px;

@@ -17,6 +17,8 @@
   font-size: clamp(18px, 5vw, 24px);
   line-height: 1.4;
 }
+.escanear-mesa__qr{display:grid;width:clamp(118px,20dvh,170px);height:clamp(118px,20dvh,170px);place-items:center;border:1px solid rgb(221 161 94 / 35%);border-radius:24px;background:#4a572c;color:#dda15e;box-shadow:0 8px 22px rgb(40 54 24 / 24%)}
+.escanear-mesa__qr svg{width:68%;height:68%;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 
 .escanear-mesa .lector-qr {
   width: 100%;

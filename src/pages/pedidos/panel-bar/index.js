@@ -41,7 +41,12 @@ export async function render(container) {
     if (!vigente()) return;
 
     if (pedidos.length === 0) {
-      lista.innerHTML = '<p class="panel-sector__vacio">No hay pedidos pendientes para este sector.</p>';
+      lista.innerHTML = `<section class="panel-sector__vacio">
+        <span class="panel-sector__vacio-icono" aria-hidden="true">✓</span>
+        <strong>Sector al día</strong>
+        <p>No hay pedidos pendientes para preparar.</p>
+        <small>Los nuevos pedidos aparecerán automáticamente.</small>
+      </section>`;
       aviso.textContent = '';
       return;
     }
