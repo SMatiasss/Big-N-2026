@@ -121,7 +121,6 @@ export function render(container) {
     onVolver: () => navegarA('/login'),
   });
   container.querySelector('[data-header]').append(header);
-  const controlVolver = header.querySelector('.app-header__volver');
   const contenido = container.querySelector('.ingreso-anonimo__contenido');
   const ajusteFormulario = ajustarFormulario(contenido, {
     variable: '--ia-ajuste',
@@ -165,11 +164,11 @@ export function render(container) {
       });
 
       // Sin pantalla intermedia: apenas queda creada la sesión y el perfil,
-      // se abre directo el lector del QR de ingreso al local. La sesión anónima
-      // ya existe, así que volver atrás desde acá no tendría sentido.
+      // se abre directo el lector del QR de ingreso al local. El AppHeader se
+      // conserva completo: ocultar sólo su botón rompía la grilla y desplazaba
+      // el título a la columna estrecha del control.
       pasoDatos.hidden = true;
       pasoQr.hidden = false;
-      controlVolver.hidden = true;
 
       container.querySelectorAll('[data-progreso]').forEach((item) => {
         item.classList.toggle(
