@@ -82,6 +82,8 @@
 .home__acciones[data-cantidad="1"] .home__accion { min-height:clamp(260px, 45dvh, 430px); padding:clamp(24px, 5dvh, 44px); }
 .home__acciones[data-cantidad="1"] .home__accion svg { width:clamp(72px, 14dvh, 118px); height:clamp(72px, 14dvh, 118px); margin-bottom:clamp(18px, 3dvh, 28px); }
 .home__acciones[data-cantidad="1"] .home__accion strong { font-size:clamp(24px, 6vw, 32px); }
+.home__acciones[data-cantidad="1"] .home__accion span { max-width:300px; margin-top:clamp(10px,2dvh,18px); color:#c8c8a0; font-size:clamp(17px,4.6vw,21px); line-height:1.35; }
+.home__acciones[data-cantidad="1"] .home__accion[data-accion="ingreso-local"] svg { box-sizing:content-box; padding:clamp(20px,3dvh,28px); border-radius:24px; background:#283618; }
 .home__accion {
   position: relative;
   display: flex;

@@ -2,3 +2,39 @@
 .lector-qr h2 { color: var(--color-texto); font-size: 1.15rem; margin: 0 0 4px; }
 .lector-qr p { color: var(--ion-color-medium, #666); margin: 0 0 12px; }
 .lector-qr ion-note { display: block; min-height: 20px; padding-top: 6px; }
+
+/* Variante compartida por los tres accesos del cliente: entrada como
+   invitado, entrada del registrado y validación de la mesa asignada. */
+.lector-qr--acceso {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.8dvh, 16px);
+  margin: 0;
+  padding: clamp(22px, 4dvh, 38px) clamp(18px, 5vw, 30px);
+  border: 1px solid rgb(221 161 94 / 38%);
+  border-radius: clamp(18px, 5vw, 24px);
+  background: #4a572c;
+  text-align: center;
+  box-shadow: 0 8px 22px rgb(40 54 24 / 18%);
+}
+.lector-qr--acceso .lector-qr__icono {
+  display: grid;
+  width: clamp(138px, min(48vw, 24dvh), 198px);
+  aspect-ratio: 1;
+  margin-bottom: clamp(4px, 1dvh, 10px);
+  place-items: center;
+  border-radius: 24px;
+  background: #283618;
+  color: #dda15e;
+}
+.lector-qr--acceso .lector-qr__icono svg { width: 66%; height: 66%; fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.lector-qr--acceso h2 { margin: 0; color: #fefae0; font: 700 clamp(23px, 6.2vw, 31px)/1.15 var(--font-heading, 'Outfit', sans-serif); }
+.lector-qr--acceso p { max-width: 310px; margin: 0 0 clamp(8px, 1.5dvh, 14px); color: #c8c8a0; font: 400 clamp(16px, 4.4vw, 20px)/1.4 var(--font-body, 'Geist', sans-serif); }
+.lector-qr--acceso ion-button { width: 100%; min-height: clamp(56px, 8dvh, 66px); margin: 0; --background:#dda15e; --background-hover:#bc6c25; --background-activated:#bc6c25; --color:#fefae0; --border-width:0; --border-radius:14px; font:700 clamp(17px,4.7vw,21px) var(--font-heading,'Outfit',sans-serif); text-transform:none; }
+.lector-qr--acceso ion-note { box-sizing:border-box; width:100%; min-height:20px; padding-top:clamp(6px,1dvh,10px); color:#ffd0bf; font-size:clamp(13px,3.5vw,16px); line-height:1.3; }

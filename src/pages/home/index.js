@@ -71,7 +71,7 @@ function crearTarjetaAccion(accion, principal = false) {
   const titulo = document.createElement("strong");
   titulo.textContent = accion.titulo;
   boton.append(titulo);
-  if (accion.descripcion && !principal) {
+  if (accion.descripcion && (!principal || accion.id === "ingreso-local")) {
     const descripcion = document.createElement("span");
     descripcion.textContent = accion.descripcion;
     boton.append(descripcion);
@@ -183,6 +183,7 @@ export async function render(container) {
         descripcion: "Es el código que está en la puerta del local.",
         textoBoton: "Escanear código",
         nombreObjeto: "código",
+        variante: "acceso",
         onLectura: async (contenido) => {
           try {
             if (!(await validarQrIngreso(contenido))) {

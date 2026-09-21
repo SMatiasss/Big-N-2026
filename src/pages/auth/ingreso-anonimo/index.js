@@ -117,7 +117,7 @@ export function render(container) {
   formulario.querySelector('.ingreso-anonimo__foto').append(selectorFoto.elemento);
 
   const header = crearAppHeader({
-    titulo: 'Ingreso como invitado',
+    titulo: 'Ingreso invitado',
     onVolver: () => navegarA('/login'),
   });
   container.querySelector('[data-header]').append(header);
@@ -183,6 +183,7 @@ export function render(container) {
         descripcion: 'Es el código que está en la puerta del local.',
         textoBoton: 'Escanear código',
         nombreObjeto: 'código',
+        variante: 'acceso',
         onLectura: async (contenido) => {
           try {
             const esValido = await validarQrIngreso(contenido);
