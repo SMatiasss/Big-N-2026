@@ -5,7 +5,7 @@ import { crearPantallaJuego, mostrarError, mostrarResultado } from '../juego-bas
 const hamburguesa = '<span class="juego-hu15__hamburguesa" role="img" aria-label="Hamburguesa">🍔</span>';
 
 export function render(container) {
-  const vista = crearPantallaJuego(container, { titulo: 'Caja premiada', instrucciones: 'Elegí una caja. Solo una contiene el premio del 15%.', tableroClase: 'juego-hu15__cajas', tableroHtml: [1,2,3].map(i => `<button type="button" data-caja="${i}" aria-label="Caja ${i}">▣<small>${i}</small></button>`).join('') });
+  const vista = crearPantallaJuego(container, { titulo: 'Caja premiada', instrucciones: 'Elegí una caja. Solo una contiene el premio del 15%.', tableroClase: 'juego-hu15__cajas', tableroHtml: [1,2,3].map(i => `<button type="button" data-caja="${i}" aria-label="Caja ${i}"><span class="juego-hu15__caja-icono" aria-hidden="true">▣</span><small>Caja ${i}</small></button>`).join('') });
   let ocupada = false;
   async function elegir(boton) {
     if (ocupada) return; ocupada = true;
@@ -14,7 +14,7 @@ export function render(container) {
       const resultado = await jugar({ juegoId: 2, eleccion: Number(boton.dataset.caja) });
       vista.tablero.querySelectorAll('button').forEach((b, i) => {
         const esPremiada = i + 1 === resultado.objetivo;
-        b.innerHTML = esPremiada ? hamburguesa : '<span aria-hidden="true">×</span>';
+        b.innerHTML = `${esPremiada ? hamburguesa : '<span class="juego-hu15__caja-fallo" aria-hidden="true">×</span>'}<small>Caja ${i + 1}</small>`;
         b.classList.toggle('premiada', esPremiada);
         b.classList.toggle('elegida', b === boton);
       });
@@ -24,5 +24,5 @@ export function render(container) {
     vista.repetir.hidden = false;
   }
   vista.tablero.querySelectorAll('[data-caja]').forEach(b => b.addEventListener('click', () => elegir(b)));
-  vista.repetir.addEventListener('click', () => { ocupada = false; vista.repetir.hidden = true; vista.resultado.textContent = 'Nueva partida recreativa lista.'; vista.tablero.querySelectorAll('button').forEach((b,i) => { b.disabled = false; b.classList.remove('premiada', 'elegida'); b.innerHTML = `▣<small>${i+1}</small>`; }); });
+  vista.repetir.addEventListener('click', () => { ocupada = false; vista.repetir.hidden = true; vista.resultado.textContent = 'Nueva partida recreativa lista.'; vista.tablero.querySelectorAll('button').forEach((b,i) => { b.disabled = false; b.classList.remove('premiada', 'elegida'); b.innerHTML = `<span class="juego-hu15__caja-icono" aria-hidden="true">▣</span><small>Caja ${i+1}</small>`; }); });
 }

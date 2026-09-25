@@ -4,7 +4,7 @@ import { PARES_MEMOTEST, revelarMemotest } from '../../../utils/juegos.js';
 import { crearPantallaJuego, mostrarError, mostrarResultado } from '../juego-base.js';
 
 export function render(container) {
-  const vista = crearPantallaJuego(container, { titulo: 'Memotest', instrucciones: 'Encontrá uno de los dos pares. Tu primera elección puede darte el 10%.', tableroClase: 'juego-hu15__cartas', tableroHtml: [0,1,2,3].map(i => `<button type="button" data-carta="${i}" aria-label="Carta ${i+1}"><span>?</span></button>`).join('') });
+  const vista = crearPantallaJuego(container, { titulo: 'Memotest', instrucciones: 'Encontrá uno de los dos pares. Tu primera elección puede darte el 10%.', tableroClase: 'juego-hu15__cartas', tableroHtml: [0,1,2,3].map(i => `<button type="button" data-carta="${i}" aria-label="Carta ${i+1}"><span>?</span><small>Carta ${i+1}</small></button>`).join('') });
   let elegidas = [];
   let ocupada = false;
 
