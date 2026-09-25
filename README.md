@@ -41,11 +41,11 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | 15 | Acceder a juegos y obtener descuentos             | Cespedes     | 15/06 | 15/06 | feature/hu15-juegos-descuentos | Finalizada |
 | 16 | Recepción de productos en cocina                  | Romero | 16/09 | 16/09 | feature/14-16-17 | Finalizada |
 | 17 | Recepción de productos en bar                     | Romero       | 16/09 | 16/09 | feature/14-16-17 | Finalizada |
-| 18 | Finalizar la preparación del pedido               | Soria        | 12/09 | - | - | En curso |
-| 19 | Entregar y recibir el pedido                      | Soria        | 12/09 | - | - | En curso |
+| 18 | Finalizar la preparación del pedido               | Soria        | 12/09 | 25/09 | - | Finalizada |
+| 19 | Entregar y recibir el pedido                      | Soria        | 12/09 | 25/09 | - | Finalizada |
 | 20 | Realizar encuesta y visualizar resultados         | Cespedes     | 18/09 | 19/09 | feature/hu20-encuestas-resultados | Finalizada |
 | 21 | Solicitar y generar la cuenta                     | Terenghi Goy       | 17/09 | 17/09 | feature/21-solicitar-cuenta | Finalizada |
-| 22 | Confirmar el pago y liberar la mesa               | Soria        | 17/09 | - | - | En curso |
+| 22 | Confirmar el pago y liberar la mesa               | Soria        | 17/09 | 25/09 | - | Finalizada |
 
 
 ## Reasignaciones

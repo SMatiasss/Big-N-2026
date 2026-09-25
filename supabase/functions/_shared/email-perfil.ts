@@ -94,56 +94,91 @@ export async function enviarEmailPerfil(req: Request, tipo: TipoCorreo) {
     ? 'Tu registro fue aprobado | Big N'
     : 'Actualización de tu registro | Big N';
   
-  const colorPrincipal = esAprobacion ? '#5D6C31' : '#C26B28';
+  // Paleta de la app (src/styles/variables.css, "formulario oliva"). El TP no
+  // admite fondos blancos ni "claritos", ni negros ni "oscuritos", ni modo
+  // oscuro: el correo usa los mismos verdes de la app. Contrastes verificados:
+  // crema sobre la tarjeta 7,4:1; texto suave 4,5:1; crema sobre el verde del
+  // fondo 5,4:1; crema sobre terracota 3,8:1 (sólo en texto grande, 19px bold).
+  const COLOR = {
+    fondo: '#606c38',        // fondo de pantalla de la app
+    tarjeta: '#4a572c',      // tarjetas y campos
+    borde: '#6e6939',
+    dorado: '#dda15e',       // acento principal
+    terracota: '#bc6c25',    // acento fuerte
+    crema: '#fefae0',        // texto principal
+    suave: '#c8c8a0',        // texto secundario
+  };
+
+  // La franja de arriba distingue un correo del otro. Los títulos van siempre
+  // en crema: la terracota sobre la tarjeta no llega al contraste (2:1).
+  const colorAcento = esAprobacion ? COLOR.dorado : COLOR.terracota;
   const tituloHeader = esAprobacion ? '¡Tu registro ha sido aprobado!' : 'Estado de tu solicitud de registro';
 
-  // Usamos referencia CID local para que Gmail despliegue el adjunto inline
+  const fuenteTitulos = "'Outfit', 'Trebuchet MS', Arial, sans-serif";
+  const fuenteTexto = "'Geist', 'Segoe UI', Roboto, Arial, sans-serif";
+
+  // Usamos referencia CID local para que Gmail despliegue el adjunto inline.
+  // Los colores van también como atributo bgcolor: algunos clientes de correo
+  // ignoran background-color en tablas.
   const htmlContent = `
     <!DOCTYPE html>
     <html lang="es">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- El TP no admite modo oscuro: se le pide al cliente de correo que no
+           invierta los colores. -->
+      <meta name="color-scheme" content="light">
+      <meta name="supported-color-schemes" content="light">
+      <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&family=Outfit:wght@700&display=swap" rel="stylesheet">
+      <style>:root { color-scheme: light; supported-color-schemes: light; }</style>
     </head>
-    <body style="margin: 0; padding: 0; background-color: #f4f5f0; font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #2d3748;">
-      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; background-color: #f4f5f0; padding: 40px 10px;">
+    <body bgcolor="${COLOR.fondo}" style="margin: 0; padding: 0; background-color: ${COLOR.fondo}; font-family: ${fuenteTexto}; color: ${COLOR.crema};">
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="${COLOR.fondo}" style="table-layout: fixed; background-color: ${COLOR.fondo}; padding: 36px 12px;">
         <tr>
           <td align="center">
-            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 550px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-top: 6px solid ${colorPrincipal};">
-              
-              <!-- Logo via CID Inline -->
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="${COLOR.tarjeta}" style="max-width: 550px; background-color: ${COLOR.tarjeta}; border: 1px solid ${COLOR.borde}; border-top: 6px solid ${colorAcento}; border-radius: 16px; overflow: hidden;">
+
+              <!-- Logo en un círculo crema, como en el inicio de la app: el
+                   gorro es verde oliva y sobre la tarjeta no se vería. -->
               <tr>
-                <td align="center" style="padding: 32px 20px 10px 20px;">
-                  <img src="cid:logo_bign_inline" alt="Big N Logo" width="110" style="display: block; width: 110px; height: auto; border: 0;" />
+                <td align="center" style="padding: 32px 20px 12px 20px;">
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td align="center" valign="middle" bgcolor="${COLOR.crema}" width="116" height="116" style="width: 116px; height: 116px; background-color: ${COLOR.crema}; border-radius: 58px;">
+                        <img src="cid:logo_bign_inline" alt="Big N" width="104" height="104" style="display: block; width: 104px; height: 104px; border: 0;" />
+                      </td>
+                    </tr>
+                  </table>
                 </td>
               </tr>
 
               <!-- Encabezado -->
               <tr>
                 <td align="center" style="padding: 10px 30px;">
-                  <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: ${colorPrincipal}; text-align: center;">${tituloHeader}</h1>
+                  <h1 style="margin: 0; font-family: ${fuenteTitulos}; font-size: 24px; font-weight: 700; line-height: 1.25; color: ${COLOR.crema}; text-align: center;">${tituloHeader}</h1>
                 </td>
               </tr>
 
               <!-- Contenido principal -->
               <tr>
-                <td style="padding: 20px 30px 30px 30px; font-size: 15px; line-height: 1.6; color: #4a5568;">
-                  <p style="margin-top: 0; font-size: 16px;">Hola <strong>${nombre}</strong>,</p>
-                  
+                <td style="padding: 20px 30px 30px 30px; font-size: 15px; line-height: 1.6; color: ${COLOR.crema};">
+                  <p style="margin-top: 0; font-size: 16px; color: ${COLOR.crema};">Hola <strong>${nombre}</strong>,</p>
+
                   ${esAprobacion ? `
-                    <p style="font-size: 15px; margin-bottom: 20px;">Nos alegra informarte que tu solicitud de registro ha sido revisada y <strong>aceptada</strong> por nuestro equipo. Ya podés iniciar sesión en la aplicación y disfrutar de nuestros servicios.</p>
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 25px 0;">
+                    <p style="font-size: 15px; margin-bottom: 20px; color: ${COLOR.crema};">Nos alegra informarte que tu solicitud de registro ha sido revisada y <strong>aceptada</strong> por nuestro equipo. Ya podés iniciar sesión en la aplicación y disfrutar de nuestros servicios.</p>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 25px 0;">
                       <tr>
                         <td align="center">
-                          <span style="background-color: #5D6C31; color: #ffffff; padding: 12px 28px; font-size: 15px; font-weight: 600; border-radius: 6px; display: inline-block;">Cuenta Activa</span>
+                          <span style="background-color: ${COLOR.terracota}; color: ${COLOR.crema}; padding: 12px 30px; font-family: ${fuenteTitulos}; font-size: 19px; font-weight: 700; border-radius: 10px; display: inline-block;">Cuenta activa</span>
                         </td>
                       </tr>
                     </table>
                   ` : `
-                    <p style="font-size: 15px; margin-bottom: 20px;">Te informamos que tu solicitud de registro <strong>no ha sido aprobada</strong> en este momento tras la revisión del supervisor.</p>
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 20px 0; background-color: #fffaf0; border-left: 4px solid #C26B28; border-radius: 4px;">
+                    <p style="font-size: 15px; margin-bottom: 20px; color: ${COLOR.crema};">Te informamos que tu solicitud de registro <strong>no ha sido aprobada</strong> en este momento tras la revisión del supervisor.</p>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="${COLOR.fondo}" style="margin: 20px 0; background-color: ${COLOR.fondo}; border-left: 4px solid ${COLOR.terracota}; border-radius: 6px;">
                       <tr>
-                        <td style="padding: 15px; font-size: 14px; color: #744210;">
+                        <td style="padding: 15px; font-size: 14px; line-height: 1.5; color: ${COLOR.crema};">
                           Para más detalles o resolver dudas sobre tu cuenta, te pedimos que te comuniques directamente con el equipo.
                         </td>
                       </tr>
@@ -154,8 +189,8 @@ export async function enviarEmailPerfil(req: Request, tipo: TipoCorreo) {
 
               <!-- Pie de página -->
               <tr>
-                <td align="center" style="background-color: #fafafa; padding: 20px 30px; font-size: 12px; color: #a0aec0; border-top: 1px solid #edf2f7;">
-                  <p style="margin: 0; font-size: 12px;">© Big N. Todos los derechos reservados.</p>
+                <td align="center" bgcolor="${COLOR.tarjeta}" style="background-color: ${COLOR.tarjeta}; padding: 18px 30px; border-top: 1px solid ${COLOR.borde};">
+                  <p style="margin: 0; font-size: 12px; color: ${COLOR.suave};">© Big N. Todos los derechos reservados.</p>
                 </td>
               </tr>
 
