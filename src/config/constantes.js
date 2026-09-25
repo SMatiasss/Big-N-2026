@@ -1,21 +1,18 @@
 // Roles, estados y nombres de tablas: un solo lugar para no repetir strings sueltos.
 
+// Exactamente los valores del enum rol_usuario (01_schema.sql), ni uno más:
+// un rol que no existe en la base hace que cualquier comparación contra él
+// sea siempre falsa sin que nada avise. tests/roles-enum.test.js lo verifica.
+// Los sectores de trabajo ("cocina", "bar") no son roles: ver SECTORES.
 export const ROLES = {
-  ADMIN: 'admin',
   DUENO: 'dueno',
   SUPERVISOR: 'supervisor',
+  METRE: 'metre',
   MOZO: 'mozo',
   // El rol identifica al empleado autorizado para trabajar en cocina.
   COCINERO: 'cocinero',
   // El cantinero es el perfil autorizado para administrar bebidas del bar.
   CANTINERO: 'cantinero',
-  // Se conserva por compatibilidad: "cocina" es un sector, no el rol cocinero.
-  COCINA: 'cocina',
-  BAR: 'bar',
-  METRE: 'metre',
-  CLIENTE: 'cliente',
-  // Los dos valores reales de cliente en el enum rol_usuario (01_schema.sql).
-  // ROLES.CLIENTE ('cliente') no coincide con ninguno de los dos y no se usa.
   CLIENTE_REGISTRADO: 'cliente_registrado',
   CLIENTE_ANONIMO: 'cliente_anonimo',
 };
@@ -33,8 +30,7 @@ export const ETIQUETAS_ROL = {
   [ROLES.CLIENTE_ANONIMO]: 'Cliente anónimo',
 };
 
-// Roles asignables desde el alta de empleado: excluye ADMIN/COCINA/BAR/CLIENTE,
-// que no son valores válidos de la columna perfiles.rol en la base (ver rol_usuario en 01_schema.sql).
+// Roles asignables desde el alta de empleado: todos menos los dos de cliente.
 export const ROLES_EMPLEADO = [
   ROLES.DUENO,
   ROLES.SUPERVISOR,

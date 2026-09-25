@@ -194,28 +194,65 @@
   background: var(--fondo-card);
   border: 2px dashed var(--acento);
   border-radius: clamp(20px, 6vw, 28px);
+
+  container-type: inline-size;
 }
+
+/* ── Ícono + texto con el MISMO margen en los cuatro lados ────────────
+   El bloque (cámara + "Tomar o subir foto") mide exactamente 80% x 80% del
+   cuadrado, centrado: queda un 10% libre en cada lado.
+
+   Todo se mide contra el ancho del cuadrado: el ícono en % (el ancho del
+   placeholder es el del cuadrado, sin padding) y el texto en cqi (el
+   cuadrado es contenedor de consultas). Los márgenes verticales en % también
+   se calculan contra el ANCHO, así que todo escala junto.
+
+   Los números salen de medir la fuente real (Geist 600, la que carga la app)
+   con HarfBuzz, el mismo motor de texto de Chrome:
+     - Ícono: 80% de ancho. El dibujo mide 24 x 20 dentro de un viewBox de
+       24 x 24, así que ocupa 80 x 20/24 = 66,667%; las franjas vacías de
+       arriba y abajo (2/24 del lado cada una = 6,667%) se recortan con
+       margen negativo, si no sumaban aire sólo en vertical.
+     - Texto: la tinta de "Tomar o subir foto" mide 8,629em de ancho
+       (con kerning), así que 80% / 8,629 = 9,2711cqi de tamaño. De alto la
+       tinta ocupa 0,731em (de la panza de la "o", -0,012, al tope de la "b"
+       y la "f", 0,719). Con line-height 1 y las métricas de la fuente
+       (ascendente 1,005 / descendente 0,295) la tinta empieza 0,136em por
+       debajo del tope de la línea y termina 0,133em antes del final: esos
+       márgenes negativos dejan la caja igual a la tinta.
+     - Separación: 80 - 66,667 - 6,777 (0,731 x 9,2711) = 6,556%.
+   Si se cambia la fuente, el peso o el texto, hay que recalcular. */
 
 .ingreso-anonimo .selector-foto-mesa__placeholder {
-  gap: clamp(12px, 2dvh, 20px);
-  padding: 0 12px;
+  gap: 0;
+  padding: 0;
 }
 
-/* En porcentaje y no en px: el ícono acompaña al cuadro, que ocupa todo el
-   ancho. Al 62% llena el recuadro de verdad; el cálculo de lo que entra es
-   62% del lado + el gap + una o dos líneas de texto, que sobre un cuadrado
-   del ancho de la pantalla deja margen de sobra. */
 .ingreso-anonimo .cuadro-foto__icono {
-  width: 62%;
+  width: 80%;
   max-width: none;
-  height: 62%;
+  height: auto;
   max-height: none;
+  aspect-ratio: 1;
+
+  margin-block: -6.6667%;
 }
 
 .ingreso-anonimo .selector-foto-mesa__texto {
-  font-size: clamp(22px, 6.2vw, 30px);
-  line-height: 1.2;
+  /* Respaldo para un WebView sin container queries (Chrome < 105): mide
+     contra la pantalla, que es aproximadamente el ancho del cuadrado. */
+  font-size: calc((100vw - 44px) * 0.092711);
+  font-size: 9.2711cqi;
+  line-height: 1;
+  white-space: nowrap;
   text-align: center;
+
+  margin-top: calc(6.5561% - 0.136em);
+  margin-bottom: -0.133em;
+
+  /* La tinta no está centrada en su caja (11 de sangría a la izquierda, 39 a
+     la derecha): se corre 0,014em para centrar la tinta, no la caja. */
+  transform: translateX(0.014em);
 }
 
 

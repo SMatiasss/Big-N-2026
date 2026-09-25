@@ -29,9 +29,14 @@ export async function listarCarta() {
 // Devuelve platos y bebidas juntos: la pantalla separa por tipo en sus pestañas
 // sin volver a pedir datos al cambiar de solapa.
 export async function listarCartaConFotos() {
+  // Sólo los activos: un producto dado de baja no se borra (lo siguen
+  // referenciando pedidos viejos, ver 03_baja_logica.sql) pero nunca debe
+  // aparecer en la carta ni en la gestión. La RLS de productos es
+  // "using (true)", así que el filtro tiene que estar acá.
   const { data, error } = await getSupabase()
     .from(TABLAS.PRODUCTOS)
     .select(`*, ${TABLAS.PRODUCTO_FOTOS}(url, orden)`)
+    .eq('activo', true)
     .order('nombre', { ascending: true });
   if (error) throw error;
 

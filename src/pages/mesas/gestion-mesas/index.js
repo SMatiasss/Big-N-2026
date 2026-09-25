@@ -39,10 +39,6 @@ export function render(container) {
               <span class="leyenda-punto leyenda-punto--ocupada" aria-hidden="true"></span>
               <span>Ocupada</span>
             </span>
-            <span class="leyenda-item">
-              <span class="leyenda-punto leyenda-punto--reservada" aria-hidden="true"></span>
-              <span>Reservada</span>
-            </span>
           </div>
 
           <!-- ESTADO DE CARGA -->

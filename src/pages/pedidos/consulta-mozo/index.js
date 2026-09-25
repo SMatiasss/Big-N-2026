@@ -27,9 +27,8 @@ export async function render(container) {
     <section class="consulta-mozo__conversacion" data-conversacion>
       <h2 data-mesa></h2><button type="button" data-anteriores hidden>Ver mensajes anteriores</button>
       <div class="hu11__chat" role="log" aria-label="Mensajes" aria-live="polite"></div>
-      <form class="hu11__form" hidden><label><span class="sr-only">Tu mensaje</span><textarea name="mensaje" required rows="1" aria-label="Tu mensaje" placeholder="Escribe un mensaje..."></textarea></label>
+      <form class="hu11__form" hidden><p class="consulta-mozo__aviso">Recibirás un aviso cuando haya un nuevo mensaje.</p><label><span class="sr-only">Tu mensaje</span><textarea name="mensaje" required rows="1" aria-label="Tu mensaje" placeholder="Escribe un mensaje..."></textarea></label>
         <button type="submit" aria-label="Enviar mensaje">→</button></form>
-      <p class="consulta-mozo__aviso">Recibirás un aviso cuando haya un nuevo mensaje.</p>
     </section>
   </main></ion-content>`;
   const raiz = container.firstElementChild;
