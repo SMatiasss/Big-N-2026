@@ -233,6 +233,12 @@
 .alta-producto .selector-fotos-producto__error {
   display: block;
 
+  height: calc(14px * var(--ap-ajuste, 1));
+  min-height: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
   padding: calc(6px * var(--ap-ajuste, 1)) 2px 0;
 
   font-size: calc(11px * var(--ap-ajuste, 1));
@@ -373,11 +379,16 @@
    ========================================================= */
 
 .alta-producto .campo-formulario ion-note {
+  /* Alto fijo de una línea reservado aunque esté vacía: que aparezca un
+     error no debe empujar el formulario ni provocar scroll. */
   display: block;
 
-  min-height: 0;
-
+  height: 16px;
   padding: 4px 2px 0;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
   font-size: 12px;
   line-height: 16px;

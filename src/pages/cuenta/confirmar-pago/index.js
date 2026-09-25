@@ -22,6 +22,7 @@ import {
   suscribirseACuentasDelSalon,
 } from '../../../services/cuentas.service.js';
 import { formatearMoneda } from '../../../utils/formato.js';
+import { vibrarError } from '../../../utils/vibracion.js';
 import { navegarA } from '../../../router.js';
 
 const FILTROS = {
@@ -200,6 +201,9 @@ export function render(container) {
       pintar();
     } catch (error) {
       if (!lista.isConnected) return;
+      // Este error se muestra en la pantalla, no con el toast, así que la
+      // vibración del requisito excluyente hay que pedirla acá.
+      void vibrarError();
       estadoCarga.hidden = true;
       lista.hidden = true;
       mensaje.hidden = false;

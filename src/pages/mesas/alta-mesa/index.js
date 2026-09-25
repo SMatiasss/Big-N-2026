@@ -22,13 +22,13 @@ function validarFormulario(datos, foto) {
   if (esCampoVacio(datos.numero)) {
     errores.numero = 'Ingresá el número de mesa.';
   } else if (!esEnteroPositivo(datos.numero)) {
-    errores.numero = 'El número debe ser un entero mayor que 0.';
+    errores.numero = 'Entero mayor a 0.';
   }
 
   if (esCampoVacio(datos.cantidad)) {
-    errores.cantidad = 'Ingresá la cantidad de comensales.';
+    errores.cantidad = 'Ingresá los asientos.';
   } else if (!esEnteroPositivo(datos.cantidad)) {
-    errores.cantidad = 'La cantidad debe ser un entero mayor que 0.';
+    errores.cantidad = 'Entero mayor a 0.';
   }
 
   if (esCampoVacio(datos.tipo) || !Object.values(TIPOS_MESA).includes(datos.tipo)) {

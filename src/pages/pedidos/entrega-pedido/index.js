@@ -19,6 +19,7 @@ import {
   suscribirseAPedidosEnCurso,
 } from '../../../services/pedidos.service.js';
 import { navegarA } from '../../../router.js';
+import { vibrarError } from '../../../utils/vibracion.js';
 
 const ETIQUETAS_SECTOR = {
   cocina: 'Cocina',
@@ -245,6 +246,9 @@ export function render(container) {
       pintar();
     } catch (error) {
       if (!lista.isConnected) return;
+      // Este error se muestra en la pantalla, no con el toast, así que la
+      // vibración del requisito excluyente hay que pedirla acá.
+      void vibrarError();
       estadoCarga.hidden = true;
       lista.hidden = true;
       mensaje.hidden = false;

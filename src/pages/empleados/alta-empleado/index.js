@@ -74,11 +74,11 @@ function validar(datos, foto) {
   }
 
   if (!esDniValido(datos.dni)) {
-    errores.dni = 'El DNI debe tener 7 u 8 dígitos.';
+    errores.dni = 'DNI de 7 u 8 dígitos.';
   }
 
   if (!esCuilValido(datos.cuil)) {
-    errores.cuil = 'Ingresá un CUIL válido de 11 dígitos.';
+    errores.cuil = 'CUIL de 11 dígitos.';
   }
 
   if (!esEmailValido(datos.email)) {
@@ -91,7 +91,7 @@ function validar(datos, foto) {
     )
   ) {
     errores.password =
-      'Usá al menos 8 caracteres, con mayúscula, minúscula y número.';
+      'Mín. 8 caracteres, con mayúscula, minúscula y número.';
   }
 
   if (!datos.confirmarPassword) {

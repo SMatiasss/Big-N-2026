@@ -14,6 +14,7 @@ import { mostrarToastError } from '../../../components/toast-error/toast-error.j
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { ESTADOS_ITEM, ESTADOS_PEDIDO, ROLES } from '../../../config/constantes.js';
 import { obtenerPerfilActual } from '../../../services/auth.service.js';
+import { vibrarError } from '../../../utils/vibracion.js';
 import {
   confirmarRecepcionPedido,
   obtenerMiPedidoEnCurso,
@@ -313,6 +314,9 @@ export function render(container) {
       }
     } catch (error) {
       if (!container.isConnected) return;
+      // Este error se muestra en la pantalla, no con el toast, así que la
+      // vibración del requisito excluyente hay que pedirla acá.
+      void vibrarError();
       estadoCarga.hidden = true;
       resumen.hidden = true;
       items.hidden = true;

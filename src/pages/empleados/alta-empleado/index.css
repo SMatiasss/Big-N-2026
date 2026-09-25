@@ -127,7 +127,7 @@
   box-sizing: border-box;
 
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 2;
   height: auto;
 
   margin: 0;
@@ -251,7 +251,7 @@
 
   width: 100%;
   min-width: 0;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 2;
   height: auto;
 
   margin: 0;
@@ -484,15 +484,20 @@
    ERRORES
    ========================================================= */
 
-/* Son ocho: aunque estén vacías, su padding superior se suma ocho veces. */
+/* Alto fijo de una línea reservado aunque esté vacía: que aparezca un error
+   no debe empujar el formulario ni provocar scroll. */
 .alta-empleado .campo-formulario ion-note {
   display: block;
 
-  min-height: 0;
-
+  height: calc(13px * var(--ae-ajuste, 1));
   padding: calc(2px * var(--ae-ajuste, 1)) 3px 0;
 
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
   font-size: calc(11px * var(--ae-ajuste, 1));
+  line-height: calc(13px * var(--ae-ajuste, 1));
 }
 
 .alta-empleado .campo-formulario--invalido input {

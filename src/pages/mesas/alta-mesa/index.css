@@ -298,13 +298,22 @@
   border-right: 1px solid var(--acento-secundario);
 }
 
-/* El <ion-note> de error del componente reserva un alto fijo (min-height +
-   padding-top) aunque esté vacío, lo que dejaba un hueco grande entre estos
-   botones y "Guardar Mesa". Ya se había reducido a la mitad (10px/4px) y
-   ahora se vuelve a reducir a la mitad de eso. */
+/* Error de la foto: una línea de alto fijo reservada aunque esté vacía,
+   para que al aparecer no empuje "Guardar Mesa" ni provoque scroll. */
 .alta-mesa .selector-foto-mesa__error {
-  min-height: 3px;
+  height: calc(14px * var(--am-ajuste, 1));
+  min-height: 0;
   padding-top: 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: calc(11px * var(--am-ajuste, 1));
+  line-height: calc(14px * var(--am-ajuste, 1));
+}
+
+/* Rectangular en vez de cuadrado: libera alto para los errores. */
+.alta-mesa .cuadro-foto.cuadro-foto {
+  aspect-ratio: 3 / 2;
 }
 
 /* BOTÓN SUBMIT */
@@ -350,15 +359,17 @@
 
 /* ERRORES */
 .campo-error {
-  display: none;
-  font-size: 13px;
-  margin-top: 3px;
+  /* Alto fijo de una línea reservado aunque esté vacío: que aparezca un
+     error no debe empujar el formulario ni provocar scroll. */
+  display: block;
+  height: calc(14px * var(--am-ajuste, 1));
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: calc(11px * var(--am-ajuste, 1));
+  line-height: calc(14px * var(--am-ajuste, 1));
   font-family: var(--fuente-geist);
   color: #ef4444;
-}
-
-.campo-formulario--invalido .campo-error {
-  display: block;
 }
 
 .campo-formulario--invalido .campo-control,

@@ -69,7 +69,7 @@ function validar(datos, foto) {
     )
   ) {
     errores.password =
-      'Usá al menos 8 caracteres, con mayúscula, minúscula y número.';
+      'Mín. 8 caracteres, con mayúscula, minúscula y número.';
   }
 
   if (!datos.confirmarPassword) {
