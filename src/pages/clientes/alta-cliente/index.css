@@ -22,11 +22,16 @@
 
   --sombra-submit: var(--form-sombra-submit);
 
-  /* Mismas proporciones que "crear empleado", pero con clamp() en vez del
-     factor --ae-ajuste medido por JS: esta pantalla tiene menos campos (sin
-     CUIL ni Perfil) y entra cómoda escalando directo contra el viewport. */
-  --ac-medio-icono: clamp(56px, 9dvh, 78px);
-  --ac-campo-alto: clamp(40px, 5.4dvh, 46px);
+  /* --ac-ajuste lo calcula lista-ajustada.js (ajustarFormulario) MIDIENDO el
+     alto real disponible bajo el header, igual que --ae-ajuste en
+     alta-empleado. Antes acá había clamp()/dvh: estimar contra el viewport
+     no contempla el alto real del header (que cambia si el título ocupa dos
+     líneas) ni la barra del navegador, así que en algunos teléfonos la
+     pantalla terminaba con scroll. Vale 1 si entra sin ajustar; si no,
+     un número menor que escala cada alto/fuente/margen de esta hoja vía
+     calc(valor-base * var(--ac-ajuste, 1)). */
+  --ac-medio-icono: calc(60px * var(--ac-ajuste, 1));
+  --ac-campo-alto: calc(44px * var(--ac-ajuste, 1));
 
   background: var(--fondo-empleado);
   color: var(--texto-claro-empleado);
@@ -56,7 +61,7 @@
   max-width: 440px;
 
   margin: 0 auto;
-  padding: clamp(14px, 3dvh, 25px) 18px;
+  padding: calc(16px * var(--ac-ajuste, 1)) 18px;
 }
 
 
@@ -83,7 +88,14 @@
 
   width: 100%;
 
-  margin: 0 auto clamp(12px, 2.4dvh, 18px);
+  /* Los dos recuadros sacan su alto del ancho (aspect-ratio 3/2), así que no
+     se achican solos con --ac-ajuste aunque son lo más alto de la pantalla.
+     Acotando el ancho del par también bajan de alto, y siguen siendo
+     rectángulos. El 0.6 + 0.4x los hace achicar más despacio que el resto,
+     para no deformar el diseño de referencia. */
+  max-width: calc(100% * (0.6 + 0.4 * var(--ac-ajuste, 1)));
+
+  margin: 0 auto calc(16px * var(--ac-ajuste, 1));
 }
 
 .alta-cliente .selector-avatar-foto {
@@ -327,7 +339,7 @@
 
 .alta-cliente .campo-formulario {
   width: 100%;
-  margin: 0 0 clamp(7px, 1.4dvh, 9px);
+  margin: 0 0 calc(8px * var(--ac-ajuste, 1));
 }
 
 .alta-cliente .campo-formulario label {
@@ -335,11 +347,11 @@
   box-sizing: border-box;
 
   width: 100%;
-  margin: 0 0 3px;
+  margin: 0 0 calc(3px * var(--ac-ajuste, 1));
 
   color: var(--texto-claro-empleado);
 
-  font-size: clamp(12px, 1.6dvh, 13px);
+  font-size: calc(13px * var(--ac-ajuste, 1));
   line-height: 1.1;
   text-transform: uppercase;
 }
@@ -367,7 +379,7 @@
   color: var(--texto-claro-empleado) !important;
 
   font-family: var(--fuente-geist) !important;
-  font-size: clamp(14px, 1.9dvh, 15px) !important;
+  font-size: calc(15px * var(--ac-ajuste, 1)) !important;
   font-weight: 400 !important;
 }
 
@@ -434,20 +446,20 @@
 .alta-cliente .campo-formulario ion-note {
   display: block;
 
-  height: 12px;
-  padding: 2px 3px 0;
+  height: calc(15px * var(--ac-ajuste, 1));
+  padding: calc(2px * var(--ac-ajuste, 1)) 3px 0;
 
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  font-size: clamp(10px, 2.8vw, 12px);
-  line-height: 12px;
+  font-size: calc(11px * var(--ac-ajuste, 1));
+  line-height: calc(13px * var(--ac-ajuste, 1));
 }
 
 .alta-cliente .campo-formulario--invalido input {
-  border-color: #ffd0bf !important;
-  outline: 1px solid #ffd0bf !important;
+  border-color: var(--color-error-texto) !important;
+  outline: 1px solid var(--color-error-texto) !important;
 }
 
 
@@ -523,10 +535,10 @@
 
 .alta-cliente__submit {
   width: 100%;
-  height: clamp(44px, 6dvh, 50px);
-  min-height: clamp(44px, 6dvh, 50px);
+  height: calc(50px * var(--ac-ajuste, 1));
+  min-height: calc(50px * var(--ac-ajuste, 1));
 
-  margin: clamp(14px, 2.6dvh, 20px) 0 0;
+  margin: calc(20px * var(--ac-ajuste, 1)) 0 0;
 
   --background: var(--acento-empleado) !important;
   --background-hover: var(--acento-empleado) !important;
@@ -538,7 +550,7 @@
   --box-shadow: var(--sombra-submit) !important;
 
   font-family: var(--fuente-outfit) !important;
-  font-size: clamp(16px, 2.2dvh, 19px) !important;
+  font-size: calc(19px * var(--ac-ajuste, 1)) !important;
   font-weight: 700 !important;
 
   text-transform: none !important;
@@ -548,7 +560,7 @@
   box-sizing: border-box;
 
   width: 100%;
-  height: clamp(44px, 6dvh, 50px);
+  height: calc(50px * var(--ac-ajuste, 1));
 
   padding: 0;
 

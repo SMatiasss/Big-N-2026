@@ -99,7 +99,7 @@ export function render(container) {
                   placeholder="14"
                   required
                 >
-                <span class="campo-error" data-error="numero" role="alert"></span>
+                <span class="campo-error texto-error" data-error="numero" role="alert"></span>
               </div>
 
               <div class="campo-formulario" data-campo="cantidad">
@@ -123,7 +123,7 @@ export function render(container) {
                     <button type="button" class="asientos-step-btn asientos-step-btn--down" aria-label="Disminuir asientos">▼</button>
                   </div>
                 </div>
-                <span class="campo-error" data-error="cantidad" role="alert"></span>
+                <span class="campo-error texto-error" data-error="cantidad" role="alert"></span>
               </div>
             </div>
 
@@ -154,7 +154,7 @@ export function render(container) {
                 </button>
               </div>
               <input type="hidden" id="tipo-mesa" name="tipo" value="${TIPOS_MESA.ESTANDAR}">
-              <span class="campo-error" data-error="tipo" role="alert"></span>
+              <span class="campo-error texto-error" data-error="tipo" role="alert"></span>
             </div>
 
             <!-- DISPONIBILIDAD INICIAL -->

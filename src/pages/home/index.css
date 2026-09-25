@@ -79,11 +79,14 @@
   gap: clamp(6px, 1dvh, 10px);
 }
 .home__acciones[data-cantidad="1"] { grid-template-columns:1fr; }
-.home__acciones[data-cantidad="1"] .home__accion { min-height:clamp(260px, 45dvh, 430px); padding:clamp(24px, 5dvh, 44px); }
-.home__acciones[data-cantidad="1"] .home__accion svg { width:clamp(72px, 14dvh, 118px); height:clamp(72px, 14dvh, 118px); margin-bottom:clamp(18px, 3dvh, 28px); }
-.home__acciones[data-cantidad="1"] .home__accion strong { font-size:clamp(24px, 6vw, 32px); }
-.home__acciones[data-cantidad="1"] .home__accion span { max-width:300px; margin-top:clamp(10px,2dvh,18px); color:#c8c8a0; font-size:clamp(17px,4.6vw,21px); line-height:1.35; }
-.home__acciones[data-cantidad="1"] .home__accion[data-accion="ingreso-local"] svg { box-sizing:content-box; padding:clamp(20px,3dvh,28px); border-radius:24px; background:#283618; }
+/* Tarjeta única (el cliente que sólo puede ingresar al local): el contenido
+   se agranda y el padding baja, para que el ícono y los textos llenen el
+   cuadro en vez de quedar chicos en el medio con aire alrededor. */
+.home__acciones[data-cantidad="1"] .home__accion { min-height:clamp(260px, 45dvh, 430px); padding:clamp(14px, 2.4dvh, 24px); }
+.home__acciones[data-cantidad="1"] .home__accion svg { width:clamp(112px, 22dvh, 180px); height:clamp(112px, 22dvh, 180px); margin-bottom:clamp(14px, 2.4dvh, 22px); }
+.home__acciones[data-cantidad="1"] .home__accion strong { font-size:clamp(30px, 7.8vw, 42px); line-height:1.1; }
+.home__acciones[data-cantidad="1"] .home__accion span { max-width:none; margin-top:clamp(8px,1.6dvh,14px); color:#c8c8a0; font-size:clamp(20px,5.4vw,26px); line-height:1.3; }
+.home__acciones[data-cantidad="1"] .home__accion[data-accion="ingreso-local"] svg { box-sizing:content-box; padding:clamp(18px,2.8dvh,30px); border-radius:28px; background:#283618; }
 .home__accion {
   position: relative;
   display: flex;
@@ -209,7 +212,7 @@
 }
 .home__error {
   min-height: 20px;
-  color: #ffd0bf;
+  color: var(--color-error-texto);
   font-size: var(--text-sm);
   text-align: center;
 }

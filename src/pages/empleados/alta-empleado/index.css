@@ -489,7 +489,7 @@
 .alta-empleado .campo-formulario ion-note {
   display: block;
 
-  height: calc(13px * var(--ae-ajuste, 1));
+  height: calc(15px * var(--ae-ajuste, 1));
   padding: calc(2px * var(--ae-ajuste, 1)) 3px 0;
 
   overflow: hidden;
@@ -501,8 +501,8 @@
 }
 
 .alta-empleado .campo-formulario--invalido input {
-  border-color: #ffd0bf !important;
-  outline: 1px solid #ffd0bf !important;
+  border-color: var(--color-error-texto) !important;
+  outline: 1px solid var(--color-error-texto) !important;
 }
 
 

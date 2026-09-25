@@ -207,7 +207,7 @@
   color: var(--acento);
 
   font-family: var(--fuente-outfit);
-  font-size: clamp(14px, 2.1vh, 18px);
+  font-size: clamp(18px, 2.8vh, 24px);
   font-weight: 700;
 }
 
@@ -217,7 +217,8 @@
 
   color: var(--texto-claro);
 
-  font-size: clamp(13px, 1.9vh, 16px);
+  font-size: clamp(16px, 2.4vh, 21px);
+  font-weight: 600;
   line-height: 1.3;
 
   overflow: hidden;
@@ -230,15 +231,15 @@
 .estado-pedido__sector {
   flex-shrink: 0;
 
-  padding: 3px 10px;
+  padding: 6px 14px;
 
   background: rgb(254 250 224 / 10%);
   border-radius: 999px;
 
   color: var(--texto-suave);
 
-  font-size: clamp(10px, 1.4vh, 12px);
-  font-weight: 600;
+  font-size: clamp(14px, 1.9vh, 17px);
+  font-weight: 700;
   line-height: 1.3;
   white-space: nowrap;
 }
@@ -300,26 +301,24 @@
 /* Punto 19: juegos, encuesta y cuenta, disponibles recién con el pedido
    ya recibido. */
 
-/* Flex y no una grilla de tres columnas fijas: al cliente anónimo se le saca
-   el botón de juegos (ver index.js) y los dos que quedan tienen que repartirse
-   el ancho completo, sin dejar un hueco. */
+/* Apilados y a todo el ancho, no en fila: en una fila de tres, cada botón
+   quedaba con ~100px y la letra tenía que bajar a 11px para entrar. En
+   columna cada uno usa el ancho completo y el texto entra cómodo.
+   Sigue siendo flex (y no una grilla de tres filas fijas) porque al cliente
+   anónimo se le saca el botón de juegos, ver index.js. */
 .estado-pedido__siguientes {
   display: flex;
-  gap: 8px;
-}
-
-.estado-pedido__siguientes button {
-  flex: 1;
-  min-width: 0;
+  flex-direction: column;
+  gap: clamp(7px, 1.2vh, 10px);
 }
 
 .estado-pedido__siguientes button {
   box-sizing: border-box;
 
   width: 100%;
-  height: clamp(38px, 5.4vh, 48px);
+  height: clamp(44px, 6vh, 54px);
 
-  padding: 0 4px;
+  padding: 0 12px;
 
   background: var(--fondo-card);
   border: 1px solid var(--acento);
@@ -328,7 +327,7 @@
   color: var(--texto-claro);
 
   font-family: var(--fuente-geist);
-  font-size: clamp(11px, 1.6vh, 14px);
+  font-size: clamp(16px, 2.3vh, 19px);
   font-weight: 600;
   line-height: 1.2;
 

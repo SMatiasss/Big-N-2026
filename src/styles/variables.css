@@ -12,6 +12,14 @@
   --color-primario-contraste: #fdf6f2;
   --color-secundario: #3e6259;
   --color-error: #b3392c;
+
+  /* Texto de error sobre los fondos oliva de la app (#606c38 y #4a572c).
+     El #ef4444 que usaban varias pantallas queda en 1.5:1 contra el fondo
+     verde: prácticamente ilegible. Este coral claro da 4.1:1 sobre el fondo
+     y 5.6:1 sobre las tarjetas, y no se confunde con el dorado del acento.
+     Se usa siempre vía la clase .texto-error (ver styles/globales.css), no
+     copiando el hex en cada pantalla. */
+  --color-error-texto: #ffd0bf;
   --color-borde: #ddd4c8;
   --fuente-outfit: 'Outfit', sans-serif;
   --fuente-geist: 'Geist', sans-serif;

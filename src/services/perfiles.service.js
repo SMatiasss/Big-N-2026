@@ -8,6 +8,46 @@ export async function altaPerfil(perfil) {
   return data;
 }
 
+/**
+ * Busca cuáles de los campos únicos de un perfil ya están ocupados.
+ *
+ * Se consulta ANTES de crear el usuario en Auth. El orden importa mucho: el
+ * alta crea primero el usuario de Auth y después inserta el perfil, y si ese
+ * INSERT rebota (DNI o CUIL repetidos) el usuario de Auth ya quedó creado y
+ * desde el cliente no hay forma de borrarlo. A partir de ahí ese correo
+ * queda quemado: cada reintento, aunque se corrijan todos los campos,
+ * responde "el correo ya está registrado".
+ *
+ * Devuelve un objeto sólo con los campos ocupados, ej. { dni: true }.
+ *
+ * @param {{dni?: string, cuil?: string, email?: string}} campos
+ * @returns {Promise<Record<string, true>>}
+ */
+export async function buscarConflictosPerfil({ dni, cuil, email } = {}) {
+  const supabase = getSupabase();
+
+  // Una consulta por campo, y no un único .or(): los valores de .eq() los
+  // escapa supabase-js, mientras que el filtro de .or() se arma como texto y
+  // habría que interpolar el correo dentro de la sintaxis de PostgREST.
+  const campos = Object.entries({ dni, cuil, email })
+    .filter(([, valor]) => valor);
+
+  const resultados = await Promise.all(
+    campos.map(async ([campo, valor]) => {
+      const { data, error } = await supabase
+        .from(TABLAS.PERFILES)
+        .select('id')
+        .eq(campo, valor)
+        .limit(1);
+
+      if (error) throw error;
+      return [campo, data.length > 0];
+    }),
+  );
+
+  return Object.fromEntries(resultados.filter(([, ocupado]) => ocupado));
+}
+
 // Traduce el MIME del File a una extensión admitida por el bucket.
 function obtenerExtensionImagen(archivo) {
   if (archivo.type === 'image/png') return 'png';

@@ -301,7 +301,7 @@
 /* Error de la foto: una línea de alto fijo reservada aunque esté vacía,
    para que al aparecer no empuje "Guardar Mesa" ni provoque scroll. */
 .alta-mesa .selector-foto-mesa__error {
-  height: calc(14px * var(--am-ajuste, 1));
+  height: calc(16px * var(--am-ajuste, 1));
   min-height: 0;
   padding-top: 2px;
   overflow: hidden;
@@ -369,11 +369,11 @@
   font-size: clamp(11px, 3vw, calc(13px * var(--am-ajuste, 1)));
   line-height: calc(14px * var(--am-ajuste, 1));
   font-family: var(--fuente-geist);
-  color: #ef4444;
+  color: var(--color-error-texto);
 }
 
 .campo-formulario--invalido .campo-control,
 .campo-formulario--invalido .campo-control-asientos,
 .campo-formulario--invalido .selector-segmentos {
-  border-color: #ef4444;
+  border-color: var(--color-error-texto);
 }

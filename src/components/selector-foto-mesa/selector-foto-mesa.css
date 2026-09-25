@@ -102,9 +102,9 @@
   padding-top: 8px;
   font-size: 13px;
   font-family: var(--fuente-geist, 'Geist', sans-serif);
-  color: #ef4444;
+  color: var(--color-error-texto);
 }
 
 .selector-foto-mesa--invalido .selector-foto-mesa__contenido {
-  border-color: #ef4444;
+  border-color: var(--color-error-texto);
 }

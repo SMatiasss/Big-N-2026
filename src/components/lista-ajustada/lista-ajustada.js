@@ -1,6 +1,11 @@
 import './lista-ajustada.css';
 
 // Lee un número de una custom property (ej. --la-items: 5).
+//
+// OJO: sólo sirve para números sueltos. getPropertyValue devuelve una custom
+// property como TEXTO sin resolver: con "--la-gap: clamp(10px, 1.8dvh, 16px)"
+// devuelve el clamp() tal cual, parseFloat da NaN y se caía al default 0.
+// Para los gaps se lee el valor ya resuelto por el navegador (ver abajo).
 function leerNumero(estilos, propiedad, porDefecto) {
   const valor = parseFloat(estilos.getPropertyValue(propiedad));
   return Number.isFinite(valor) ? valor : porDefecto;
@@ -35,12 +40,22 @@ function observar(elemento, aplicar) {
  * @param {HTMLElement} lista - El contenedor con la clase .lista-ajustada.
  * @param {object} [opciones]
  * @param {number} [opciones.paddingInferior] - Píxeles extra a reservar al final (ej. para sombras).
+ *
+ * OJO: la lista no debe tener padding vertical propio. scroll-snap alinea
+ * contra el "snapport", que es el PADDING box: con padding, N elementos
+ * dejan de llenar esa ventana y asoma el siguiente. Para dejar un hueco
+ * (ej. un carrito flotante) va un margin en la lista, no un padding.
  */
 export function ajustarLista(lista, { paddingInferior = 0 } = {}) {
   function aplicar() {
     const estilos = getComputedStyle(lista);
     const items = leerNumero(estilos, '--la-items', 0);
-    const gap = leerNumero(estilos, '--la-gap', 0);
+    // El gap real es el margin-bottom ya resuelto del primer elemento
+    // (.lista-ajustada > * { margin: 0 0 var(--la-gap) }). Así --la-gap puede
+    // ser un clamp()/calc() y la cuenta sigue exacta. El primero nunca es el
+    // último (sin margin) porque acá siempre hay más de --la-items hijos.
+    const primero = lista.firstElementChild;
+    const gap = primero ? parseFloat(getComputedStyle(primero).marginBottom) || 0 : 0;
     const alto = lista.clientHeight - paddingInferior;
 
     // Con pocos elementos no hace falta encajarlos: sin scroll no hay nada
@@ -70,7 +85,9 @@ export function ajustarLista(lista, { paddingInferior = 0 } = {}) {
 export function ajustarGrilla(grilla, { columnas = 3 } = {}) {
   function aplicar() {
     const estilos = getComputedStyle(grilla);
-    const gap = leerNumero(estilos, '--la-gap', 0);
+    // Resuelto por el navegador (gap: var(--la-gap)), por el mismo motivo
+    // que en ajustarLista: --la-gap puede no ser un número suelto.
+    const gap = parseFloat(estilos.rowGap) || 0;
     const alto = grilla.clientHeight;
     const ancho = grilla.clientWidth;
     if (!alto || !ancho) return;

@@ -89,7 +89,7 @@ export function render(container) {
                 placeholder="Ej. Margarita Rosaria"
                 required
               >
-              <ion-note color="danger" data-error="nombre" aria-live="polite"></ion-note>
+              <ion-note class="texto-error" data-error="nombre" aria-live="polite"></ion-note>
             </div>
 
             <div class="campo-formulario" data-campo="descripcion">
@@ -102,7 +102,7 @@ export function render(container) {
                 placeholder="Ej. Tequila, jugo de limón y sal"
                 required
               ></textarea>
-              <ion-note color="danger" data-error="descripcion" aria-live="polite"></ion-note>
+              <ion-note class="texto-error" data-error="descripcion" aria-live="polite"></ion-note>
             </div>
 
             <div class="campo-formulario" data-campo="precio">
@@ -118,7 +118,7 @@ export function render(container) {
                 placeholder="$ 950"
                 required
               >
-              <ion-note color="danger" data-error="precio" aria-live="polite"></ion-note>
+              <ion-note class="texto-error" data-error="precio" aria-live="polite"></ion-note>
             </div>
 
             <div class="campo-formulario" data-campo="tiempo">
@@ -134,7 +134,7 @@ export function render(container) {
                 placeholder="5 min"
                 required
               >
-              <ion-note color="danger" data-error="tiempo" aria-live="polite"></ion-note>
+              <ion-note class="texto-error" data-error="tiempo" aria-live="polite"></ion-note>
             </div>
 
             <ion-button class="alta-producto__submit" type="submit" expand="block">

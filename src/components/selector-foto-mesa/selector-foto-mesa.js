@@ -53,7 +53,7 @@ export function crearSelectorFotoMesa({
       <button class="selector-foto-mesa__contenido cuadro-foto" type="button" aria-label="Tomar o subir foto de la mesa"></button>
       <div class="selector-foto-mesa__acciones" hidden></div>
     </article>
-    <ion-note class="selector-foto-mesa__error" color="danger" aria-live="polite"></ion-note>
+    <ion-note class="selector-foto-mesa__error texto-error"  aria-live="polite"></ion-note>
   `;
 
   const contenido = elemento.querySelector('.selector-foto-mesa__contenido');

@@ -69,7 +69,7 @@ export function crearSelectorFotosProducto({
       <p>Seleccioná exactamente tres imágenes.</p>
     </div>
     <div class="selector-fotos-producto__grilla"></div>
-    <ion-note class="selector-fotos-producto__error" color="danger" aria-live="polite"></ion-note>
+    <ion-note class="selector-fotos-producto__error texto-error"  aria-live="polite"></ion-note>
   `;
 
   const grilla = elemento.querySelector('.selector-fotos-producto__grilla');

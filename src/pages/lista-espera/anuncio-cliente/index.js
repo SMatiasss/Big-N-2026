@@ -6,7 +6,8 @@ import { navegarA, reemplazarRuta } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { avisarNuevaEspera } from '../../../services/notificaciones.service.js';
-import { ESTADOS_ESPERA } from '../../../config/constantes.js';
+import { ESTADOS_ESPERA, ROLES } from '../../../config/constantes.js';
+import { obtenerPerfilActual } from '../../../services/auth.service.js';
 import { obtenerMiEstadiaActiva } from '../../../services/estadias.service.js';
 import {
   anotarse,
@@ -74,6 +75,21 @@ export function render(container) {
     onVolver: () => reemplazarRuta('/home'),
   });
   container.querySelector('[data-header]').append(header);
+
+  // El invitado no tiene a dónde volver: su /home no tiene ninguna acción
+  // para el rol anónimo, así que el botón lo dejaba en una pantalla vacía.
+  // El cliente registrado sí conserva el suyo. El perfil está cacheado en
+  // este punto (viene de crearlo al entrar), así que no llega a verse el
+  // botón antes de sacarlo.
+  void obtenerPerfilActual()
+    .then((perfil) => {
+      if (perfil?.rol !== ROLES.CLIENTE_ANONIMO) return;
+      header.replaceWith(crearAppHeader({
+        titulo: 'Lista de espera',
+        sinVolver: true,
+      }));
+    })
+    .catch(() => {});
 
   const aviso = container.querySelector('.lista-espera-cliente__aviso');
   const avisoTexto = container.querySelector('.lista-espera-cliente__aviso-texto');

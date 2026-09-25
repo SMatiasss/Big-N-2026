@@ -58,7 +58,7 @@ export function render(container) {
                   placeholder="Ej. Juan"
                   required
                 >
-                <ion-note color="danger" data-error="nombre" aria-live="polite"></ion-note>
+                <ion-note class="texto-error" data-error="nombre" aria-live="polite"></ion-note>
               </div>
 
               <ion-button class="ingreso-anonimo__submit" type="submit" expand="block">
@@ -122,10 +122,15 @@ export function render(container) {
   });
   container.querySelector('[data-header]').append(header);
   const contenido = container.querySelector('.ingreso-anonimo__contenido');
+  /* margen es el colchón que se deja libre abajo. Con 4px el botón
+     "Ingresar" quedaba pegado al borde de la pantalla; 18 le da aire y
+     además cubre la barra de gestos de Android. El piso de achique baja a
+     0.74 para que ese aire salga de encoger un poco más el formulario y no
+     de dejarlo sin entrar. */
   const ajusteFormulario = ajustarFormulario(contenido, {
     variable: '--ia-ajuste',
-    minimo: 0.78,
-    margen: 4,
+    minimo: 0.74,
+    margen: 18,
   });
   let ajusteQr = null;
 
@@ -164,9 +169,17 @@ export function render(container) {
       });
 
       // Sin pantalla intermedia: apenas queda creada la sesión y el perfil,
-      // se abre directo el lector del QR de ingreso al local. El AppHeader se
-      // conserva completo: ocultar sólo su botón rompía la grilla y desplazaba
-      // el título a la columna estrecha del control.
+      // se abre directo el lector del QR de ingreso al local.
+      //
+      // Desde acá ya no hay "atrás" posible: la sesión anónima está creada, y
+      // volver al login dejaría al invitado en una pantalla que no le
+      // corresponde. Se rehace el header sin el botón (sinVolver deja un
+      // espaciador, así el título sigue centrado).
+      header.replaceWith(crearAppHeader({
+        titulo: 'Ingreso invitado',
+        sinVolver: true,
+      }));
+
       pasoDatos.hidden = true;
       pasoQr.hidden = false;
 
@@ -202,7 +215,7 @@ export function render(container) {
         variable: '--ia-ajuste',
         minimo: 0.84,
         maximo: 1.12,
-        margen: 4,
+        margen: 18,
       });
     } catch (error) {
       console.error('No se pudo completar el ingreso anónimo.', error);

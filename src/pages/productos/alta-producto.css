@@ -230,19 +230,24 @@
 
 /* ERROR DE LAS FOTOS */
 
+/* A 11px el mensaje se leía como un subrayado de las fotos, no como un
+   aviso. Va al mismo tamaño que el resto de los errores del formulario y
+   centrado bajo la fila de fotos, que es lo que describe. El alto sigue
+   reservado de antemano para no empujar el formulario al aparecer. */
 .alta-producto .selector-fotos-producto__error {
   display: block;
 
-  height: calc(14px * var(--ap-ajuste, 1));
+  height: 26px;
   min-height: 0;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  padding: calc(6px * var(--ap-ajuste, 1)) 2px 0;
+  padding: 6px 2px 0;
 
-  font-size: calc(11px * var(--ap-ajuste, 1));
-  line-height: calc(14px * var(--ap-ajuste, 1));
+  font-size: 15px;
+  line-height: 20px;
+  text-align: center;
 }
 
 
@@ -383,7 +388,7 @@
      error no debe empujar el formulario ni provocar scroll. */
   display: block;
 
-  height: 16px;
+  height: 20px;
   padding: 4px 2px 0;
 
   overflow: hidden;
@@ -395,7 +400,7 @@
 }
 
 .alta-producto .campo-formulario--invalido .campo-control {
-  border-color: #ffd0bf;
+  border-color: var(--color-error-texto);
 }
 
 

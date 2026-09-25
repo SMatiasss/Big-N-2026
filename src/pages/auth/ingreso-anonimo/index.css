@@ -68,7 +68,7 @@
 
   box-sizing: border-box;
 
-  padding: calc(10px * var(--ia-ajuste, 1)) 12px;
+  padding: calc(14px * var(--ia-ajuste, 1)) 16px;
 
   background: rgb(74 87 44 / 55%);
   border: 1px solid transparent;
@@ -76,9 +76,9 @@
 
   color: var(--texto-suave);
 
-  font-size: clamp(12px, 3.2vw, 14px);
+  font-size: clamp(15px, 4.2vw, 18px);
   font-weight: 600;
-  line-height: 15px;
+  line-height: 1.2;
 
   transition:
     background 0.2s ease,
@@ -92,8 +92,8 @@
   justify-content: center;
   flex-shrink: 0;
 
-  width: 21px;
-  height: 21px;
+  width: clamp(26px, 7vw, 31px);
+  height: clamp(26px, 7vw, 31px);
 
   background: rgb(254 250 224 / 16%);
   border-radius: 50%;
@@ -101,7 +101,7 @@
   color: var(--texto-suave);
 
   font-family: var(--fuente-outfit);
-  font-size: clamp(12px, 3.2vw, 14px);
+  font-size: clamp(15px, 4.2vw, 18px);
   font-weight: 700;
   line-height: 1;
 }
@@ -130,12 +130,15 @@
 }
 
 .ingreso-anonimo__ayuda {
-  margin: 0 0 6px;
+  margin: 0 0 calc(10px * var(--ia-ajuste, 1));
 
   color: var(--texto-suave);
 
-  font-size: clamp(14px, 4.2vw, 17px);
+  /* Mismo tamaño que los pasos de arriba y centrado, para que los tres
+     bloques de texto de la pantalla se lean como una sola escalera. */
+  font-size: clamp(15px, 4.2vw, 18px);
   line-height: 1.35;
+  text-align: center;
 }
 
 .ingreso-anonimo__formulario {
@@ -167,13 +170,17 @@
   padding: 0;
 }
 
-/* El avatar se mide contra el ancho Y el alto: en un celular alto crece para
-   llenar el espacio libre, y en uno bajo se achica en vez de desbordar. */
+/* Cuadrado y a todo el ancho: es el control principal del paso, así que se
+   lleva el espacio que antes quedaba libre a los costados. El max-width
+   sigue a --ia-ajuste porque el alto del cuadro sale de su ancho
+   (aspect-ratio 1) y, si no, sería el único bloque que no puede achicarse
+   cuando el formulario no entra. */
 
 .ingreso-anonimo .selector-foto-mesa {
-  width: clamp(190px, min(72vw, 34dvh), 280px);
+  width: 100%;
+  max-width: calc(100% * (0.62 + 0.38 * var(--ia-ajuste, 1)));
   max-height: 100%;
-  margin: 0;
+  margin: 0 auto;
 }
 
 .ingreso-anonimo .selector-foto-mesa__contenido {
@@ -186,24 +193,28 @@
 
   background: var(--fondo-card);
   border: 2px dashed var(--acento);
-  border-radius: 50%;
+  border-radius: clamp(20px, 6vw, 28px);
 }
 
 .ingreso-anonimo .selector-foto-mesa__placeholder {
-  gap: 10px;
-  padding: 0 18px;
+  gap: clamp(12px, 2dvh, 20px);
+  padding: 0 12px;
 }
 
+/* En porcentaje y no en px: el ícono acompaña al cuadro, que ocupa todo el
+   ancho. Al 62% llena el recuadro de verdad; el cálculo de lo que entra es
+   62% del lado + el gap + una o dos líneas de texto, que sobre un cuadrado
+   del ancho de la pantalla deja margen de sobra. */
 .ingreso-anonimo .cuadro-foto__icono {
-  width: 46px;
+  width: 62%;
   max-width: none;
-  height: 46px;
+  height: 62%;
   max-height: none;
 }
 
 .ingreso-anonimo .selector-foto-mesa__texto {
-  font-size: 14px;
-  line-height: 17px;
+  font-size: clamp(22px, 6.2vw, 30px);
+  line-height: 1.2;
   text-align: center;
 }
 
@@ -219,23 +230,23 @@
 .ingreso-anonimo .selector-foto-mesa__preview-wrap img {
   min-height: 0;
   max-height: none;
-  border-radius: 50%;
+  border-radius: clamp(18px, 5.4vw, 26px);
 }
 
 .ingreso-anonimo .selector-foto-mesa__cambiar-badge {
   bottom: 18px;
 
-  padding: 5px 13px;
+  padding: 7px 16px;
 
-  font-size: clamp(11px, 3vw, 13px);
-  line-height: 13px;
+  font-size: clamp(13px, 3.6vw, 16px);
+  line-height: 1.2;
 }
 
 
 /* CÁMARA / GALERÍA (sólo aparecen en el celular) */
 
 .ingreso-anonimo .selector-foto-mesa__acciones {
-  margin-top: 16px;
+  margin-top: calc(16px * var(--ia-ajuste, 1));
 }
 
 .ingreso-anonimo .selector-foto-mesa__boton-fuente {
@@ -246,10 +257,10 @@
   color: var(--texto-claro);
 
   font-family: var(--fuente-geist);
-  font-size: 14px;
+  font-size: clamp(16px, 4.4vw, 19px);
   font-weight: 600;
 
-  padding: 9px 20px;
+  padding: calc(clamp(12px, 1.8dvh, 16px) * var(--ia-ajuste, 1)) clamp(22px, 6vw, 32px);
 }
 
 
@@ -265,7 +276,7 @@
 .ingreso-anonimo .campo-formulario label {
   display: block;
 
-  margin: 0 0 8px;
+  margin: 0 0 calc(8px * var(--ia-ajuste, 1));
 
   color: var(--texto-claro);
 
@@ -317,22 +328,16 @@
   border-color: var(--acento);
 }
 
-/* El rojo por defecto de Ionic desentona con la paleta; se usa el mismo tono
-   de error que el resto de las pantallas. */
+/* El color y el alto reservado los pone .texto-error (styles/globales.css);
+   acá sólo se ajusta el tamaño a esta pantalla. El alto se mide en em, así
+   que la línea reservada acompaña sola y el layout no se mueve cuando
+   aparece el mensaje. */
 
 .ingreso-anonimo .campo-formulario ion-note,
 .ingreso-anonimo .selector-foto-mesa__error {
-  display: block;
-
-  min-height: 0;
-
   padding: 4px 2px 0;
 
-  color: #ffd0bf;
-
-  font-family: var(--fuente-geist);
-  font-size: clamp(12px, 3.2vw, 14px);
-  line-height: 15px;
+  font-size: clamp(13px, 3.5vw, 15px);
 }
 
 .ingreso-anonimo .selector-foto-mesa__error {
@@ -340,7 +345,7 @@
 }
 
 .ingreso-anonimo .campo-formulario--invalido .campo-control {
-  border-color: #ffd0bf;
+  border-color: var(--color-error-texto);
 }
 
 
@@ -479,7 +484,7 @@
 
   padding: 14px 2px 0;
 
-  color: #ffd0bf;
+  color: var(--color-error-texto);
 
   font-size: clamp(13px, 3.4vw, 15px);
   line-height: 16px;

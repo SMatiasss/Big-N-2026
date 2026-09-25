@@ -23,7 +23,7 @@ export function crearLectorQr({
     <h2>${titulo}</h2>
     <p>${descripcion}</p>
     <ion-button type="button" fill="outline" expand="block">${textoBoton}</ion-button>
-    <ion-note color="danger" aria-live="polite"></ion-note>
+    <ion-note class="texto-error" aria-live="polite"></ion-note>
   `;
   const boton = elemento.querySelector('ion-button');
   const mensaje = elemento.querySelector('ion-note');

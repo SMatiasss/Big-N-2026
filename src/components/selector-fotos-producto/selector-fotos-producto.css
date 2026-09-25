@@ -81,7 +81,7 @@
 }
 
 .selector-fotos-producto--invalido .selector-fotos-producto__contenido {
-  border-color: var(--color-error);
+  border-color: var(--color-error-texto);
 }
 
 @media (max-width: 600px) {

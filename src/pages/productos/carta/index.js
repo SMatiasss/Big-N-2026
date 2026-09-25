@@ -7,7 +7,7 @@ import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { navegarA } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearPestanas } from '../../../components/pestanas-filtro/pestanas-filtro.js';
-import '../../../components/lista-ajustada/lista-ajustada.css';
+import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 
 import './nuevos-estilos.css';
 import { CarritoService } from '../../../services/carrito.service.js';
@@ -24,7 +24,7 @@ export async function render(container) {
         <div data-acciones class="hu11__acciones-contenedor"></div>
         <div data-pestanas></div>
         <p role="status"></p>
-        <section class="hu11__productos lista-ajustada" aria-label="Productos" style="--la-gap: 20px; padding-bottom: 20px;"></section>
+        <section class="hu11__productos lista-ajustada" aria-label="Productos"></section>
       </main>
     </ion-content>
   `;
@@ -37,6 +37,19 @@ export async function render(container) {
     onVolver: () => navegarA(operativa ? '/lista-espera' : '/home'),
   });
   raiz.querySelector('[data-header]').append(header);
+
+  /* La lista traía la clase .lista-ajustada y la cáscara .pantalla-lista,
+     pero nunca se llamaba a ajustarLista(): sin eso --la-alto nunca se
+     calcula, cada tarjeta conserva su alto natural y el snap corta la
+     última que entra. Cuántas entran lo decide el CSS con --la-items.
+
+     Sin opciones, igual que el resto de los listados: el hueco para el
+     carrito flotante es un margin fijo de la lista (ver nuevos-estilos.css),
+     así que el alto no cambia y no hay nada extra que reservar acá. */
+  if (operativa) lista.classList.add('hu11__productos--con-carrito');
+
+  const ajusteLista = ajustarLista(lista);
+  window.addEventListener('hashchange', () => ajusteLista.destruir(), { once: true });
   
   let carritoAbierto = false;
   const footerCarrito = document.createElement('div');
@@ -44,9 +57,9 @@ export async function render(container) {
   
   footerCarrito.innerHTML = `
     <div class="carrito-header">
-      <h3>Tu Pedido (<span id="carrito-count">0</span>)</h3>
+      <h3>Tu Pedido<span id="carrito-count"></span></h3>
       <div class="carrito-header-total">
-        <strong id="carrito-total-header">$0.00</strong>
+        <strong id="carrito-total-header"></strong>
         <span id="carrito-icon">▲</span>
       </div>
     </div>
@@ -70,17 +83,17 @@ export async function render(container) {
   const btnConfirmar = footerCarrito.querySelector('#btn-confirmar-pedido');
   const statusCarrito = footerCarrito.querySelector('#carrito-status');
 
+  const abrirCarrito = (abrir) => {
+    carritoAbierto = abrir;
+    footerCarrito.classList.toggle('carrito-flotante--abierto', abrir);
+    bodyCarrito.classList.toggle('carrito-body--visible', abrir);
+    iconCarrito.textContent = abrir ? '▼' : '▲';
+  };
+
+  // Vacío no se despliega: no hay nada que mostrar ni confirmar.
   headerCarrito.onclick = () => {
-    carritoAbierto = !carritoAbierto;
-    if (carritoAbierto) {
-      footerCarrito.classList.add('carrito-flotante--abierto');
-      bodyCarrito.classList.add('carrito-body--visible');
-      iconCarrito.textContent = '▼';
-    } else {
-      footerCarrito.classList.remove('carrito-flotante--abierto');
-      bodyCarrito.classList.remove('carrito-body--visible');
-      iconCarrito.textContent = '▲';
-    }
+    if (CarritoService.getCarrito().length === 0) return;
+    abrirCarrito(!carritoAbierto);
   };
 
   const actualizarUI = () => {
@@ -88,15 +101,17 @@ export async function render(container) {
     const cantidadTotal = carrito.reduce((acc, item) => acc + item.cantidad, 0);
     const importeTotal = CarritoService.obtenerTotal();
     
-    countSpan.textContent = cantidadTotal;
-    totalHeader.textContent = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(importeTotal);
+    const vacio = cantidadTotal === 0;
 
-    if (cantidadTotal > 0) {
-      footerCarrito.classList.add('carrito-flotante--visible');
-    } else {
-      footerCarrito.classList.remove('carrito-flotante--visible');
-      if (carritoAbierto) headerCarrito.click(); // Cerrar si se vacía
-    }
+    countSpan.textContent = vacio ? '' : ` (${cantidadTotal})`;
+    totalHeader.textContent = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(vacio ? 0 : importeTotal);
+
+    // Siempre a la vista en la carta operativa, aunque esté vacío: ocupa el
+    // hueco que la lista le deja reservado abajo, que si no quedaba como
+    // una franja vacía.
+    footerCarrito.classList.add('carrito-flotante--visible');
+    footerCarrito.classList.toggle('carrito-flotante--vacio', vacio);
+    if (vacio && carritoAbierto) abrirCarrito(false);
 
     itemsContainer.innerHTML = '';
     carrito.forEach(item => {

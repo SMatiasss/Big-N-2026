@@ -185,7 +185,7 @@
   min-height: 200px;
   
   margin: 0 auto;
-  padding: 24px;
+  padding: clamp(12px, 2dvh, 20px);
   
   border: 1px solid rgb(221 161 94 / 18%);
   border-radius: 20px;
@@ -277,8 +277,8 @@
 .lista-espera-cliente__acciones { margin:0; }
 .lista-espera-cliente__ingresar { height:clamp(84px, 12dvh, 108px); min-height:clamp(84px, 12dvh, 108px); }
 .lista-espera-cliente__accion-mesa { flex:1; max-width:none; min-height:clamp(230px, 45dvh, 390px); }
-.lista-espera-cliente__accion-mesa svg { width:clamp(112px, 20dvh, 172px); height:clamp(112px, 20dvh, 172px); margin-bottom:clamp(18px, 3dvh, 28px); }
-.lista-espera-cliente__accion-mesa strong { font-size:clamp(23px, 6vw, 31px); }
+.lista-espera-cliente__accion-mesa svg { width:clamp(152px, 29dvh, 248px); height:clamp(152px, 29dvh, 248px); margin-bottom:clamp(12px, 2dvh, 20px); }
+.lista-espera-cliente__accion-mesa strong { font-size:clamp(29px, 7.8vw, 41px); }
 .lista-espera-cliente__accion-mesa[aria-busy="true"] { opacity:.72; cursor:wait; }
 .lista-espera-cliente__contenido[data-estado="asignada"] .lista-espera-cliente__acciones { display:flex; flex:1; }
 

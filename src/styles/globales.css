@@ -20,6 +20,36 @@ body {
    el flujo de accesibilidad (display:none lo sacaría del todo). Faltaba esta
    utilidad -se usa en login/index.js pero nunca quedó definida en ningún
    lado, así que el texto se veía de más en pantalla. */
+/* =========================================================
+   TEXTO DE ERROR — estándar único de toda la app.
+
+   Antes cada pantalla elegía su propio rojo (#ef4444, el "danger" de Ionic,
+   algún hex suelto): ninguno contrastaba bien contra el verde oliva y no
+   había dos iguales. Esta clase fija color y tamaño en un solo lugar.
+
+   Reserva SIEMPRE el alto de una línea, aunque el texto esté vacío, para que
+   al aparecer un error no se mueva el layout ni se dispare el scroll. Las
+   pantallas que necesitan otro tamaño pisan font-size: el alto reservado se
+   mide en em, así que acompaña solo.
+
+   Nota: sobre <ion-note> hay que evitar el atributo color="danger", porque
+   inyecta el rojo de Ionic con más especificidad que esta clase.
+   ========================================================= */
+
+.texto-error {
+  display: block;
+  box-sizing: border-box;
+
+  min-height: 1.35em;
+
+  color: var(--color-error-texto);
+
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
 .sr-only {
   position: absolute;
 

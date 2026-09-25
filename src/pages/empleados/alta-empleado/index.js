@@ -4,12 +4,13 @@ import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
 import { ROLES, ROLES_EMPLEADO, ESTADOS_PERFIL } from '../../../config/constantes.js';
 import { registrarUsuarioSinIniciarSesion } from '../../../services/auth.service.js';
-import { altaPerfil, subirFotoPerfil } from '../../../services/perfiles.service.js';
+import { altaPerfil, buscarConflictosPerfil, subirFotoPerfil } from '../../../services/perfiles.service.js';
 import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { ajustarFormulario } from '../../../components/lista-ajustada/lista-ajustada.js';
+import { mensajeDeErrorAlta } from '../../../utils/errores-alta.js';
 
 
 const ROLES_DISPONIBLES = ROLES_EMPLEADO;
@@ -335,7 +336,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="nombre"
               ></ion-note>
 
@@ -365,7 +366,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="apellido"
               ></ion-note>
 
@@ -398,7 +399,7 @@ export function render(container) {
                 >
 
                 <ion-note
-                  color="danger"
+                  class="texto-error"
                   data-error="dni"
                 ></ion-note>
 
@@ -427,7 +428,7 @@ export function render(container) {
                 >
 
                 <ion-note
-                  color="danger"
+                  class="texto-error"
                   data-error="cuil"
                 ></ion-note>
 
@@ -458,7 +459,7 @@ export function render(container) {
               </ion-select>
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="rol"
               ></ion-note>
 
@@ -488,7 +489,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="email"
               ></ion-note>
 
@@ -517,7 +518,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="password"
               ></ion-note>
 
@@ -546,7 +547,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="confirmarPassword"
               ></ion-note>
 
@@ -636,6 +637,11 @@ export function render(container) {
 
   let enviandoAlta = false;
 
+  /* Errores que sólo conoce la base (DNI/CUIL/correo ya usados). Van aparte
+     de validar(), que mira nada más el contenido del formulario, y se
+     limpian campo por campo apenas se edita ese campo. */
+  let conflictosServidor = {};
+
 
   /* =========================================================
      VOLVER
@@ -657,10 +663,10 @@ export function render(container) {
       return;
     }
 
-    const errores = validar(
-      datosFormulario(formulario),
-      foto
-    );
+    const errores = {
+      ...validar(datosFormulario(formulario), foto),
+      ...conflictosServidor,
+    };
 
     [
       'nombre',
@@ -827,6 +833,15 @@ export function render(container) {
         evento,
         () => {
 
+          /* Si el dueño corrige el campo que la base rechazó, el aviso deja
+             de aplicar: el valor ya no es el que chocaba. */
+          const campo = control.id.replace('-empleado', '');
+
+          if (conflictosServidor[campo]) {
+            const { [campo]: _descartado, ...resto } = conflictosServidor;
+            conflictosServidor = resto;
+          }
+
           actualizar();
 
           ocultarResultado();
@@ -879,18 +894,69 @@ export function render(container) {
       enviandoAlta = true;
       botonGuardar.disabled = true;
 
+      const datos = datosFormulario(formulario);
+
       try {
-        const datos = datosFormulario(formulario);
-        // No se usa signUp(): ése inicia sesión con el usuario recién creado y
-        // dejaría al dueño logueado como el empleado nuevo, con el INSERT del
-        // perfil rebotando por RLS (el nuevo usuario todavía no tiene rol).
+
+        /* — 1. Unicidad contra la base, ANTES de crear nada —
+         *
+         * Acá estaba el problema: el alta creaba el usuario de Auth y recién
+         * después insertaba el perfil. Si ese INSERT rebotaba (DNI o CUIL ya
+         * usados) el usuario de Auth quedaba creado igual, y desde el cliente
+         * no hay forma de borrarlo. Ese correo quedaba quemado para siempre:
+         * el siguiente intento, con todo corregido, seguía respondiendo "el
+         * correo ya está registrado" y no había manera de salir del paso.
+         *
+         * Consultando primero, el caso normal ni siquiera llega a Auth.
+         */
+
+        const conflictos = await buscarConflictosPerfil({
+          dni: datos.dni,
+          cuil: datos.cuil,
+          email: datos.email,
+        });
+
+        if (Object.keys(conflictos).length) {
+
+          conflictosServidor = {
+            ...(conflictos.dni && { dni: 'Ese DNI ya está registrado.' }),
+            ...(conflictos.cuil && { cuil: 'Ese CUIL ya está registrado.' }),
+            ...(conflictos.email && { email: 'Ese correo ya está registrado.' }),
+          };
+
+          actualizar();
+
+          mostrarToastError('Revisá los campos señalados antes de continuar.');
+
+          return;
+        }
+
+
+        /* — 2. La foto antes que el usuario —
+         *
+         * Si falla la subida, no quedó creado ningún usuario y el correo
+         * sigue libre para reintentar.
+         */
+
+        const fotoUrl = await subirFotoPerfil(foto);
+
+
+        /* — 3. Usuario de Auth —
+         *
+         * No se usa signUp(): ése inicia sesión con el usuario recién creado y
+         * dejaría al dueño logueado como el empleado nuevo, con el INSERT del
+         * perfil rebotando por RLS (el nuevo usuario todavía no tiene rol).
+         */
+
         const { user } = await registrarUsuarioSinIniciarSesion(datos.email, datos.password);
 
         if (!user) {
           throw new Error('No se pudo obtener el usuario creado en Supabase Auth.');
         }
 
-        const fotoUrl = await subirFotoPerfil(foto);
+
+        /* — 4. Perfil — */
+
         await altaPerfil({
           id: user.id,
           apellidos: datos.apellido,
@@ -909,23 +975,12 @@ export function render(container) {
 
       } catch (error) {
 
-        let mensaje = 'No se pudo crear el empleado.';
-
-        if (error.code === '23505') {
-          mensaje = 'DNI o CUIL ya registrado.';
-        } else if (error.code === '22P02') {
-          mensaje = 'Rol o estado inválido.';
-        } else if (error.code === '42501') {
-          mensaje = 'Sin permisos (RLS).';
-        } else if (error.message?.includes('already registered')) {
-          mensaje = 'El correo ya está registrado.';
-        } else if (error.message?.includes('rate limit')) {
-          mensaje = 'Demasiados intentos. Aguardá.';
-        } else if (error.message) {
-          mensaje = error.message;
-        }
-
-        mostrarToastError(mensaje);
+        mostrarToastError(mensajeDeErrorAlta(error, {
+          marcarCampo: (campo, mensaje) => {
+            conflictosServidor = { ...conflictosServidor, [campo]: mensaje };
+            actualizar();
+          },
+        }));
 
       } finally {
         enviandoAlta = false;

@@ -11,7 +11,7 @@ export function crearSelectorAvatarFoto({ onCambio = () => {} } = {}) {
     <p>Tomá una foto desde la cámara del dispositivo.</p>
     <div class="selector-avatar-foto__preview" aria-live="polite">Sin foto</div>
     <ion-button type="button" expand="block" aria-label="Tomar foto"></ion-button>
-    <ion-note color="danger" aria-live="polite"></ion-note>
+    <ion-note class="texto-error" aria-live="polite"></ion-note>
   `;
 
   const preview = elemento.querySelector('.selector-avatar-foto__preview');

@@ -1,5 +1,5 @@
 /* -- estilos añadidos -- */
-.hu11__main-espaciado { padding-bottom: clamp(10px, 2dvh, 20px) !important; }
+.hu11__main-espaciado { padding-bottom: max(16px, env(safe-area-inset-bottom)) !important; }
 .hu11 [data-mesa] { text-align: center; margin-top: 0; margin-bottom: 24px; font-size: 1.1rem; }
 .hu11__acciones-contenedor { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
 .hu11__acciones-contenedor button { flex: 1; width: 100%; }
@@ -15,28 +15,131 @@
 .hu11__categoria-titulo { font-size: 1.4rem; font-weight: bold; padding: 12px; cursor: pointer; color: #dda15e; outline: none; list-style-type: "▾ "; }
 .hu11__grupo-espaciado { padding: 12px; }
 
-/* Productos */
-.hu11__productos { --la-gap:clamp(10px, 1.8dvh, 16px); padding-bottom:clamp(72px, 10dvh, 92px) !important; }
-.hu11-producto { min-height:clamp(176px, 24dvh, 206px); height:auto; }
-.hu11-producto__datos { min-height:0; display:flex; flex-direction:column; justify-content:center; align-self:stretch; }
+/* =========================================================
+   LISTA DE PRODUCTOS
+
+   Misma cáscara que el resto de los listados (ver lista-ajustada.css):
+   ion-content no scrollea, esta lista es el único bloque elástico y snapea
+   al inicio de cada tarjeta.
+   ========================================================= */
+
+/* Dos tarjetas completas en pantalla, en cualquier alto: la tarjeta lleva
+   foto, navegación de fotos, cuatro líneas de texto y los controles de
+   cantidad. Con tres, el alto que le toca a cada una no alcanza para ese
+   contenido y el overflow:hidden de .lista-ajustada recorta los botones. */
+
+.hu11__productos {
+  --la-items: 2;
+  /* clamp() funciona desde que ajustarLista lee el gap ya resuelto. Antes
+     lo leía como texto, daba 0, y cada tarjeta salía un gap más alta de lo
+     que entraba: ése era el corte de abajo y el snap corrido. */
+  --la-gap: clamp(10px, 1.8dvh, 16px);
+}
+
+/* Un respiro fijo arriba y abajo: garantiza que la primera tarjeta no
+   quede pegada a las pestañas y que la última no toque el borde. */
+
+.hu11__productos {
+  margin-top: clamp(4px, 0.8dvh, 10px);
+  margin-bottom: clamp(6px, 1dvh, 12px);
+}
+
+/* Hueco para el carrito flotante: MARGIN, nunca padding, y RESERVADO
+   SIEMPRE mientras la pantalla sea la operativa (la que tiene carrito),
+   esté el carrito visible o no.
+
+   Dos motivos. Uno: scroll-snap alinea contra el "snapport", que es el
+   padding box de la lista; con padding-bottom las tarjetas dejan de
+   llenar esa ventana y asoma un pedazo de la siguiente. Dos: reservarlo
+   sólo cuando el carrito aparece obligaba a recalcular el alto en cada
+   cambio, y cualquier medición a destiempo volvía a cortar la lista. Un
+   hueco fijo, como el de una pantalla con botón al pie, no se puede
+   desincronizar. */
+
+/* Medida exacta, no estimada: el carrito colapsado asoma 60px (es el
+   translateY(calc(100% - 60px)) de .carrito-flotante, más abajo). El <main>
+   ya deja max(16px, safe-area) de padding al pie, así que la lista sólo
+   tiene que sumar la diferencia + 8px de aire sobre el carrito. Si cambia
+   el alto colapsado del carrito, cambiar el 60 acá también. */
+
+.hu11__productos--con-carrito {
+  margin-bottom: calc(60px + 8px - max(16px, env(safe-area-inset-bottom)));
+}
+
+/* El <p role="status"> vive entre las pestañas y la lista. Vacío seguía
+   ocupando sus márgenes por defecto de párrafo: ése era el hueco de más
+   arriba del primer producto. */
+
+.hu11 main > p[role="status"] {
+  margin: 8px 0;
+}
+
+.hu11 main > p[role="status"]:empty {
+  display: none;
+}
+
+/* La descripción es el único texto de largo libre: se acota a dos líneas
+   para que no empuje los controles fuera de la tarjeta (los recortaría el
+   overflow:hidden). En tarjetas bajas, una sola. */
+
 .hu11-producto__descripcion {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  flex-shrink: 0;
   overflow: hidden;
-  min-height: 2.8em;
 }
 
-/* Controles de cantidad en los productos */
-.hu11-producto__controles { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+@media (max-height: 720px) {
+  .hu11-producto__descripcion { -webkit-line-clamp: 1; }
+}
 
-.hu11-producto__btn-cantidad { background: #dda15e !important; color: #283618 !important; border: none !important; border-radius: 4px !important; width: 32px !important; height: 32px !important; min-width: 32px !important; min-height: 32px !important; padding: 0 !important; margin: 0 !important; font-weight: bold !important; font-size: 1.2rem !important; cursor: pointer; display: flex !important; align-items: center !important; justify-content: center !important; }
-.hu11-producto__cantidad-texto { font-weight: bold; min-width: 20px; text-align: center; }
+/* Controles de cantidad: pegados abajo de la columna de datos. */
+.hu11-producto__controles {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, calc(var(--tarjeta-alto, 230px) * 0.05), 14px);
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.hu11-producto__btn-cantidad {
+  --lado: clamp(28px, calc(var(--tarjeta-alto, 230px) * 0.145), 42px);
+
+  background: var(--form-dorado) !important;
+  color: var(--form-texto-claro) !important;
+  border: none !important;
+  border-radius: 6px !important;
+  width: var(--lado) !important;
+  height: var(--lado) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-weight: bold !important;
+  font-size: clamp(1rem, calc(var(--tarjeta-alto, 230px) * 0.075), 1.4rem) !important;
+  cursor: pointer;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.hu11-producto__cantidad-texto {
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+  font-size: clamp(.95rem, calc(var(--tarjeta-alto, 230px) * 0.075), 1.25rem);
+}
 
 /* Carrito Flotante */
 .carrito-flotante { position: fixed; bottom: 0; left: 0; right: 0; background: #283618; color: #fefae0; padding: 16px; border-radius: 20px 20px 0 0; box-shadow: 0 -4px 10px rgba(0,0,0,0.5); z-index: 1000; max-height: 80vh; display: none; flex-direction: column; transition: transform 0.3s ease; transform: translateY(calc(100% - 60px)); }
 .carrito-flotante--visible { display: flex; }
 .carrito-flotante--abierto { transform: translateY(0); }
+
+/* Vacío: queda fijo abajo mostrando "Tu Pedido" y $ 0,00, sin la flecha
+   (no se puede desplegar) ni cursor de botón. */
+.carrito-flotante--vacio .carrito-header { cursor: default; }
+.carrito-flotante--vacio #carrito-icon { visibility: hidden; }
 
 .carrito-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; height: 30px; }
 .carrito-header h3 { margin: 0; font-size: 1.1rem; }
@@ -53,10 +156,10 @@
 .carrito-item-info p { margin: 0; color: #e5e4c9; font-size: 0.85em; }
 .carrito-item-subtotal { color: #dda15e; font-size: 1rem; }
 
-.btn-confirmar-pedido { width: 100%; padding: 14px; margin-top: 16px; font-weight: bold; font-size: 1.1rem; background: #dda15e; color: #283618; border: none; border-radius: 8px; }
+.btn-confirmar-pedido { width: 100%; padding: 14px; margin-top: 16px; font-weight: bold; font-size: 1.1rem; background: var(--form-dorado); color: var(--form-texto-claro); border: none; border-radius: 8px; }
 .carrito-status { text-align: center; margin-top: 10px; font-weight: bold; }
 
 .carrito-item-controles { display: flex; align-items: center; gap: 8px; }
-.carrito-item-btn { background: #dda15e !important; color: #283618 !important; border: none !important; border-radius: 4px !important; width: 32px !important; height: 32px !important; min-width: 32px !important; min-height: 32px !important; padding: 0 !important; margin: 0 !important; font-weight: bold !important; font-size: 1.2rem !important; cursor: pointer; display: flex !important; align-items: center !important; justify-content: center !important; }
+.carrito-item-btn { background: var(--form-dorado) !important; color: var(--form-texto-claro) !important; border: none !important; border-radius: 4px !important; width: 32px !important; height: 32px !important; min-width: 32px !important; min-height: 32px !important; padding: 0 !important; margin: 0 !important; font-weight: bold !important; font-size: 1.2rem !important; cursor: pointer; display: flex !important; align-items: center !important; justify-content: center !important; }
 .carrito-item-eliminar { background: transparent !important; color: #ff6b6b !important; border: none !important; font-size: 1.2rem !important; cursor: pointer; margin-left: 8px; padding: 0 4px !important; display: flex !important; align-items: center !important; justify-content: center !important; }
 

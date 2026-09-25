@@ -1,26 +1,127 @@
 .hu11 { --background: #606c38; --color: #fefae0; }
-.hu11 main { max-width: 1050px; margin: auto; padding: clamp(10px, 2dvh, 24px) 16px clamp(10px, 2dvh, 20px); }
-.hu11 button { min-height: 44px; padding: 10px 16px; border: 0; border-radius: 10px; background: #dda15e; color: #283618; font: inherit; cursor: pointer; }
+.hu11 main { max-width: 1050px; margin: auto; padding: clamp(10px, 2dvh, 24px) 16px max(16px, env(safe-area-inset-bottom)); }
+.hu11 button { min-height: 44px; padding: 10px 16px; border: 0; border-radius: 10px; background: var(--form-dorado); color: var(--form-texto-claro); font: inherit; cursor: pointer; }
 .hu11 button:disabled { opacity: .5; cursor: wait; }
 .hu11 button:focus-visible, .hu11 input:focus-visible, .hu11 textarea:focus-visible, .hu11 select:focus-visible { outline: 3px solid #fefae0; outline-offset: 2px; }
 .hu11 input, .hu11 textarea, .hu11 select { display: block; width: 100%; padding: 12px; margin: 12px 0; border-radius: 8px; border: 1px solid #dda15e; background: #fefae0; color: #283618; font: inherit; }
 .hu11__grupo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 12px; }
-/* Sólo la carta: no cambia las burbujas del chat ni otros usos del carrusel. */
-.hu11 .hu11-producto { display: grid; grid-template-columns: clamp(112px, 34vw, 148px) minmax(0, 1fr); align-items: center; gap: clamp(10px, 3vw, 16px); background: #4a572c; color: #fefae0; border-radius: 16px; padding: clamp(10px, 2.4vw, 14px); overflow-wrap: anywhere; }
-.hu11-producto__datos { min-width: 0; }
-.hu11-producto h3 { margin: 0 0 6px; font-size: clamp(1rem, 4.4vw, 1.2rem); line-height: 1.25; }
-.hu11-producto__descripcion { margin: 0 0 10px; color: #e5e4c9; font-size: .875rem; line-height: 1.4; }
-.hu11-producto__precio { display: block; color: #dda15e; font-size: 1rem; line-height: 1.4; }
-.hu11-producto__tiempo { margin: 5px 0 0; color: #e5e4c9; font-size: .8rem; line-height: 1.4; }
-.hu11-producto .carrusel-imagenes { min-width: 0; }
-.hu11-producto .carrusel-imagenes__foto { height: clamp(112px, 19dvh, 148px); border-radius: 10px; }
-.hu11-producto .carrusel-imagenes nav { gap: 2px; margin-top: 4px; }
-.hu11-producto .carrusel-imagenes nav span { min-width: 36px; text-align: center; font-size: .75rem; white-space: nowrap; }
-.hu11-producto .carrusel-imagenes button { padding: 0; width: 44px; min-height: 44px; background: transparent; color: #dda15e; }
-@media (max-width: 360px) {
-  .hu11 .hu11-producto { grid-template-columns: 120px minmax(0, 1fr); gap: 10px; padding: 10px; }
-  .hu11-producto .carrusel-imagenes nav span { min-width: 28px; }
+/* =========================================================
+   TARJETA DE PRODUCTO DE LA CARTA
+   (no toca las burbujas del chat ni otros usos del carrusel)
+
+   Mismo criterio que .producto-card en gestión de productos: el ALTO lo
+   fija .lista-ajustada vía --la-alto, y todo lo de adentro se mide contra
+   ese alto. Las dos columnas se estiran a la tarjeta completa y el sobrante
+   se lo lleva la foto, así la tarjeta entra exacta en el alto que le toque
+   sin que haya que adivinar píxeles (era lo que cortaba los controles).
+   ========================================================= */
+
+.hu11 .hu11-producto {
+  --tarjeta-alto: var(--la-alto, 230px);
+
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: clamp(116px, calc(var(--tarjeta-alto) * 0.6), 190px) minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(10px, calc(var(--tarjeta-alto) * 0.05), 16px);
+
+  padding: clamp(10px, calc(var(--tarjeta-alto) * 0.045), 14px);
+
+  background: #4a572c;
+  color: #fefae0;
+  border-radius: 16px;
+
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
+
+
+/* — Columna izquierda: foto + navegación entre fotos — */
+
+.hu11-producto .carrusel-imagenes {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* La foto absorbe todo el alto que sobra: es lo que la hace lo más grande
+   posible sin empujar a la navegación fuera de la tarjeta. */
+.hu11-producto .carrusel-imagenes__foto {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  border-radius: 10px;
+}
+
+.hu11-producto .carrusel-imagenes nav {
+  flex-shrink: 0;
+  gap: clamp(4px, calc(var(--tarjeta-alto) * 0.03), 10px);
+  margin-top: clamp(4px, calc(var(--tarjeta-alto) * 0.03), 9px);
+}
+
+.hu11-producto .carrusel-imagenes nav span {
+  min-width: 38px;
+  text-align: center;
+  font-size: clamp(.8rem, calc(var(--tarjeta-alto) * 0.062), 1.05rem);
+  white-space: nowrap;
+}
+
+.hu11-producto .carrusel-imagenes button {
+  width: clamp(38px, calc(var(--tarjeta-alto) * 0.19), 58px);
+  min-width: 0;
+  height: clamp(36px, calc(var(--tarjeta-alto) * 0.17), 54px);
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--form-dorado);
+  font-size: clamp(1.35rem, calc(var(--tarjeta-alto) * 0.105), 2.1rem);
+  line-height: 1;
+}
+
+
+/* — Columna derecha: datos y controles de cantidad — */
+
+.hu11-producto__datos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hu11-producto h3 {
+  margin: 0 0 clamp(3px, calc(var(--tarjeta-alto) * 0.022), 7px);
+  font-size: clamp(1rem, calc(var(--tarjeta-alto) * 0.098), 1.45rem);
+  line-height: 1.2;
+}
+
+.hu11-producto__descripcion {
+  margin: 0 0 clamp(5px, calc(var(--tarjeta-alto) * 0.035), 11px);
+  color: #e5e4c9;
+  font-size: clamp(.82rem, calc(var(--tarjeta-alto) * 0.072), 1.05rem);
+  line-height: 1.35;
+}
+
+.hu11-producto__precio {
+  display: block;
+  color: var(--form-dorado);
+  font-size: clamp(.95rem, calc(var(--tarjeta-alto) * 0.082), 1.22rem);
+  line-height: 1.35;
+}
+
+.hu11-producto__tiempo {
+  margin: clamp(2px, calc(var(--tarjeta-alto) * 0.018), 6px) 0 0;
+  color: #e5e4c9;
+  font-size: clamp(.78rem, calc(var(--tarjeta-alto) * 0.066), 1rem);
+  line-height: 1.35;
+}
+
+@media (max-width: 360px) {
+  .hu11 .hu11-producto { grid-template-columns: clamp(104px, calc(var(--tarjeta-alto) * 0.56), 150px) minmax(0, 1fr); }
+  .hu11-producto .carrusel-imagenes nav span { min-width: 30px; }
+}
+
 .hu11__chat { display: flex; flex-direction: column; gap: 12px; max-height: 55vh; min-height: 180px; overflow: auto; padding: 14px 4px; }
 .hu11__form { display: flex; gap: 12px; align-items: end; }
 .hu11__form label { flex: 1; }

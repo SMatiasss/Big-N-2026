@@ -5,12 +5,14 @@ import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-foto/selector-avatar-foto.js';
 import { ROLES, ESTADOS_PERFIL } from '../../../config/constantes.js';
 import { obtenerPermisos, signUp } from '../../../services/auth.service.js';
-import { altaPerfil, subirFotoPerfil } from '../../../services/perfiles.service.js';
+import { altaPerfil, buscarConflictosPerfil, subirFotoPerfil } from '../../../services/perfiles.service.js';
 import { enviarEmailPendiente } from '../../../services/email.service.js';
 import { avisarNuevoClientePendiente } from '../../../services/notificaciones.service.js';
 import { esCampoVacio, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
+import { ajustarFormulario } from '../../../components/lista-ajustada/lista-ajustada.js';
+import { mensajeDeErrorAlta } from '../../../utils/errores-alta.js';
 
 
 /* =========================================================
@@ -260,7 +262,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="nombre"
               ></ion-note>
 
@@ -290,7 +292,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="apellido"
               ></ion-note>
 
@@ -321,7 +323,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="dni"
               ></ion-note>
 
@@ -351,7 +353,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="email"
               ></ion-note>
 
@@ -380,7 +382,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="password"
               ></ion-note>
 
@@ -409,7 +411,7 @@ export function render(container) {
               >
 
               <ion-note
-                color="danger"
+                class="texto-error"
                 data-error="confirmarPassword"
               ></ion-note>
 
@@ -499,6 +501,11 @@ export function render(container) {
 
   let enviandoAlta = false;
 
+  /* Errores que sólo conoce la base (DNI o correo ya usados). Van aparte de
+     validar(), que mira nada más el contenido del formulario, y se limpian
+     campo por campo apenas se edita ese campo. */
+  let conflictosServidor = {};
+
 
   /* =========================================================
      HEADER
@@ -508,6 +515,14 @@ export function render(container) {
      "+" del metre en Clientes (con sesión, da de alta a otra persona). El
      título por default corresponde al caso sin sesión; si hay una sesión de
      metre activa, se corrige apenas se confirma.
+
+     Los dos títulos son cortos a propósito: "Registrar un cliente nuevo"
+     entraba en dos líneas y ese renglón de más era lo que empujaba el
+     formulario hasta provocar scroll. Al cambiarlos, conviene que ambos
+     sigan cayendo en el mismo tramo de largo (12 a 20 caracteres, ver
+     crearAppHeader) para que el header mida siempre igual: la clase que
+     define el tamaño de fuente se asigna al crearlo y no se recalcula
+     cuando después se reemplaza el texto.
      ========================================================= */
 
   const header = crearAppHeader({
@@ -518,7 +533,7 @@ export function render(container) {
   obtenerPermisos()
     .then((permisos) => {
       if (permisos.rol === ROLES.METRE) {
-        header.querySelector('.app-header__titulo').textContent = 'Registrar un cliente nuevo';
+        header.querySelector('.app-header__titulo').textContent = 'Nuevo cliente';
       }
     })
     .catch(() => {
@@ -536,10 +551,10 @@ export function render(container) {
       return;
     }
 
-    const errores = validar(
-      datosFormulario(formulario),
-      foto
-    );
+    const errores = {
+      ...validar(datosFormulario(formulario), foto),
+      ...conflictosServidor,
+    };
 
     [
       'nombre',
@@ -655,6 +670,20 @@ export function render(container) {
 
 
   /* =========================================================
+     AJUSTE DE ALTO
+
+     Recién acá (con la foto y el lector de DNI ya insertados: son los que
+     le dan su alto real a esos recuadros) tiene sentido medir. Antes,
+     ".alta-cliente__foto"/"__lector-qr" están vacíos y miden 0.
+     ========================================================= */
+
+  const ajusteFormulario = ajustarFormulario(
+    container.querySelector('.alta-cliente__contenido'),
+    { variable: '--ac-ajuste' },
+  );
+
+
+  /* =========================================================
      EVENTOS DE LOS CAMPOS
      ========================================================= */
 
@@ -665,6 +694,15 @@ export function render(container) {
       control.addEventListener(
         'input',
         () => {
+
+          /* Si se corrige el campo que la base rechazó, el aviso deja de
+             aplicar: el valor ya no es el que chocaba. */
+          const campo = control.id.replace('-cliente', '');
+
+          if (conflictosServidor[campo]) {
+            const { [campo]: _descartado, ...resto } = conflictosServidor;
+            conflictosServidor = resto;
+          }
 
           actualizar();
 
@@ -718,15 +756,56 @@ export function render(container) {
       enviandoAlta = true;
       botonGuardar.disabled = true;
 
+      const datos = datosFormulario(formulario);
+
       try {
-        const datos = datosFormulario(formulario);
+
+        /* — 1. Unicidad contra la base, ANTES de crear nada —
+         *
+         * Si se crea el usuario de Auth y después rebota el INSERT del perfil
+         * (DNI repetido), el usuario queda creado igual y desde el cliente no
+         * hay forma de borrarlo: ese correo queda quemado y todo reintento,
+         * aun con los datos corregidos, responde que ya está registrado.
+         *
+         * Con el metre logueado esta consulta ve la tabla y corta antes de
+         * llegar a Auth. En el registro sin sesión, RLS no deja leer perfiles
+         * y devuelve vacío: no molesta, y el rebote lo sigue atajando el
+         * índice único con el mensaje de mensajeDeErrorAlta().
+         */
+
+        const conflictos = await buscarConflictosPerfil({
+          dni: datos.dni,
+          email: datos.email,
+        });
+
+        if (Object.keys(conflictos).length) {
+
+          conflictosServidor = {
+            ...(conflictos.dni && { dni: 'Ese DNI ya está registrado.' }),
+            ...(conflictos.email && { email: 'Ese correo ya está registrado.' }),
+          };
+
+          actualizar();
+
+          mostrarToastError('Revisá los campos señalados antes de continuar.');
+
+          return;
+        }
+
+
+        /* — 2. La foto antes que el usuario: si falla la subida, el correo
+               queda libre para reintentar. — */
+
+        const foto_url = await subirFotoPerfil(foto) || 'https://placehold.co/200x200/png?text=Cliente';
+
+
+        /* — 3. Usuario de Auth y perfil — */
+
         const { user } = await signUp(datos.email, datos.password);
 
         if (!user) {
           throw new Error('No se pudo obtener el usuario creado en Supabase Auth.');
         }
-
-        const foto_url = await subirFotoPerfil(foto) || 'https://placehold.co/200x200/png?text=Cliente';
 
         await altaPerfil({
           id: user.id,
@@ -759,7 +838,12 @@ export function render(container) {
 
       } catch (error) {
 
-        mostrarToastError(error.message ?? 'No se pudo crear el cliente.');
+        mostrarToastError(mensajeDeErrorAlta(error, {
+          marcarCampo: (campo, mensaje) => {
+            conflictosServidor = { ...conflictosServidor, [campo]: mensaje };
+            actualizar();
+          },
+        }));
 
       } finally {
         enviandoAlta = false;
@@ -778,6 +862,7 @@ export function render(container) {
     'hashchange',
     () => {
       avatar.destruir();
+      ajusteFormulario.destruir();
     },
     { once: true }
   );

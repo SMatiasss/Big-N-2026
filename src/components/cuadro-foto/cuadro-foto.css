@@ -96,5 +96,5 @@
 }
 
 .cuadro-foto--invalido {
-  --cf-borde: #ef4444;
+  --cf-borde: var(--color-error-texto);
 }
