@@ -2,9 +2,8 @@
    BASE
 
    Criterio de esta pantalla: ocupar todo el alto sin dejar un hueco muerto.
-   En vez de empujar el botón al pie con un margen automático, el espacio
-   sobrante lo absorbe el bloque de la foto (flex: 1), y los tamaños se
-   escalan con el viewport para que en pantallas altas se vea completa.
+   La foto crece con el viewport y el formulario reparte el alto disponible
+   entre contenido útil, sin convertir el espacio sobrante en huecos.
    ========================================================= */
 
 .ingreso-anonimo {
@@ -39,10 +38,11 @@
 
   width: 100%;
   max-width: 440px;
-  min-height: 100%;
+  height: var(--vista-alto-disponible, auto);
+  min-height: 0;
 
   margin: 0 auto;
-  padding: 24px 20px 28px;
+  padding: calc(clamp(12px, 2.4dvh, 24px) * var(--ia-ajuste, 1)) 20px calc(clamp(14px, 2.8dvh, 28px) * var(--ia-ajuste, 1));
 }
 
 
@@ -54,7 +54,7 @@
   display: flex;
   gap: 10px;
 
-  margin: 0 0 20px;
+  margin: 0 0 calc(clamp(10px, 2dvh, 20px) * var(--ia-ajuste, 1));
   padding: 0;
 
   list-style: none;
@@ -68,7 +68,7 @@
 
   box-sizing: border-box;
 
-  padding: 10px 12px;
+  padding: calc(10px * var(--ia-ajuste, 1)) 12px;
 
   background: rgb(74 87 44 / 55%);
   border: 1px solid transparent;
@@ -76,7 +76,7 @@
 
   color: var(--texto-suave);
 
-  font-size: 12px;
+  font-size: clamp(12px, 3.2vw, 14px);
   font-weight: 600;
   line-height: 15px;
 
@@ -101,7 +101,7 @@
   color: var(--texto-suave);
 
   font-family: var(--fuente-outfit);
-  font-size: 12px;
+  font-size: clamp(12px, 3.2vw, 14px);
   font-weight: 700;
   line-height: 1;
 }
@@ -139,8 +139,10 @@
 }
 
 .ingreso-anonimo__formulario {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  align-items: stretch;
+  gap: calc(clamp(10px, 1.8dvh, 16px) * var(--ia-ajuste, 1));
   flex: 1;
 
   width: 100%;
@@ -152,7 +154,7 @@
 
    El componente es el mismo del alta de mesa (un rectángulo grande); acá la
    foto es de una persona, así que se lo lleva a un avatar redondo. Este
-   bloque es el que absorbe el espacio libre de la pantalla.
+   bloque aprovecha el espacio principal sin separar los controles inferiores.
    ========================================================= */
 
 .ingreso-anonimo__foto {
@@ -160,18 +162,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
-
   min-height: 0;
 
-  padding: 12px 0;
+  padding: 0;
 }
 
 /* El avatar se mide contra el ancho Y el alto: en un celular alto crece para
    llenar el espacio libre, y en uno bajo se achica en vez de desbordar. */
 
 .ingreso-anonimo .selector-foto-mesa {
-  width: min(70vw, 33vh, 270px);
+  width: clamp(190px, min(72vw, 34dvh), 280px);
+  max-height: 100%;
   margin: 0;
 }
 
@@ -226,7 +227,7 @@
 
   padding: 5px 13px;
 
-  font-size: 11px;
+  font-size: clamp(11px, 3vw, 13px);
   line-height: 13px;
 }
 
@@ -258,7 +259,7 @@
 
 .ingreso-anonimo .campo-formulario {
   width: 100%;
-  margin: 0 0 18px;
+  margin: 0;
 }
 
 .ingreso-anonimo .campo-formulario label {
@@ -268,7 +269,7 @@
 
   color: var(--texto-claro);
 
-  font-size: 12px;
+  font-size: clamp(12px, 3.2vw, 14px);
   font-weight: 600;
   line-height: 14px;
   letter-spacing: 0.06em;
@@ -281,7 +282,7 @@
   display: block;
 
   width: 100%;
-  height: 56px;
+  height: calc(54px * var(--ia-ajuste, 1));
 
   margin: 0;
   padding: 0 16px;
@@ -299,7 +300,7 @@
   font-family: var(--fuente-geist);
   font-size: 16px;
   font-weight: 400;
-  line-height: 56px;
+  line-height: calc(54px * var(--ia-ajuste, 1));
 
   outline: none;
   box-shadow: none;
@@ -330,7 +331,7 @@
   color: #ffd0bf;
 
   font-family: var(--fuente-geist);
-  font-size: 12px;
+  font-size: clamp(12px, 3.2vw, 14px);
   line-height: 15px;
 }
 
@@ -349,8 +350,8 @@
 
 .ingreso-anonimo__submit {
   width: 100%;
-  height: 58px;
-  min-height: 58px;
+  height: calc(56px * var(--ia-ajuste, 1));
+  min-height: calc(52px * var(--ia-ajuste, 1));
 
   margin: 0;
 
@@ -403,7 +404,7 @@
 .ingreso-anonimo .lector-qr {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   flex: 1;
 
   box-sizing: border-box;
@@ -411,7 +412,7 @@
   width: 100%;
 
   margin: 0;
-  padding: 32px 22px;
+  padding: clamp(20px, 4dvh, 34px) 22px;
 
   background: var(--fondo-card);
   border: 1px solid var(--acento-fuerte);
@@ -423,21 +424,7 @@
 /* Marco de visor: los tramos punteados dejan las esquinas marcadas. */
 
 .ingreso-anonimo .lector-qr::before {
-  content: '';
-
-  display: block;
-
-  box-sizing: border-box;
-
-  /* Igual que el avatar: se mide contra el ancho y el alto disponibles. */
-  width: min(54vw, 25vh, 200px);
-  height: min(54vw, 25vh, 200px);
-
-  margin: 0 auto 26px;
-
-  border: 5px solid var(--acento);
-  border-radius: 22px;
-  border-style: solid dashed;
+  display: none;
 }
 
 .ingreso-anonimo .lector-qr h2 {
@@ -494,7 +481,7 @@
 
   color: #ffd0bf;
 
-  font-size: 13px;
+  font-size: clamp(13px, 3.4vw, 15px);
   line-height: 16px;
 }
 

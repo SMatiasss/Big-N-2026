@@ -26,6 +26,7 @@ export async function render(container) {
     const lector = crearLectorQr({
       titulo: 'Escanear mesa', descripcion: 'Usá el QR de la mesa que te asignó el metre.',
       textoBoton: 'Escanear QR', nombreObjeto: 'QR de mesa', onLectura: validar,
+      variante: 'acceso',
     });
     raiz.querySelector('[data-lector]').append(lector.elemento);
     async function validar(contenido) {

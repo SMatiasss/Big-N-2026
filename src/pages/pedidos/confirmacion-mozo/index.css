@@ -26,6 +26,9 @@
 
 .confirmacion-mozo__main {
   box-sizing: border-box;
+  display: flex;
+  min-height: var(--vista-alto-disponible, calc(100dvh - 110px));
+  flex-direction: column;
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
@@ -33,14 +36,30 @@
 }
 
 .confirmacion-mozo__vacio {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  min-height: clamp(360px, 62dvh, 620px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2dvh, 18px);
+  padding: clamp(28px, 6dvh, 56px) clamp(20px, 6vw, 36px);
+  border: 1px solid rgb(221 161 94 / 28%);
+  border-radius: 22px;
+  background: var(--fondo-card);
   text-align: center;
-  margin-top: 40px;
   color: var(--texto-suave);
-  font-size: 1.1rem;
+  font-size: clamp(16px, 4.6vw, 20px);
 }
+.confirmacion-mozo__vacio-icono { display:grid; width:clamp(100px,18dvh,148px); height:clamp(100px,18dvh,148px); place-items:center; border-radius:50%; background:#283618; color:var(--acento); font:700 clamp(52px,10dvh,78px)/1 var(--font-heading); }
+.confirmacion-mozo__vacio strong { color:var(--texto-claro); font:700 clamp(28px,7vw,38px)/1.1 var(--font-heading); }
+.confirmacion-mozo__vacio p,.confirmacion-mozo__vacio small { margin:0; line-height:1.4; }
+.confirmacion-mozo__vacio small { max-width:300px; font-size:clamp(14px,4vw,18px); }
 
 .confirmacion-mozo__lista {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 16px;
   margin-top: 16px;
@@ -67,13 +86,13 @@
   margin: 0;
   color: var(--acento);
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 1.4rem;
+  font-size: clamp(20px, 5.8vw, 25px);
 }
 
 .pedido-card__cliente {
   margin: 4px 0 0 0;
   color: var(--texto-claro);
-  font-size: 1rem;
+  font-size: clamp(14px, 4.1vw, 18px);
 }
 
 .pedido-card__cuerpo ul {
@@ -84,7 +103,7 @@
 
 .pedido-card__cuerpo li {
   color: var(--texto-claro);
-  font-size: 1.1rem;
+  font-size: clamp(16px, 4.6vw, 20px);
   margin-bottom: 4px;
 }
 
@@ -99,7 +118,7 @@
   height: 48px;
   border-radius: 8px;
   border: none;
-  font-size: 1.5rem;
+  font-size: clamp(21px, 6vw, 27px);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -12,10 +12,14 @@ export function crearLectorQr({
   descripcion = 'Escaneá el código QR o PDF417 del DNI para completar los datos disponibles.',
   textoBoton = 'Leer DNI',
   nombreObjeto = 'DNI',
+  variante = '',
 } = {}) {
   const elemento = document.createElement('section');
-  elemento.className = 'lector-qr';
+  elemento.className = `lector-qr${variante ? ` lector-qr--${variante}` : ''}`;
   elemento.innerHTML = `
+    ${variante === 'acceso' ? `<span class="lector-qr__icono" aria-hidden="true">
+      <svg viewBox="0 0 64 64" focusable="false"><path d="M8 8h18v18H8zM38 8h18v18H38zM8 38h18v18H8zM13 13h8v8h-8zM43 13h8v8h-8zM13 43h8v8h-8zM38 38h7v7h-7zM49 38h7v18H45v-7h-7v7"/></svg>
+    </span>` : ''}
     <h2>${titulo}</h2>
     <p>${descripcion}</p>
     <ion-button type="button" fill="outline" expand="block">${textoBoton}</ion-button>

@@ -1,23 +1,23 @@
 .juego-hu15 { --j-fondo: var(--form-fondo, #606c38); --j-card: var(--form-campo-fondo, #4a572c); --j-profundo: var(--form-texto-oscuro, #283618); --j-acento: var(--form-dorado, #dda15e); --j-texto: var(--form-texto-claro, #fefae0); color: var(--j-texto); }
 .juego-hu15 ion-content { --background: var(--j-fondo); }
 .juego-hu15 .app-header { --ah-bg: var(--j-fondo); --ah-escala: 1.42; }
-.juego-hu15__main { box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 520px); min-height: calc(100% - 8px); margin: 0 auto; padding: 0 18px calc(18px + env(safe-area-inset-bottom)); font-family: var(--fuente-geist); text-align: center; }
-.juego-hu15__intro { margin: 0 0 18px; color: rgb(254 250 224 / 82%); font-size: 15px; line-height: 1.4; }
+.juego-hu15__main { box-sizing: border-box; display: flex; flex-direction: column; width: min(100%, 520px); height: var(--vista-alto-disponible, calc(100dvh - 118px)); min-height: 0; margin: 0 auto; padding: 0 18px calc(18px + env(safe-area-inset-bottom)); font-family: var(--fuente-geist); text-align: center; }
+.juego-hu15__intro { margin: 0 0 clamp(10px, 2.2dvh, 18px); color: rgb(254 250 224 / 82%); font-size: clamp(14px, 3.8vw, 17px); line-height: 1.4; }
 .juego-hu15__tablero { display: grid; flex: 1; align-content: center; gap: 14px; padding: 20px; border: 1px solid rgb(254 250 224 / 10%); border-radius: 20px; background: var(--j-card); }
 .juego-hu15__tablero button { min-height: 74px; border: 1px solid rgb(221 161 94 / 48%); border-radius: 14px; background: var(--j-profundo); color: var(--j-acento); font: 700 20px var(--fuente-outfit); }
 .juego-hu15__tablero button:disabled { opacity: .8; }
-.juego-hu15__resultado { min-height: 64px; margin: 16px 0 0; padding: 13px; border-radius: 14px; background: var(--j-profundo); color: var(--j-texto); font-size: 14px; line-height: 1.35; }
-.juego-hu15__resultado strong { display: block; margin-bottom: 3px; color: var(--j-acento); font: 700 18px var(--fuente-outfit); }
-.juego-hu15__repetir { min-height: 46px; margin-top: 12px; border: 0; border-radius: 12px; background: var(--j-acento); color: var(--j-profundo); font: 700 16px var(--fuente-outfit); }
+.juego-hu15__resultado { min-height: clamp(58px, 9dvh, 70px); margin: clamp(10px, 2dvh, 16px) 0 0; padding: clamp(11px, 3vw, 15px); border-radius: 14px; background: var(--j-profundo); color: var(--j-texto); font-size: clamp(13px, 3.6vw, 16px); line-height: 1.35; }
+.juego-hu15__resultado strong { display: block; margin-bottom: 3px; color: var(--j-acento); font: 700 clamp(16px, 4.5vw, 20px) var(--fuente-outfit); }
+.juego-hu15__repetir { min-height: clamp(46px, 7dvh, 54px); margin-top: clamp(9px, 1.6dvh, 12px); border: 0; border-radius: 12px; background: var(--j-acento); color: var(--j-profundo); font: 700 clamp(15px, 4.2vw, 18px) var(--fuente-outfit); }
 .juego-hu15__repetir[hidden] { display: none; }
 .juego-hu15__cartas { grid-template-columns: repeat(2, 1fr); }
-.juego-hu15__cartas button { min-height: 120px; font-size: 34px; }
+.juego-hu15__cartas button { min-height: clamp(90px, 16dvh, 120px); font-size: clamp(28px, 9vw, 38px); }
 .juego-hu15__cartas button.seleccionada { background: var(--j-acento); color: var(--j-profundo); }
 .juego-hu15__cartas button.acertada { outline: 3px solid var(--j-texto); }
-.juego-hu15__cartas button span { display: grid; place-items: center; min-height: 52px; font-size: 38px; }
+.juego-hu15__cartas button span { display: grid; place-items: center; min-height: clamp(46px, 8dvh, 56px); font-size: clamp(32px, 10vw, 42px); }
 .juego-hu15__cajas { grid-template-columns: repeat(3, 1fr); }
-.juego-hu15__cajas button { min-width: 0; min-height: 150px; padding: 6px; font-size: 34px; }
-.juego-hu15__cajas button small { display: block; margin-top: 8px; color: var(--j-texto); font-size: 14px; }
+.juego-hu15__cajas button { min-width: 0; min-height: clamp(110px, 20dvh, 150px); padding: 6px; font-size: clamp(28px, 9vw, 38px); }
+.juego-hu15__cajas button small { display: block; margin-top: 8px; color: var(--j-texto); font-size: clamp(12px, 3.4vw, 15px); }
 .juego-hu15__cajas button.premiada { background: var(--j-acento); color: var(--j-profundo); opacity: 1; }
 .juego-hu15__cajas button.elegida { outline: 3px solid var(--j-texto); opacity: 1; }
 .juego-hu15__hamburguesa { display: block; font-size: clamp(42px, 13vw, 66px); filter: drop-shadow(0 4px 2px rgb(40 54 24 / 28%)); }

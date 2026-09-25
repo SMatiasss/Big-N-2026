@@ -121,7 +121,7 @@
 
   color: var(--texto-suave);
 
-  font-size: 12px;
+  font-size: clamp(12px, 3.2vw, 14px);
   line-height: 14px;
   text-align: center;
 }
@@ -157,7 +157,7 @@
   border-radius: 999px;
 
   font-family: var(--fuente-geist);
-  font-size: 12px;
+  font-size: clamp(12px, 3.2vw, 14px);
   font-weight: 600;
   text-transform: none;
 }
@@ -259,14 +259,11 @@
 }
 
 .panel-metre__mensaje {
-  margin: 40px 0 0;
-
-  color: var(--texto-suave);
-
-  font-size: 15px;
-  line-height: 19px;
-  text-align: center;
+  box-sizing:border-box; display:flex; flex:1; min-height:0; flex-direction:column; align-items:center; justify-content:center; gap:clamp(10px,2dvh,18px); margin:0; padding:clamp(28px,6dvh,56px) clamp(20px,6vw,36px); border:1px solid rgb(221 161 94 / 28%); border-radius:22px; background:var(--fondo-card); color:var(--texto-suave); text-align:center;
 }
+.panel-metre__mensaje-icono{display:grid;width:clamp(108px,20dvh,158px);height:clamp(108px,20dvh,158px);place-items:center;border-radius:50%;background:#283618;color:var(--acento);font:700 clamp(58px,11dvh,86px)/1 var(--font-heading)}
+.panel-metre__mensaje strong{color:var(--texto-claro);font:700 clamp(28px,7vw,38px)/1.1 var(--font-heading)}
+.panel-metre__mensaje p,.panel-metre__mensaje small{margin:0;line-height:1.4}.panel-metre__mensaje p{font-size:clamp(17px,4.7vw,22px)}.panel-metre__mensaje small{max-width:310px;font-size:clamp(14px,4vw,18px)}
 
 
 /* =========================================================

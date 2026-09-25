@@ -54,7 +54,12 @@ export function render(container) {
             <span>Cargando...</span>
           </div>
           <ul class="panel-metre__lista lista-ajustada" hidden></ul>
-          <p class="panel-metre__mensaje" hidden>No hay clientes esperando.</p>
+          <section class="panel-metre__mensaje" hidden>
+            <span class="panel-metre__mensaje-icono" aria-hidden="true">◷</span>
+            <strong>Lista despejada</strong>
+            <p>No hay clientes esperando en este momento.</p>
+            <small>Las nuevas solicitudes aparecerán automáticamente.</small>
+          </section>
         </main>
       </ion-content>
     </ion-page>

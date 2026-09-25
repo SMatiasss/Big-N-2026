@@ -12,6 +12,7 @@ import { crearClienteAnonimo } from '../../../services/perfiles.service.js';
 import { validarQrIngreso } from '../../../services/qr.service.js';
 import { navegarA } from '../../../router.js';
 import { esArchivoImagen, esNombrePersonaValido } from '../../../utils/validadores.js';
+import { ajustarFormulario, ajustarVista } from '../../../components/lista-ajustada/lista-ajustada.js';
 
 function validarFormulario(nombre, foto) {
   const errores = {};
@@ -116,11 +117,17 @@ export function render(container) {
   formulario.querySelector('.ingreso-anonimo__foto').append(selectorFoto.elemento);
 
   const header = crearAppHeader({
-    titulo: 'Ingreso como invitado',
+    titulo: 'Ingreso invitado',
     onVolver: () => navegarA('/login'),
   });
   container.querySelector('[data-header]').append(header);
-  const controlVolver = header.querySelector('.app-header__volver');
+  const contenido = container.querySelector('.ingreso-anonimo__contenido');
+  const ajusteFormulario = ajustarFormulario(contenido, {
+    variable: '--ia-ajuste',
+    minimo: 0.78,
+    margen: 4,
+  });
+  let ajusteQr = null;
 
   formulario.querySelector('#nombre-anonimo').addEventListener('input', revalidar);
 
@@ -157,11 +164,11 @@ export function render(container) {
       });
 
       // Sin pantalla intermedia: apenas queda creada la sesión y el perfil,
-      // se abre directo el lector del QR de ingreso al local. La sesión anónima
-      // ya existe, así que volver atrás desde acá no tendría sentido.
+      // se abre directo el lector del QR de ingreso al local. El AppHeader se
+      // conserva completo: ocultar sólo su botón rompía la grilla y desplazaba
+      // el título a la columna estrecha del control.
       pasoDatos.hidden = true;
       pasoQr.hidden = false;
-      controlVolver.hidden = true;
 
       container.querySelectorAll('[data-progreso]').forEach((item) => {
         item.classList.toggle(
@@ -175,6 +182,7 @@ export function render(container) {
         descripcion: 'Es el código que está en la puerta del local.',
         textoBoton: 'Escanear código',
         nombreObjeto: 'código',
+        variante: 'acceso',
         onLectura: async (contenido) => {
           try {
             const esValido = await validarQrIngreso(contenido);
@@ -189,6 +197,13 @@ export function render(container) {
         },
       });
       container.querySelector('.ingreso-anonimo__lector-qr').append(lector.elemento);
+      ajusteFormulario.destruir();
+      ajusteQr = ajustarVista(contenido, {
+        variable: '--ia-ajuste',
+        minimo: 0.84,
+        maximo: 1.12,
+        margen: 4,
+      });
     } catch (error) {
       console.error('No se pudo completar el ingreso anónimo.', error);
       mostrarToastError(`No se pudo completar el ingreso: ${error.message ?? 'error desconocido'}`);
@@ -196,5 +211,9 @@ export function render(container) {
     }
   });
 
-  window.addEventListener('hashchange', () => selectorFoto.destruir(), { once: true });
+  window.addEventListener('hashchange', () => {
+    selectorFoto.destruir();
+    ajusteFormulario.destruir();
+    ajusteQr?.destruir();
+  }, { once: true });
 }
