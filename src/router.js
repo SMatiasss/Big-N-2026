@@ -34,7 +34,9 @@ const rutas = {
   '/pedidos/entrega': () => import('./pages/pedidos/entrega-pedido/index.js'),
   '/pedidos/estado': () => import('./pages/pedidos/estado-pedido/index.js'),
   '/pedidos/consulta': () => import('./pages/pedidos/consulta-mozo/index.js'),
-  '/pedidos/aceptado': () => import('./pages/pedidos/pedido-aceptado/index.js'),
+  // Alias conservado para enlaces/versiones anteriores: ahora muestra la única
+  // pantalla de seguimiento del pedido.
+  '/pedidos/aceptado': () => import('./pages/pedidos/estado-pedido/index.js'),
 
   '/juegos': () => import('./pages/juegos/index.js'),
   '/juegos/1': () => import('./pages/juegos/juego-1/index.js'),
