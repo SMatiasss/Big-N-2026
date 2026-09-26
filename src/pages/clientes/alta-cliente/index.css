@@ -10,7 +10,9 @@
      src/styles/variables.css) en vez de repetir los hex acá. */
   --fondo-empleado: var(--form-fondo);
   --fondo-campo-empleado: var(--form-campo-fondo);
-  --acento-empleado: var(--form-dorado);
+  /* Terracota, el naranja fuerte de "Guardar Mesa" y "Guardar Empleado":
+     marcos punteados y botón Guardar. (Antes era el dorado.) */
+  --acento-empleado: var(--form-terracota);
   --marco-dni-empleado: var(--form-terracota);
 
   --texto-claro-empleado: var(--form-texto-claro);
@@ -57,7 +59,6 @@
      ajustarFormulario() en ESTE elemento, y una variable declarada en un
      ancestro ya viene resuelta con el valor por defecto (1), así que esos
      altos nunca se achicaban. */
-  --ac-medio-icono: calc(60px * var(--ac-ajuste, 1));
   --ac-campo-alto: calc(44px * var(--ac-ajuste, 1));
 
   box-sizing: border-box;
@@ -87,9 +88,11 @@
    ========================================================= */
 
 .alta-cliente__medios {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  /* Sólo la foto, centrada. Mide lo mismo que cuando compartía la fila con
+     el lector (la mitad menos el espacio entre ambos): así la pantalla no
+     gana alto. */
+  display: flex;
+  justify-content: center;
 
   width: 100%;
 
@@ -101,6 +104,23 @@
   max-width: calc(100% * (0.6 + 0.4 * var(--ac-ajuste, 1)));
 
   margin: 0 auto calc(16px * var(--ac-ajuste, 1));
+}
+
+/* Con Nombres y Apellidos en una sola fila sobra el alto de un campo: la
+   foto lo usa creciendo hacia abajo y, por el 4/3, se ensancha sólo lo
+   necesario para no quedar tan rectangular. */
+.alta-cliente__foto {
+  width: 64%;
+}
+
+.alta-cliente__fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.alta-cliente__fila > .campo-formulario {
+  min-width: 0;
 }
 
 .alta-cliente .selector-avatar-foto {
@@ -121,7 +141,7 @@
   box-sizing: border-box;
 
   width: 100%;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 4 / 3;
   height: auto;
 
   margin: 0;
@@ -129,7 +149,7 @@
   background: var(--fondo-campo-empleado)
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fefae0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/%3E%3Ccircle cx='12' cy='13' r='4'/%3E%3C/svg%3E")
     no-repeat center;
-  background-size: var(--ac-medio-icono) var(--ac-medio-icono);
+  background-size: auto 75%;
   border: 2px dashed var(--acento-empleado);
   border-radius: 16px;
 
@@ -236,30 +256,33 @@
 
 
 /* =========================================================
+   FALTA LA FOTO (igual que en alta-empleado)
+
+   Al intentar guardar sin foto, el componente le pone la clase --invalido
+   y se la saca apenas se toma una. No se veía: la regla del marco de arriba
+   (terracota) le ganaba al color de error del componente. Acá no hay botón
+   "+" (tocar el recuadro ya abre la cámara), así que sólo cambia el marco.
+   ========================================================= */
+
+.alta-cliente .selector-avatar-foto--invalido .selector-avatar-foto__preview {
+  border-color: var(--color-error-texto);
+}
+
+
+/* =========================================================
    LECTOR DNI
    ========================================================= */
 
+/* Ya no es un recuadro: es un botón a lo ancho, arriba de "Guardar Cliente",
+   con el borde terracota y el texto crema (secundario frente al botón
+   Guardar, que va relleno). */
+.alta-cliente__lector-qr {
+  margin: calc(18px * var(--ac-ajuste, 1)) 0 0;
+}
+
 .alta-cliente .lector-qr {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  box-sizing: border-box;
-
-  width: 100%;
-  min-width: 0;
-  aspect-ratio: 3 / 2;
-  height: auto;
-
   margin: 0;
   padding: 0;
-
-  background: var(--fondo-campo-empleado) !important;
-
-  border: 2px dashed var(--acento-empleado) !important;
-  border-radius: 16px !important;
-
-  overflow: hidden;
 }
 
 .alta-cliente .lector-qr :is(h2, p, ion-note) {
@@ -267,50 +290,27 @@
 }
 
 .alta-cliente .lector-qr ion-button {
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
+  width: 100%;
+  height: calc(46px * var(--ac-ajuste, 1));
+  min-height: 0;
+  margin: 0;
 
-  margin: 0 !important;
+  --background: transparent;
+  --background-hover: rgb(254 250 224 / 8%);
+  --background-activated: rgb(254 250 224 / 14%);
+  --background-focused: transparent;
+  --border-width: 2px;
+  --border-style: solid;
+  --border-color: var(--acento-empleado);
+  --border-radius: 9px;
+  --box-shadow: none;
+  --color: var(--texto-claro-empleado);
 
-  --border-width: 0 !important;
-  --border-style: none !important;
-  --border-color: transparent !important;
-
-  --background: transparent !important;
-  --background-hover: transparent !important;
-  --background-activated: transparent !important;
-  --background-focused: transparent !important;
-
-  --box-shadow: none !important;
-  --color: transparent !important;
-
-  background: transparent !important;
-  border-radius: 0 !important;
-  outline: none !important;
-}
-
-.alta-cliente .lector-qr ion-button::part(native) {
-  box-sizing: border-box;
-
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-
-  padding: 0 !important;
-
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fefae0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7V4a1 1 0 0 1 1-1h3'/%3E%3Cpath d='M17 3h3a1 1 0 0 1 1 1v3'/%3E%3Cpath d='M21 17v3a1 1 0 0 1-1 1h-3'/%3E%3Cpath d='M7 21H4a1 1 0 0 1-1-1v-3'/%3E%3C/svg%3E")
-    no-repeat center !important;
-  background-size: var(--ac-medio-icono) var(--ac-medio-icono) !important;
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  outline: none !important;
-
-  color: transparent !important;
-  font-size: 0 !important;
+  font-family: var(--fuente-outfit);
+  font-size: calc(17px * var(--ac-ajuste, 1));
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 
@@ -543,7 +543,7 @@
   height: calc(50px * var(--ac-ajuste, 1));
   min-height: calc(50px * var(--ac-ajuste, 1));
 
-  margin: calc(20px * var(--ac-ajuste, 1)) 0 0;
+  margin: calc(10px * var(--ac-ajuste, 1)) 0 0;
 
   --background: var(--acento-empleado) !important;
   --background-hover: var(--acento-empleado) !important;

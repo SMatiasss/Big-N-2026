@@ -224,9 +224,9 @@ export function render(container) {
 
             <!-- FOTO Y LECTOR DNI, lado a lado -->
 
+            <!-- La foto va sola y centrada, como pide el TP. -->
             <div class="alta-cliente__medios">
               <div class="alta-cliente__foto"></div>
-              <div class="alta-cliente__lector-qr"></div>
             </div>
 
 
@@ -239,7 +239,10 @@ export function render(container) {
             ></pre>
 
 
-            <!-- NOMBRES -->
+            <!-- NOMBRES Y APELLIDOS: uno al lado del otro, para dejarle
+                 más alto a la foto. -->
+
+            <div class="alta-cliente__fila">
 
             <div
               class="campo-formulario"
@@ -295,6 +298,8 @@ export function render(container) {
                 class="texto-error"
                 data-error="apellido"
               ></ion-note>
+
+            </div>
 
             </div>
 
@@ -426,6 +431,12 @@ export function render(container) {
               aria-live="polite"
               hidden
             ></div>
+
+
+            <!-- ESCANEAR DNI: botón propio arriba de Guardar (antes era un
+                 recuadro al lado de la foto). -->
+
+            <div class="alta-cliente__lector-qr"></div>
 
 
             <!-- GUARDAR -->
@@ -626,6 +637,7 @@ export function render(container) {
      ========================================================= */
 
   const lector = crearLectorQr({
+    textoBoton: 'Escanear datos DNI',
     onLectura: async (contenido) => {
 
       resultadoEscaneo.hidden = false;
