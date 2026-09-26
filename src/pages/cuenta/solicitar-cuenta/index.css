@@ -292,36 +292,47 @@
   justify-content: space-evenly;
   text-align: center;
 }
-.cuenta__paso--total > * { flex-shrink: 0; }
+/* min-width: 0 es el que importa acá: sin él, un ítem de flex column no
+   puede achicarse por debajo de su ancho de contenido (default min-width:auto)
+   y en pantallas altas y angostas el número/botón se salían del recuadro y de
+   la pantalla en vez de ajustarse. flex-shrink sólo afecta el eje vertical
+   (la columna), así que no alcanzaba por sí solo. */
+.cuenta__paso--total > * { flex-shrink: 0; min-width: 0; }
 
 .cuenta__nivel {
   margin: 0;
 
+  overflow-wrap: break-word;
+
   color: var(--acento);
 
-  font: 700 clamp(16px, 3.2vh, 26px)/1.2 var(--fuente-outfit);
+  font: 700 clamp(20px, min(5vh, 8vw), 32px)/1.2 var(--fuente-outfit);
 }
 
 .cuenta__total-etiqueta {
   margin: 0;
 
   color: var(--texto-suave);
-
-  font-size: clamp(12px, 2.2vh, 17px);
+  font-size: clamp(14px, 2.8vh, 20px);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 /* El número es lo más importante de la pantalla: grande, alto contraste y
-   solo, sin nada que compita al lado. */
+   solo, sin nada que compita al lado. El tamaño escala con el alto (9vh)
+   pero el min() lo tapa con un límite en ancho (14vw): en una pantalla alta
+   y angosta 9vh da un número enorme que no entra en el ancho disponible, así
+   que el que gana ahí es el límite de ancho, no el de alto. */
 .cuenta__total {
   display: block;
 
   margin: 0;
 
+  overflow-wrap: break-word;
+
   color: var(--texto-claro);
 
-  font: 700 clamp(38px, 9vh, 76px)/1.05 var(--fuente-outfit);
+  font: 700 clamp(32px, min(9vh, 14vw), 76px)/1.05 var(--fuente-outfit);
   letter-spacing: -0.01em;
 }
 

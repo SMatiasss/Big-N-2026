@@ -66,6 +66,19 @@ export async function eliminarDeEspera(entradaId) {
   if (error) throw error;
 }
 
+// El metre rechaza a un cliente que está esperando. A diferencia de
+// eliminarDeEspera (el propio cliente cancelándose), acá se hace un UPDATE a
+// 'cancelado' en vez de un DELETE: el cliente ya está escuchando UPDATEs de
+// su fila por suscribirseAMiEspera (así se entera de la mesa asignada), y un
+// DELETE no dispara ese evento.
+export async function rechazarEspera(entradaId) {
+  const { error } = await getSupabase()
+    .from(TABLAS.LISTA_ESPERA)
+    .update({ estado: ESTADOS_ESPERA.CANCELADO, atendido_en: new Date().toISOString() })
+    .eq('id', entradaId);
+  if (error) throw error;
+}
+
 // Avisa al propio cliente cuando SU fila cambia (típicamente estado -> 'asignado').
 // Devuelve una función para desuscribirse.
 export function suscribirseAMiEspera(entradaId, onCambio) {
