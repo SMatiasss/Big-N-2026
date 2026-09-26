@@ -32,7 +32,7 @@
    contenido y el overflow:hidden de .lista-ajustada recorta los botones. */
 
 .hu11__productos {
-  --la-items: 2;
+  --la-items: 1;
   /* clamp() funciona desde que ajustarLista lee el gap ya resuelto. Antes
      lo leía como texto, daba 0, y cada tarjeta salía un gap más alta de lo
      que entraba: ése era el corte de abajo y el snap corrido. */
@@ -87,14 +87,14 @@
 
 .hu11-producto__descripcion {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   flex-shrink: 0;
   overflow: hidden;
 }
 
 @media (max-height: 720px) {
-  .hu11-producto__descripcion { -webkit-line-clamp: 1; }
+  .hu11-producto__descripcion { -webkit-line-clamp: 2; }
 }
 
 /* Controles de cantidad: pegados abajo de la columna de datos. */
@@ -103,7 +103,13 @@
   align-items: center;
   gap: clamp(8px, calc(var(--tarjeta-alto, 230px) * 0.05), 14px);
   flex-shrink: 0;
-  margin-top: auto;
+  justify-content: center;
+  width: 100%;
+  margin-top: clamp(7px, 1.2dvh, 12px);
+  padding: clamp(5px, 1dvh, 9px);
+  border: 1px solid rgb(221 161 94 / 45%);
+  border-radius: 10px;
+  background: rgb(40 54 24 / 35%);
 }
 
 .hu11-producto__btn-cantidad {

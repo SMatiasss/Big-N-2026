@@ -9,21 +9,18 @@
    TARJETA DE PRODUCTO DE LA CARTA
    (no toca las burbujas del chat ni otros usos del carrusel)
 
-   Mismo criterio que .producto-card en gestión de productos: el ALTO lo
-   fija .lista-ajustada vía --la-alto, y todo lo de adentro se mide contra
-   ese alto. Las dos columnas se estiran a la tarjeta completa y el sobrante
-   se lo lleva la foto, así la tarjeta entra exacta en el alto que le toque
-   sin que haya que adivinar píxeles (era lo que cortaba los controles).
+   El ALTO lo fija .lista-ajustada vía --la-alto. La disposición vertical
+   deja el nombre arriba, un carrusel protagonista, la descripción y una
+   fila final con tiempo/precio, como una ficha de producto móvil.
    ========================================================= */
 
 .hu11 .hu11-producto {
   --tarjeta-alto: var(--la-alto, 230px);
 
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: clamp(116px, calc(var(--tarjeta-alto) * 0.6), 190px) minmax(0, 1fr);
-  align-items: stretch;
-  gap: clamp(10px, calc(var(--tarjeta-alto) * 0.05), 16px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, calc(var(--tarjeta-alto) * 0.018), 12px);
 
   padding: clamp(10px, calc(var(--tarjeta-alto) * 0.045), 14px);
 
@@ -36,11 +33,12 @@
 }
 
 
-/* — Columna izquierda: foto + navegación entre fotos — */
+/* — Carrusel ancho — */
 
 .hu11-producto .carrusel-imagenes {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
 }
@@ -51,8 +49,11 @@
   flex: 1;
   min-height: 0;
   height: auto;
+  width: 100%;
   border-radius: 10px;
 }
+
+.hu11-producto .carrusel-imagenes__foto img { object-fit: cover; }
 
 .hu11-producto .carrusel-imagenes nav {
   flex-shrink: 0;
@@ -80,45 +81,53 @@
 }
 
 
-/* — Columna derecha: datos y controles de cantidad — */
+/* — Información debajo de la imagen — */
 
 .hu11-producto__datos {
   display: flex;
   flex-direction: column;
+  flex: 0 0 auto;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
 }
 
 .hu11-producto h3 {
-  margin: 0 0 clamp(3px, calc(var(--tarjeta-alto) * 0.022), 7px);
-  font-size: clamp(1rem, calc(var(--tarjeta-alto) * 0.098), 1.45rem);
+  margin: 0;
+  font-size: clamp(1.15rem, calc(var(--tarjeta-alto) * 0.055), 1.55rem);
   line-height: 1.2;
+  text-align: center;
 }
 
 .hu11-producto__descripcion {
-  margin: 0 0 clamp(5px, calc(var(--tarjeta-alto) * 0.035), 11px);
+  margin: 0;
   color: #e5e4c9;
-  font-size: clamp(.82rem, calc(var(--tarjeta-alto) * 0.072), 1.05rem);
+  font-size: clamp(.86rem, calc(var(--tarjeta-alto) * 0.038), 1.05rem);
   line-height: 1.35;
 }
 
 .hu11-producto__precio {
-  display: block;
   color: var(--form-dorado);
-  font-size: clamp(.95rem, calc(var(--tarjeta-alto) * 0.082), 1.22rem);
+  font-size: clamp(1rem, calc(var(--tarjeta-alto) * 0.043), 1.25rem);
   line-height: 1.35;
 }
 
 .hu11-producto__tiempo {
-  margin: clamp(2px, calc(var(--tarjeta-alto) * 0.018), 6px) 0 0;
+  margin: 0;
   color: #e5e4c9;
-  font-size: clamp(.78rem, calc(var(--tarjeta-alto) * 0.066), 1rem);
+  font-size: clamp(.82rem, calc(var(--tarjeta-alto) * 0.037), 1rem);
   line-height: 1.35;
 }
 
+.hu11-producto__resumen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: clamp(5px, 1dvh, 10px);
+}
+
 @media (max-width: 360px) {
-  .hu11 .hu11-producto { grid-template-columns: clamp(104px, calc(var(--tarjeta-alto) * 0.56), 150px) minmax(0, 1fr); }
   .hu11-producto .carrusel-imagenes nav span { min-width: 30px; }
 }
 

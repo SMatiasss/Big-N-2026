@@ -315,7 +315,10 @@ export async function render(container) {
       precio.textContent = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(producto.precio);
       const tiempo = document.createElement('p'); tiempo.textContent = `Preparación: ${producto.tiempo_elaboracion_min} min`;
       tiempo.className = 'hu11-producto__tiempo';
-      datos.append(nombre, descripcion, precio, tiempo);
+      const resumen = document.createElement('div');
+      resumen.className = 'hu11-producto__resumen';
+      resumen.append(tiempo, precio);
+      datos.append(descripcion, resumen);
       
       if (puedePedir) {
         const controles = document.createElement('div');
@@ -358,7 +361,11 @@ export async function render(container) {
         datos.append(controles);
       }
 
-      tarjeta.append(crearCarruselImagenes(ordenarFotosProducto(producto.producto_fotos), producto.nombre), datos);
+      tarjeta.append(
+        nombre,
+        crearCarruselImagenes(ordenarFotosProducto(producto.producto_fotos), producto.nombre),
+        datos,
+      );
       lista.append(tarjeta);
     }
   };
