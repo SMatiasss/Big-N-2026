@@ -11,7 +11,9 @@
   --fondo-empleado: var(--form-fondo);
   --fondo-campo-empleado: var(--form-campo-fondo);
   --fondo-hover-empleado: var(--form-campo-fondo-hover);
-  --acento-empleado: var(--form-dorado);
+  /* Terracota, el naranja fuerte de "Guardar Mesa": marcos punteados,
+     círculo del + y botón Guardar. (Antes era el dorado.) */
+  --acento-empleado: var(--form-terracota);
   --marco-dni-empleado: var(--form-terracota);
 
   --texto-claro-empleado: var(--form-texto-claro);
@@ -31,8 +33,6 @@
      esta hoja vía calc(valor-base * var(--ae-ajuste, 1)). El piso lo define
      el "minimo" que le pasa alta-empleado/index.js; por debajo de eso se
      permite scroll en vez de volver todo ilegible. */
-  --ae-medio-icono:  calc(60px * var(--ae-ajuste, 1));
-  --ae-campo-alto:   calc(42px * var(--ae-ajuste, 1));
 
   background: var(--fondo-empleado);
   color: var(--texto-claro-empleado);
@@ -65,6 +65,13 @@
    ========================================================= */
 
 .alta-empleado__contenido {
+  /* Van acá y no en la raíz de la pantalla: --ae-ajuste lo escribe
+     ajustarFormulario() en ESTE elemento, y una variable declarada en un
+     ancestro ya viene resuelta con el valor por defecto (1), así que esos
+     altos nunca se achicaban. */
+  --ae-medio-icono:  calc(60px * var(--ae-ajuste, 1));
+  --ae-campo-alto:   calc(42px * var(--ae-ajuste, 1));
+
   box-sizing: border-box;
 
   width: 100%;
@@ -237,6 +244,33 @@
   line-height: 1;
 
   pointer-events: none;
+}
+
+
+/* =========================================================
+   FALTA LA FOTO
+
+   Al intentar guardar sin foto, el componente le pone la clase
+   --invalido y se la saca apenas se toma una. Ya existía, pero no se veía:
+   las reglas de arriba (dorado) le ganaban al color de error del componente.
+   Va el color de error estándar de la app, el mismo del borde de los campos
+   inválidos. El "+" pasa a verde oscuro para seguir leyéndose sobre el
+   círculo claro.
+   ========================================================= */
+
+.alta-empleado .selector-avatar-foto--invalido .selector-avatar-foto__preview {
+  border-color: var(--color-error-texto);
+}
+
+.alta-empleado .selector-avatar-foto--invalido ion-button {
+  --background: var(--color-error-texto);
+  --background-hover: var(--color-error-texto);
+  --background-activated: var(--color-error-texto);
+  --background-focused: var(--color-error-texto);
+}
+
+.alta-empleado .selector-avatar-foto--invalido ion-button::after {
+  color: var(--form-texto-oscuro);
 }
 
 

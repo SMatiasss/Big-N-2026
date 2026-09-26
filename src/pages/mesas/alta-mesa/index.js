@@ -15,12 +15,17 @@ import {
   esEnteroPositivo,
 } from '../../../utils/validadores.js';
 
+// Tope de personas por mesa.
+const MAX_ASIENTOS = 18;
+
 // Valida los datos ingresados antes de aceptar el formulario.
 function validarFormulario(datos, foto) {
   const errores = {};
 
   if (esCampoVacio(datos.numero)) {
     errores.numero = 'Ingresá el número de mesa.';
+  } else if (!/^\d+$/.test(datos.numero)) {
+    errores.numero = 'Solo números.';
   } else if (!esEnteroPositivo(datos.numero)) {
     errores.numero = 'Entero mayor a 0.';
   }
@@ -29,6 +34,8 @@ function validarFormulario(datos, foto) {
     errores.cantidad = 'Ingresá los asientos.';
   } else if (!esEnteroPositivo(datos.cantidad)) {
     errores.cantidad = 'Entero mayor a 0.';
+  } else if (Number(datos.cantidad) > MAX_ASIENTOS) {
+    errores.cantidad = `Máximo ${MAX_ASIENTOS} personas.`;
   }
 
   if (esCampoVacio(datos.tipo) || !Object.values(TIPOS_MESA).includes(datos.tipo)) {
@@ -92,10 +99,10 @@ export function render(container) {
                   id="numero-mesa"
                   name="numero"
                   class="campo-control"
-                  type="number"
+                  type="text"
                   inputmode="numeric"
-                  min="1"
-                  step="1"
+                  pattern="[0-9]*"
+                  autocomplete="off"
                   placeholder="14"
                   required
                 >
@@ -112,6 +119,7 @@ export function render(container) {
                     type="number"
                     inputmode="numeric"
                     min="1"
+                    max="18"
                     step="1"
                     placeholder="4"
                     value="4"
@@ -236,7 +244,7 @@ export function render(container) {
   formulario.querySelector('.asientos-step-btn--up')?.addEventListener('click', (e) => {
     e.preventDefault();
     const val = parseInt(inputCantidad.value, 10) || 0;
-    inputCantidad.value = val + 1;
+    inputCantidad.value = Math.min(MAX_ASIENTOS, val + 1);
     inputCantidad.dispatchEvent(new Event('input', { bubbles: true }));
   });
   formulario.querySelector('.asientos-step-btn--down')?.addEventListener('click', (e) => {
@@ -279,6 +287,19 @@ export function render(container) {
     textoSubmit.textContent = valor ? 'Guardando...' : 'Guardar Mesa';
     selectorFoto.establecerBloqueado(valor);
   }
+
+  // Número de mesa: sólo dígitos. Lo que se tipee o pegue que no sea un
+  // dígito se descarta en el momento y se avisa, sin esperar al guardar.
+  const inputNumero = formulario.querySelector('#numero-mesa');
+  inputNumero.addEventListener('input', (evento) => {
+    const soloDigitos = inputNumero.value.replace(/\D/g, '');
+    if (soloDigitos === inputNumero.value) return;
+    inputNumero.value = soloDigitos;
+    mostrarErrorCampo(formulario, 'numero', 'Solo números.');
+    // Si no, el validador general de abajo (mismo evento, mismo campo) ve el
+    // valor ya limpio y borra el aviso en el acto.
+    evento.stopImmediatePropagation();
+  });
 
   // Validación dinámica
   formulario.querySelectorAll('input:not([type="hidden"])').forEach((control) => {

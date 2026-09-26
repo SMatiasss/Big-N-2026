@@ -145,19 +145,96 @@ async function navegar(container) {
   modulo.render(container);
 }
 
+/* =========================================================
+   HISTORIAL: VOLVER SIN APILAR Y BOTÓN ATRÁS INTERCEPTABLE
+
+   navegarA() cambia location.hash, y cada cambio apila una entrada en el
+   historial del WebView. El botón volver del header también navegaba así,
+   con lo que "Empleados -> Agregar -> volver" dejaba Empleados, Agregar y
+   Empleados apilados: el botón atrás de Android volvía a Agregar y se armaba
+   un bucle. Acá se lleva una pila de rutas para que "volver" retroceda de
+   verdad (history.back) cuando el destino es la pantalla anterior, y
+   reemplace la entrada actual cuando no lo es.
+   ========================================================= */
+
+const rutaActual = () => location.hash.replace(/^#/, '') || '/';
+
+// Aproximación del historial del WebView, alimentada por hashchange.
+const pila = [rutaActual()];
+let proximoEsReemplazo = false;
+let modoVolver = false;
+
+window.addEventListener('hashchange', () => {
+  const ruta = rutaActual();
+  if (proximoEsReemplazo) {
+    proximoEsReemplazo = false;
+    pila[pila.length - 1] = ruta;
+  } else if (pila.length >= 2 && pila[pila.length - 2] === ruta) {
+    pila.pop(); // fue un retroceso (botón atrás o history.back)
+  } else {
+    pila.push(ruta);
+  }
+});
+
 export function navegarA(ruta) {
+  // Llamada desde el botón volver del header: no apila (ver volverA).
+  if (modoVolver) {
+    volverA(ruta);
+    return;
+  }
   location.hash = ruta;
+}
+
+// Ejecuta el handler del botón volver del header: cualquier navegarA() que
+// haga adentro (sincrónico) se resuelve como volverA(), sin apilar.
+export function ejecutarComoVolver(handler) {
+  modoVolver = true;
+  try {
+    return handler();
+  } finally {
+    modoVolver = false;
+  }
+}
+
+/* Botón atrás de Android: una pantalla puede atajarlo mientras tiene algo
+   abierto (ej. el visor de fotos) para cerrarlo en vez de navegar.
+   Devuelve la función que lo suelta. Gana el último registrado. */
+const manejadoresAtras = [];
+
+export function alPresionarAtras(manejador) {
+  manejadoresAtras.push(manejador);
+  return () => {
+    const indice = manejadoresAtras.lastIndexOf(manejador);
+    if (indice >= 0) manejadoresAtras.splice(indice, 1);
+  };
+}
+
+// Lo llama main.js al recibir el botón atrás. true si alguien lo atajó.
+export function manejarBotonAtras() {
+  const manejador = manejadoresAtras.at(-1);
+  if (!manejador) return false;
+  manejador();
+  return true;
 }
 
 export function irAlHome() {
   navegarA('/home');
 }
 
+// Volver a una pantalla sin apilar: si es la anterior, se retrocede de
+// verdad; si no, se reemplaza la entrada actual.
 export function volverA(ruta) {
-  navegarA(ruta);
+  if (pila.length >= 2 && pila[pila.length - 2] === ruta) {
+    window.history.back();
+    return;
+  }
+  reemplazarRuta(ruta);
 }
 
 export function reemplazarRuta(ruta) {
+  // A la misma ruta no hay navegación ni hashchange: no se marca nada.
+  if (ruta === rutaActual()) return;
+  proximoEsReemplazo = true;
   const destino = `${window.location.pathname}${window.location.search}#${ruta}`;
   window.location.replace(destino);
 }

@@ -94,7 +94,7 @@ export async function render(container) {
         <main class="home__contenido" aria-busy="true">
           <header class="home__encabezado">
             <div class="home__marca"><img src="/assets/logo/Icono Big N.svg" alt=""><span>Big N</span></div>
-            <h1 class="home__saludo">Bienvenido <span data-nombre-saludo>Usuario</span></h1>
+            <h1 class="home__saludo sr-only">Bienvenido <span data-nombre-saludo>Usuario</span></h1>
           </header>
           <p class="home__aviso" role="status" aria-live="polite" hidden></p>
           <p class="home__error" role="alert" hidden></p>
@@ -138,9 +138,7 @@ export async function render(container) {
     raiz.querySelector("[data-inicial]").textContent = nombre
       .charAt(0)
       .toUpperCase();
-    raiz.querySelector("[data-detalle]").textContent = [rol, perfil.email]
-      .filter(Boolean)
-      .join(" · ");
+    raiz.querySelector("[data-detalle]").textContent = rol ?? "";
     raiz.querySelector(".home__perfil").hidden = false;
 
     const agregarAcciones = (selector, lista, principal) => {

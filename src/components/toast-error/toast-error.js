@@ -25,7 +25,14 @@ export function mostrarToastError(mensaje) {
     });
   });
 
+  // Pasado su tiempo en pantalla, sale por arriba con la misma transición con
+  // la que entró (sacar --visible lo devuelve a translateY(-100%)), y recién
+  // al terminar se borra. El segundo timeout es un respaldo por si la
+  // transición no llega a correr (app en segundo plano, animaciones
+  // desactivadas): el toast nunca queda colgado.
   setTimeout(() => {
-    toast.remove();
+    toast.classList.remove('toast-error--visible');
+    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+    setTimeout(() => toast.remove(), 600);
   }, 2000);
 }

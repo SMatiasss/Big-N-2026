@@ -13,6 +13,7 @@ import './nuevos-estilos.css';
 import { CarritoService } from '../../../services/carrito.service.js';
 import { crearPedido } from '../../../services/pedidos.service.js';
 import { avisarNuevoPedido } from '../../../services/notificaciones.service.js';
+import { atajarAtrasInvitado } from '../../../utils/salida-invitado.js';
 
 export async function render(container) {
   const operativa = location.hash.replace('#', '') === '/mesa/carta';
@@ -49,7 +50,12 @@ export async function render(container) {
   if (operativa) lista.classList.add('hu11__productos--con-carrito');
 
   const ajusteLista = ajustarLista(lista);
-  window.addEventListener('hashchange', () => ajusteLista.destruir(), { once: true });
+  // Invitado: el botón atrás de Android pregunta si cerrar la sesión.
+  const soltarAtras = atajarAtrasInvitado();
+  window.addEventListener('hashchange', () => {
+    ajusteLista.destruir();
+    soltarAtras();
+  }, { once: true });
   
   let carritoAbierto = false;
   const footerCarrito = document.createElement('div');

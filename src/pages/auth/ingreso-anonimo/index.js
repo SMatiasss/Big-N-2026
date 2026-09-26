@@ -13,6 +13,7 @@ import { validarQrIngreso } from '../../../services/qr.service.js';
 import { navegarA } from '../../../router.js';
 import { esArchivoImagen, esNombrePersonaValido } from '../../../utils/validadores.js';
 import { ajustarFormulario, ajustarVista } from '../../../components/lista-ajustada/lista-ajustada.js';
+import { atajarAtrasInvitado } from '../../../utils/salida-invitado.js';
 
 function validarFormulario(nombre, foto) {
   const errores = {};
@@ -133,6 +134,7 @@ export function render(container) {
     margen: 18,
   });
   let ajusteQr = null;
+  let soltarAtras = () => {};
 
   formulario.querySelector('#nombre-anonimo').addEventListener('input', revalidar);
 
@@ -179,6 +181,10 @@ export function render(container) {
         titulo: 'Ingreso invitado',
         sinVolver: true,
       }));
+
+      // Con la sesión anónima creada, el botón atrás de Android pregunta si
+      // cerrarla en vez de volver al paso 1.
+      soltarAtras = atajarAtrasInvitado();
 
       pasoDatos.hidden = true;
       pasoQr.hidden = false;
@@ -228,5 +234,6 @@ export function render(container) {
     selectorFoto.destruir();
     ajusteFormulario.destruir();
     ajusteQr?.destruir();
+    soltarAtras();
   }, { once: true });
 }

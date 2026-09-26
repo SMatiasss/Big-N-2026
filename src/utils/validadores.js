@@ -11,15 +11,45 @@ export function esDniValido(valor) {
   return /^\d{7,8}$/.test(String(valor).trim());
 }
 
-export function esCuilValido(valor) {
-  const cuil = String(valor).replace(/\D/g, '');
-  if (!/^\d{11}$/.test(cuil)) return false;
+// Prefijos de CUIL de personas: 20 y 27 (según el sexo registrado), 23 y 24
+// (asignados cuando el cálculo con 20/27 no da un verificador posible, o por
+// duplicados). 30, 33 y 34 son de empresas (CUIT), no de empleados.
+const PREFIJOS_CUIL_PERSONA = ['20', '23', '24', '27'];
 
+/**
+ * Qué tiene de malo un CUIL, o null si es válido. Un solo mensaje por causa,
+ * así el formulario puede decir por qué lo rechaza en vez de "11 dígitos"
+ * para todo.
+ *
+ * @param {string} valor - El CUIL, con o sin guiones.
+ * @param {string} [dni] - Si viene un DNI válido, el CUIL tiene que contenerlo
+ *   (prefijo + DNI de 8 dígitos + verificador).
+ * @returns {string|null}
+ */
+export function errorCuil(valor, dni) {
+  const cuil = String(valor ?? '').replace(/\D/g, '');
+  if (!/^\d{11}$/.test(cuil)) return 'CUIL de 11 dígitos.';
+
+  if (!PREFIJOS_CUIL_PERSONA.includes(cuil.slice(0, 2))) return 'Prefijo de CUIL inválido.';
+
+  if (dni !== undefined && esDniValido(dni) && cuil.slice(2, 10) !== String(dni).trim().padStart(8, '0')) {
+    return 'No coincide con el DNI.';
+  }
+
+  // Módulo 11. Un resto de 10 no es un CUIL posible: en ese caso a la persona
+  // se le asigna el prefijo 23, y con él la cuenta ya da 9 o 4. Por eso se
+  // rechaza en vez de aceptarlo como 9, que dejaba pasar CUIL inexistentes.
   const pesos = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
   const suma = pesos.reduce((total, peso, indice) => total + Number(cuil[indice]) * peso, 0);
   const resto = 11 - (suma % 11);
-  const verificador = resto === 11 ? 0 : resto === 10 ? 9 : resto;
-  return Number(cuil[10]) === verificador;
+  const verificador = resto === 11 ? 0 : resto;
+  if (resto === 10 || Number(cuil[10]) !== verificador) return 'Último dígito inválido.';
+
+  return null;
+}
+
+export function esCuilValido(valor) {
+  return errorCuil(valor) === null;
 }
 
 export function esNombrePersonaValido(valor) {

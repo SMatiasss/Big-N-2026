@@ -28,8 +28,6 @@
      (tamaño completo) si entra sin ajustar; si no entra, un número menor
      que se aplica a cada alto/fuente/margen de esta hoja vía
      calc(valor-base * var(--am-ajuste, 1)). */
-  --am-campo-alto: calc(44px * var(--am-ajuste, 1));
-
   background: var(--fondo);
   color: var(--texto-claro);
   font-family: var(--fuente-geist);
@@ -48,6 +46,20 @@
 }
 
 .alta-mesa__contenido {
+  /* Van acá y no en .alta-mesa: --am-ajuste lo escribe ajustarFormulario() en
+     ESTE elemento, y una variable declarada en un ancestro ya viene resuelta
+     con el valor por defecto (1), así que nunca achicaba nada. */
+  --am-campo-alto: calc(44px * var(--am-ajuste, 1));
+
+  /* Tamaño de letra de campos y botones, alineado al botón más angosto:
+     los tres de "tipo de mesa". La etiqueta más ancha es "Adaptada" (4,65em
+     en Geist 600) y a cada botón le queda (ancho - 88px) / 3 para el texto
+     (18px de margen de pantalla por lado, 4px de relleno y separación de la
+     barra, 6px de relleno del botón). (ancho - 88) / 3 / 4,65 = (ancho - 88)
+     * 0,0717; con 0,066 queda un 8% de aire para la negrita de la opción
+     elegida. Da 20px en un teléfono de 392px y 18px en uno de 360px. */
+  --am-texto: calc(min(22px, (min(100vw, 480px) - 88px) * 0.066) * var(--am-ajuste, 1));
+
   box-sizing: border-box;
   width: 100%;
   max-width: 480px;
@@ -64,7 +76,7 @@
 
 .alta-mesa__fila-numerica {
   display: grid;
-  grid-template-columns: 1fr 1.15fr;
+  grid-template-columns: 1fr 1.3fr;
   gap: 12px;
 }
 
@@ -128,8 +140,9 @@
 }
 
 .campo-control--asientos {
-  flex: 0 0 28px;
-  width: 28px;
+  /* En em: con la letra más grande, "18" no entraba en 28px fijos. */
+  flex: 0 0 1.3em;
+  width: 1.3em;
   background: transparent;
   border: none;
   padding: 0;
@@ -257,12 +270,25 @@
   display: none;
 }
 
-/* El cuadro es mucho más ancho acá que en alta-empleado (una sola columna
-   en vez de dos), así que el ícono necesita un techo más grande para
-   guardar una proporción parecida en vez de quedar chico en el medio. */
+/* Ícono de la cámara: el dibujo ocupa el 75% del ALTO del recuadro, centrado
+   (12,5% libre arriba y abajo). El recuadro es 3:2 y el dibujo 24x20, así
+   que no pueden quedar los cuatro márgenes iguales como en ingreso invitado:
+   lo limita el alto. Cuentas, con W el ancho del recuadro:
+     alto del recuadro   = 2/3 W
+     alto del dibujo     = 75% de 2/3 W = 0,5 W
+     lado del viewBox    = 0,5 W x 24/20 = 0,6 W  ->  width: 60%
+   Las franjas vacías del viewBox (arriba y abajo) son iguales, así que el
+   dibujo queda centrado solo, sin márgenes negativos. */
+.alta-mesa .selector-foto-mesa__placeholder {
+  padding: 0;
+}
+
 .alta-mesa .cuadro-foto__icono {
-  max-width: 100px;
-  max-height: 100px;
+  width: 60%;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  aspect-ratio: 1;
 }
 
 /* Las dos fuentes (cámara/galería) como un solo botón partido al medio,
@@ -376,4 +402,25 @@
 .campo-formulario--invalido .campo-control-asientos,
 .campo-formulario--invalido .selector-segmentos {
   border-color: var(--color-error-texto);
+}
+
+
+/* =========================================================
+   TAMAÑO DE LETRA DE CAMPOS Y BOTONES (ver --am-texto)
+   Al final y con .alta-mesa delante: las reglas de arriba .campo-control y
+   .selector-segmentos__opcion son globales, y así no se toca ninguna otra
+   pantalla que use esas clases.
+   ========================================================= */
+
+.alta-mesa .campo-control,
+.alta-mesa .campo-control--asientos,
+.alta-mesa .campo-control-asientos__sufijo,
+.alta-mesa .selector-segmentos__opcion,
+.alta-mesa .selector-foto-mesa__boton-fuente {
+  font-size: var(--am-texto);
+}
+
+/* El botón principal, un poco más grande que el resto. */
+.alta-mesa .alta-mesa__submit {
+  font-size: calc(var(--am-texto) + 2px);
 }

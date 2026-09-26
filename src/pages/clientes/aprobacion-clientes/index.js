@@ -1,6 +1,6 @@
 import './index.css';
 import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
-import { navegarA } from '../../../router.js';
+import { alPresionarAtras, navegarA } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearPestanas } from '../../../components/pestanas-filtro/pestanas-filtro.js';
 import { crearModalConfirmacion } from '../../../components/modal-confirmacion/modal-confirmacion.js';
@@ -8,6 +8,32 @@ import { listarClientesPendientes, listarClientesAceptados, resolverClientePendi
 import { obtenerPermisos } from '../../../services/auth.service.js';
 import { PERMISOS_PESTANAS } from '../../../config/navegacion.js';
 import { ESTADOS_PERFIL, ROLES } from '../../../config/constantes.js';
+
+// Visor de foto: la muestra a pantalla completa y cualquier toque la cierra.
+// También se cierra si se cambia de pantalla con el visor abierto.
+function abrirVisorFoto(src, alt) {
+  const visor = document.createElement('div');
+  visor.className = 'aprobacion-clientes__visor';
+  visor.setAttribute('role', 'dialog');
+  visor.setAttribute('aria-label', alt);
+
+  const imagen = document.createElement('img');
+  imagen.src = src;
+  imagen.alt = alt;
+  imagen.referrerPolicy = 'no-referrer';
+  visor.append(imagen);
+
+  // El botón atrás de Android cierra el visor en vez de salir de la pantalla.
+  let soltarAtras = () => {};
+  const cerrar = () => {
+    soltarAtras();
+    visor.remove();
+  };
+  soltarAtras = alPresionarAtras(cerrar);
+  visor.addEventListener('click', cerrar);
+  window.addEventListener('hashchange', cerrar, { once: true });
+  document.body.append(visor);
+}
 
 export async function render(container) {
   container.innerHTML = `
@@ -140,6 +166,11 @@ export async function render(container) {
           imagen.loading = 'lazy';
           imagen.referrerPolicy = 'no-referrer';
           imagen.addEventListener('error', () => { foto.textContent = iniciales || '?'; }, { once: true });
+          // Tocar la foto la abre a pantalla completa, sin activar la tarjeta.
+          imagen.addEventListener('click', (evento) => {
+            evento.stopPropagation();
+            abrirVisorFoto(imagen.src, imagen.alt);
+          });
           foto.replaceChildren(imagen);
           foto.removeAttribute('aria-label');
         }

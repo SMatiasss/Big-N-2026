@@ -30,8 +30,6 @@
      pantalla terminaba con scroll. Vale 1 si entra sin ajustar; si no,
      un número menor que escala cada alto/fuente/margen de esta hoja vía
      calc(valor-base * var(--ac-ajuste, 1)). */
-  --ac-medio-icono: calc(60px * var(--ac-ajuste, 1));
-  --ac-campo-alto: calc(44px * var(--ac-ajuste, 1));
 
   background: var(--fondo-empleado);
   color: var(--texto-claro-empleado);
@@ -55,6 +53,13 @@
    ========================================================= */
 
 .alta-cliente__contenido {
+  /* Van acá y no en la raíz de la pantalla: --ac-ajuste lo escribe
+     ajustarFormulario() en ESTE elemento, y una variable declarada en un
+     ancestro ya viene resuelta con el valor por defecto (1), así que esos
+     altos nunca se achicaban. */
+  --ac-medio-icono: calc(60px * var(--ac-ajuste, 1));
+  --ac-campo-alto: calc(44px * var(--ac-ajuste, 1));
+
   box-sizing: border-box;
 
   width: 100%;

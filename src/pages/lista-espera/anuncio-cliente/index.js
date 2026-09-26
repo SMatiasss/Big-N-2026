@@ -19,6 +19,7 @@ import { vigilarMiEstadiaSiSoyAnonima } from '../../../services/sesion-anonima.s
 import { ajustarVista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 import { validarQrMesaAsignada } from '../../../services/mesa-cliente.service.js';
+import { atajarAtrasInvitado } from '../../../utils/salida-invitado.js';
 
 export function render(container) {
   container.innerHTML = `
@@ -274,8 +275,12 @@ export function render(container) {
     }
   });
 
+  // Invitado: el botón atrás de Android pregunta si cerrar la sesión.
+  const soltarAtras = atajarAtrasInvitado();
+
   window.addEventListener('hashchange', () => {
     cancelarSuscripcion?.();
     ajusteVista.destruir();
+    soltarAtras();
   }, { once: true });
 }

@@ -5,7 +5,7 @@ import { crearSelectorAvatarFoto } from '../../../components/selector-avatar-fot
 import { ROLES, ROLES_EMPLEADO, ESTADOS_PERFIL } from '../../../config/constantes.js';
 import { registrarUsuarioSinIniciarSesion } from '../../../services/auth.service.js';
 import { altaPerfil, buscarConflictosPerfil, subirFotoPerfil } from '../../../services/perfiles.service.js';
-import { esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
+import { errorCuil, esCampoVacio, esCuilValido, esDniValido, esEmailValido, esNombrePersonaValido, obtenerErrorArchivoImagen } from '../../../utils/validadores.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
@@ -78,8 +78,11 @@ function validar(datos, foto) {
     errores.dni = 'DNI de 7 u 8 dígitos.';
   }
 
-  if (!esCuilValido(datos.cuil)) {
-    errores.cuil = 'CUIL de 11 dígitos.';
+  // Dice por qué lo rechaza (largo, prefijo, DNI o dígito verificador), y
+  // compara con el DNI cargado: el CUIL es prefijo + DNI + verificador.
+  const motivoCuil = errorCuil(datos.cuil, datos.dni);
+  if (motivoCuil) {
+    errores.cuil = motivoCuil;
   }
 
   if (!esEmailValido(datos.email)) {

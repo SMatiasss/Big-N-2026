@@ -7,7 +7,7 @@ import "./styles/tipografia.css";
 import "./styles/globales.css";
 import { initSupabase } from "./services/supabase.client.js";
 import { verificarSesionAnonimaAlArrancar } from "./services/sesion-anonima.service.js";
-import { iniciarRouter } from "./router.js";
+import { iniciarRouter, manejarBotonAtras } from "./router.js";
 import { escucharAccionesPush } from "./services/notificaciones.service.js";
 import { resolverRutaClienteAlArrancar } from "./services/navegacion-inicial.service.js";
 
@@ -62,6 +62,9 @@ window.addEventListener("load", () => {
 // historial del WebView. Por eso el botón "atrás" físico puede resolverse
 // simplemente retrocediendo ese historial en lugar de cerrar la app.
 App.addListener("backButton", ({ canGoBack }) => {
+  // Si una pantalla tiene algo abierto (ej. el visor de fotos), se cierra
+  // eso y no se navega.
+  if (manejarBotonAtras()) return;
   if (canGoBack) window.history.back();
   else App.exitApp();
 });

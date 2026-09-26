@@ -33,14 +33,23 @@
   color: var(--home-texto);
   font: 800 36px/1.05 var(--font-heading);
 }
+/* El círculo crece con el alto que dejó libre el saludo, que ya no se ve
+   (~47px en un teléfono de 871px de alto: de 14dvh a 19,5dvh).
+
+   Dibujo casi hasta el borde: el SVG trae mucho aire alrededor. Medido
+   renderizándolo, la tinta está centrada y su punto más alejado llega al
+   56% del radio de la imagen. object-view-box recorta un 20,1% por lado, así
+   ese punto queda al 94% del radio del círculo: un 6% de margen. Se recorta
+   con CSS y no en el archivo porque el login usa el mismo SVG. */
 .home__marca img {
   box-sizing: border-box;
-  width: clamp(84px, 14dvh, 136px);
-  height: clamp(84px, 14dvh, 136px);
-  padding: clamp(10px, 1.6dvh, 14px);
+  width: clamp(120px, 19.5dvh, 184px);
+  height: clamp(120px, 19.5dvh, 184px);
+  padding: 0;
   border-radius: 50%;
   background: var(--home-texto);
   object-fit: contain;
+  object-view-box: inset(20.1%);
 }
 .home__saludo {
   margin: 0 0 clamp(10px, 2dvh, 20px);
@@ -177,14 +186,16 @@
 .home__perfil-datos strong {
   color: white;
   overflow: hidden;
-  font: 700 var(--text-md) / 1.25 var(--font-heading);
+  /* Texto más grande sin agrandar la tarjeta: el alto lo fija el avatar de
+     48px, y nombre + rol suman 19 x 1,25 + 3 + 15 x 1,2 = 44,75px. */
+  font: 700 19px / 1.25 var(--font-heading);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .home__perfil-datos small {
   margin-top: 3px;
   color: var(--home-acento);
-  font-size: clamp(10px, 2.8vw, 13px);
+  font-size: 15px;
   line-height: 1.2;
   overflow-wrap: anywhere;
   white-space: normal;

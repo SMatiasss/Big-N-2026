@@ -1,4 +1,5 @@
 import './app-header.css';
+import { ejecutarComoVolver } from '../../router.js';
 
 /**
  * Crea el header estándar de la aplicación.
@@ -35,7 +36,9 @@ export function crearAppHeader({ titulo, etiquetaVolver = 'Volver', onVolver, ac
     volver.className = 'app-header__control app-header__volver';
     volver.setAttribute('aria-label', etiquetaVolver);
     volver.textContent = '‹';
-    volver.addEventListener('click', onVolver ?? (() => window.history.back()));
+    // Volver no apila: la navegación que haga el handler retrocede o
+    // reemplaza (ver ejecutarComoVolver en router.js).
+    volver.addEventListener('click', () => ejecutarComoVolver(onVolver ?? (() => window.history.back())));
   }
 
   /* — Título central — */
