@@ -11,6 +11,7 @@ import { fijarAltoDisponible } from '../../../components/lista-ajustada/lista-aj
 import { SECTORES, TIPOS_PRODUCTO } from '../../../config/constantes.js';
 import { crearPlatoCompleto } from '../../../services/productos.service.js';
 import { navegarA } from '../../../router.js';
+import { soloNumeros } from '../../../utils/campo-numerico.js';
 import {
   esCampoVacio,
   esEnteroPositivo,
@@ -131,7 +132,7 @@ export function render(container) {
                 class="campo-control"
                 id="precio-plato"
                 name="precio"
-                type="number"
+                type="text"
                 inputmode="decimal"
                 min="0.01"
                 step="0.01"
@@ -147,7 +148,7 @@ export function render(container) {
                 class="campo-control"
                 id="tiempo-plato"
                 name="tiempo"
-                type="number"
+                type="text"
                 inputmode="numeric"
                 min="1"
                 step="1"
@@ -210,6 +211,16 @@ export function render(container) {
 
   // Después del primer submit, cada cambio vuelve a validar su campo para
   // que el error desaparezca apenas el usuario lo corrija.
+  // Precio y tiempo: sólo números. Va antes del validador general (ver
+  // soloNumeros).
+  soloNumeros(formulario.querySelector('#precio-plato'), {
+    decimales: true,
+    alInvalido: () => mostrarErrorCampo(formulario, 'precio', 'Ingrese sólo números.'),
+  });
+  soloNumeros(formulario.querySelector('#tiempo-plato'), {
+    alInvalido: () => mostrarErrorCampo(formulario, 'tiempo', 'Ingrese sólo números.'),
+  });
+
   formulario.querySelectorAll('input, textarea').forEach((control) => {
     control.addEventListener('input', () => {
       if (!validacionMostrada) return;

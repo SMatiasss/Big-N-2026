@@ -10,8 +10,10 @@
 .alta-producto {
   --fondo: #606c38;
   --fondo-campo: #4a572c;
-  --acento: #dda15e;
-  --acento-fuerte: #bc6c25;
+  /* Terracota, el naranja fuerte de "Guardar Mesa" y "Guardar Empleado"
+     (antes era el dorado #dda15e). El presionado, un tono más oscuro. */
+  --acento: var(--form-terracota);
+  --acento-fuerte: #9c5a1f;
 
   --texto-claro: #fefae0;
   --texto-suave: #8f956f;
@@ -114,6 +116,8 @@
 .alta-producto .selector-fotos-producto__posicion {
   position: relative;
   aspect-ratio: 1;
+  /* Para que el "+" pueda medirse contra el recuadro (cqi). */
+  container-type: inline-size;
 }
 
 
@@ -135,6 +139,24 @@
 .alta-producto .selector-fotos-producto__contenido:has(img) {
   border-style: solid;
   border-color: var(--borde);
+}
+
+/* Faltan fotos al intentar guardar: los recuadros vacíos se marcan con el
+   color de error estándar (igual que el marco de la foto en alta empleado).
+   Lleva !important porque el borde de arriba también lo lleva. Al elegir
+   una foto, ese recuadro deja de estar vacío y vuelve solo a la normalidad. */
+.alta-producto .selector-fotos-producto--invalido .selector-fotos-producto__contenido:not(:has(img)) {
+  border-color: var(--color-error-texto) !important;
+}
+
+/* El "+" acompaña a su marco: es el hermano siguiente del recuadro en el
+   HTML del componente, así que cambia con él sin JavaScript. */
+.alta-producto .selector-fotos-producto--invalido .selector-fotos-producto__contenido:not(:has(img)) ~ .selector-fotos-producto__acciones {
+  background: var(--color-error-texto);
+}
+
+.alta-producto .selector-fotos-producto--invalido .selector-fotos-producto__contenido:not(:has(img)) ~ .selector-fotos-producto__acciones::after {
+  color: var(--form-texto-oscuro);
 }
 
 
@@ -160,8 +182,12 @@
 
   box-sizing: border-box;
 
-  width: 26px;
-  height: 26px;
+  /* 40% del lado del recuadro (y no 26px fijos): el círculo ocupa el 12,6%
+     del área y el cuadrado que lo contiene el 16%, debajo del 25% máximo.
+     En un teléfono de 392px mide ~45px, el mínimo táctil recomendado. */
+  width: calc(40% - 2px);
+  height: auto;
+  aspect-ratio: 1;
 
   margin: 0;
 
@@ -182,7 +208,8 @@
   color: var(--texto-claro);
 
   font-family: system-ui, sans-serif;
-  font-size: 18px;
+  /* El "+" acompaña al círculo: se mide contra el recuadro (cqi). */
+  font-size: 26cqi;
   font-weight: 700;
   line-height: 1;
 
@@ -351,7 +378,7 @@
   padding-bottom: 14px;
 
   line-height: 23px;
-  resize: vertical;
+  resize: none;
 }
 
 .alta-producto .campo-control::placeholder {
