@@ -59,17 +59,26 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 
 | Item | QR |
 |------|----|
-| Ingreso al local | <img width="200" height="200" alt="Ingresar al local" src="https://github.com/user-attachments/assets/290bbcb4-4eab-4f76-b24e-fad6f53ece3e" /> |
-| Mesa 1 | <img width="200" height="200" alt="qr-mesa-1" src="https://github.com/user-attachments/assets/450d0864-29d8-41ba-bf33-ffbbc8ee2621"/> |
-| Mesa 2 | <img width="200" height="200" alt="qr-mesa-2" src="https://github.com/user-attachments/assets/8e527e13-d228-4767-b297-c02b75119fd7"/> |
-| Mesa 3 | <img width="200" height="200" alt="qr-mesa-3" src="https://github.com/user-attachments/assets/0e107fab-478c-49c0-a71d-6792af92b66d"/> |
-| Mesa 4 | <img width="200" height="200" alt="qr-mesa-4" src="https://github.com/user-attachments/assets/6960397f-7975-4883-8df2-65876cb3d320" /> |
+| Ingreso al local | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/bba909c6-8439-4a4c-9aad-3949453e3074" /> |
+| Mesa 1 | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/6a131365-f867-451f-825c-0f26849039b5" /> |
+| Mesa 2 | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/4f5a6427-57b7-46e2-9709-01ac467bd19e" /> |
+| Mesa 3 | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/25e91b46-b774-44f2-b75a-ab1ae32049a9" /> |
+| Mesa 4 | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/d76a1889-20e4-478c-8dd8-064fed66c82a" /> |
+| Mesa 5 | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/44d5a81c-eb0a-4269-8d28-08806c7f0ca8" /> |
+| Mesa 6 | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/93374f33-9f89-4077-8787-a6b83d28cbc4" /> |
+| Mesa 7 | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/c9d89ecf-18ad-4013-afca-c95616b0f540" /> |
+| Mesa 8 | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/5613dc23-6f8c-41d4-8327-c784672d02f0" /> |
+| Mesa 9 | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/3ae4d24d-7f91-49b0-ade8-4679a42dbaa8" /> |
 
-- **QR de propina — Excelente — 20 %**
-- **QR de propina — Muy Bueno — 15 %**
-- **QR de propina — Bueno — 10 %**
-- **QR de propina — Regular — 5 %**
-- **QR de propina — Malo — 0 %**
+
+## QR de propina
+| Nivel | QR |
+|------|----|
+| Excelente — 20% | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/8416aada-6766-4b92-89ff-a4e1ba6f58a4" /> |
+| Muy bueno — 15% | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/11dbfef3-b271-4f7d-bb09-975fc4fa7d51" /> |
+| Bueno — 10% | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/424389b6-ec1b-4817-ad92-168b9d4d7053" /> |
+| Regular — 5% | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/804d6b69-6437-4155-9ade-288e469311cd" /> |
+| Malo — 0% | <img width="335" height="329" alt="image" src="https://github.com/user-attachments/assets/6a4807d2-f9da-4fb5-93ce-3497acb329a3" /> |
 
 ## Datos simulados de encuestas
 
