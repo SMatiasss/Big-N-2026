@@ -108,7 +108,7 @@ function urlFotoMesa(fotoUrl) {
 export async function obtenerMesa(id) {
   const { data, error } = await getSupabase()
     .from(TABLAS.MESAS)
-    .select('id, numero, cantidad_comensales, tipo, estado, foto_url, activa')
+    .select('id, numero, cantidad_comensales, tipo, estado, foto_url, activa, qr_token')
     .eq('id', id)
     .maybeSingle();
   if (error) throw error;

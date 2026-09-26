@@ -7,8 +7,12 @@ import './index.css';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { fijarAltoDisponible } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { ICONO_CAMARA_SVG } from '../../../components/cuadro-foto/cuadro-foto.js';
+import { crearModalQrMesa } from '../../../components/modal-qr-mesa/modal-qr-mesa.js';
 import { ESTADOS_MESA, ETIQUETAS_TIPO_MESA } from '../../../config/constantes.js';
 import { obtenerMesa } from '../../../services/mesas.service.js';
+import { compartirImagen, generarQR } from '../../../services/qr.service.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { contenidoQrMesa } from '../../../utils/hu11.js';
 
 const ETIQUETAS_DISPONIBILIDAD = {
   [ESTADOS_MESA.LIBRE]: 'Vacía',
@@ -46,8 +50,52 @@ export function render(container, { id } = {}) {
     </ion-page>
   `;
 
-  const header = crearAppHeader({ titulo: 'Mesa' });
+  // El botón de "ver QR" reusa el mismo glifo que ya representa un QR en
+  // "Tu cuenta" (ver .cuenta .lector-qr::before), en vez de inventar otro.
+  // Queda oculto hasta tener el qr_token de la mesa (ver más abajo).
+  let mesaActual = null;
+  let generandoQr = false;
+
+  const header = crearAppHeader({
+    titulo: 'Mesa',
+    accion: {
+      texto: '⌗',
+      etiqueta: 'Ver QR de la mesa',
+      onClick: () => void abrirQr(),
+    },
+  });
   container.querySelector('[data-header]').append(header);
+
+  const botonQr = header.querySelector('.app-header__accion');
+  botonQr.hidden = true;
+
+  async function abrirQr() {
+    if (!mesaActual || generandoQr) return;
+    generandoQr = true;
+    botonQr.disabled = true;
+    try {
+      const dataUrlQr = await generarQR(contenidoQrMesa(mesaActual.qr_token));
+      if (!container.isConnected) return;
+      crearModalQrMesa({
+        numero: mesaActual.numero,
+        dataUrlQr,
+        onCompartir: () => compartirImagen(dataUrlQr, {
+          nombreArchivo: `mesa-${mesaActual.numero}-qr.png`,
+          titulo: `QR de la mesa ${mesaActual.numero}`,
+          texto: `Código QR de la mesa ${mesaActual.numero} — Big N`,
+        }).catch((error) => {
+          console.error('No se pudo compartir el QR de la mesa.', error);
+          mostrarToastError('No se pudo compartir el QR. Probá de nuevo.');
+        }),
+      }).presentar();
+    } catch (error) {
+      console.error('No se pudo generar el QR de la mesa.', error);
+      mostrarToastError('No se pudo generar el QR de la mesa.');
+    } finally {
+      generandoQr = false;
+      botonQr.disabled = false;
+    }
+  }
 
   const estado = container.querySelector('.info-mesa__estado');
   const ficha = container.querySelector('.info-mesa__ficha');
@@ -72,6 +120,8 @@ export function render(container, { id } = {}) {
       }
 
       header.querySelector('.app-header__titulo').textContent = `Mesa ${mesa.numero}`;
+      mesaActual = mesa;
+      botonQr.hidden = false;
 
       if (mesa.foto_url) {
         foto.alt = `Foto de la mesa ${mesa.numero}`;
