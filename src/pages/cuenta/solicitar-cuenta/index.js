@@ -14,7 +14,9 @@
 import './index.css';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
-import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
+// Sólo la cáscara ".pantalla-lista" (header fijo + cuerpo flex): la lista de
+// consumos tiene su propio alto fijo de 3 ítems, ver index.css.
+import '../../../components/lista-ajustada/lista-ajustada.css';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { ESTADOS_CUENTA } from '../../../config/constantes.js';
 import {
@@ -62,7 +64,7 @@ export function render(container) {
 
           <section class="cuenta__detalle" hidden>
             <h2 class="cuenta__titulo-detalle">Tu consumo</h2>
-            <ul class="cuenta__items lista-ajustada"></ul>
+            <ul class="cuenta__items"></ul>
             <dl class="cuenta__totales">
               <div class="cuenta__linea">
                 <dt>Subtotal</dt>
@@ -122,8 +124,6 @@ export function render(container) {
   const esperandoTexto = container.querySelector('.cuenta__esperando-texto');
   const botonPagar = container.querySelector('.cuenta__pagar');
 
-  const ajusteLista = ajustarLista(listaItems);
-
   container.querySelector('[data-header]').append(crearAppHeader({
     titulo: 'Tu cuenta',
     etiquetaVolver: 'Volver a mi pedido',
@@ -153,7 +153,7 @@ export function render(container) {
 
   function pintarDetalle(items) {
     listaItems.innerHTML = plantillaItems(items);
-    ajusteLista.actualizar();
+    listaItems.scrollTop = 0;
   }
 
   // Los importes salen de la cuenta guardada, no de una cuenta recalculada acá:
@@ -285,6 +285,5 @@ export function render(container) {
 
   window.addEventListener('hashchange', () => {
     desuscribir?.();
-    ajusteLista.destruir();
   }, { once: true });
 }

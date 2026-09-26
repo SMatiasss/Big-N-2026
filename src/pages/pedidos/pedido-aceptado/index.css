@@ -40,7 +40,10 @@
 .pedido-aceptado__resumen header { justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgb(254 250 224 / 14%); }
 .pedido-aceptado__resumen h2 { display: flex; align-items: center; gap: 8px; margin: 0; font: 700 clamp(16px, calc(18px * var(--pa-ajuste)), 21px)/1.2 var(--fuente-outfit); }
 .pedido-aceptado__resumen h2 svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; }
-.pedido-aceptado__resumen ul { display: grid; grid-auto-rows: minmax(48px, 1fr); gap: calc(7px * var(--pa-ajuste)); min-height: 0; margin: calc(9px * var(--pa-ajuste)) 0; padding: 0; list-style: none; }
+/* overflow-y: con un pedido largo la lista scrollea dentro de la tarjeta en
+   vez de empujar el total y los botones fuera de la pantalla. */
+.pedido-aceptado__resumen ul { display: grid; grid-auto-rows: minmax(48px, 1fr); gap: calc(7px * var(--pa-ajuste)); min-height: 0; margin: calc(9px * var(--pa-ajuste)) 0; padding: 0; list-style: none; overflow-y: auto; overscroll-behavior: contain; }
+.pedido-aceptado__resumen li.pedido-aceptado__aviso { justify-content: center; color: rgb(254 250 224 / 75%); text-align: center; }
 .pedido-aceptado__resumen li { padding: 0 10px; border-radius: 10px; background: rgb(40 54 24 / 18%); }
 .pedido-aceptado__resumen li span:nth-child(2) { flex: 1; }
 .pedido-aceptado__cantidad { width: 20px; text-align: center; font-weight: 700; }

@@ -62,34 +62,48 @@
   font: 700 clamp(15px, 2.4vh, 20px)/1.15 var(--fuente-outfit);
 }
 
+/* Se ven como máximo 3 consumos; con más, la lista scrollea con snap. Cada
+   ítem tiene alto fijo y la lista mide exactamente 3 ítems + 2 separaciones,
+   así cada posición de snap deja 3 ítems enteros, sin ninguno cortado.
+   Antes el alto lo repartía ajustarLista con 4-5 ítems y le robaba lugar al
+   bloque del total, que quedaba desbordado (texto y botón fuera del recuadro). */
 .cuenta__items {
-  --la-items: 4;
-  --la-gap: 8px;
+  --cuenta-item-alto: clamp(52px, 7.2vh, 62px);
+  --cuenta-item-gap: 8px;
 
-  /* Pisa el flex:1 de .lista-ajustada: acá la lista no tiene que absorber el
-     espacio sobrante, sólo el suyo (y scrollear si no entra). */
   flex: 0 1 auto;
+  min-height: 0;
+  max-height: calc(3 * var(--cuenta-item-alto) + 2 * var(--cuenta-item-gap));
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--cuenta-item-gap);
 
   margin: 0;
   padding: 0;
 
   list-style: none;
-}
 
-@media (max-height: 700px) { .cuenta__items { --la-items: 3; } }
-@media (min-height: 900px) { .cuenta__items { --la-items: 5; } }
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+}
 
 .cuenta__item {
   display: flex;
+  flex: 0 0 var(--cuenta-item-alto);
   align-items: center;
   gap: 10px;
 
   box-sizing: border-box;
+  height: var(--cuenta-item-alto);
 
-  padding: clamp(7px, 1.3vh, 12px) clamp(10px, 2vw, 14px);
+  padding: 0 clamp(10px, 2vw, 14px);
 
   background: var(--fondo-card);
   border-radius: 12px;
+
+  scroll-snap-align: start;
 }
 
 .cuenta__item--vacio {
@@ -168,7 +182,9 @@
 .cuenta__linea + .cuenta__linea { margin-top: 5px; }
 
 .cuenta__linea dt { color: var(--texto-suave); }
-.cuenta__linea dd { margin: 0; font-weight: 600; }
+/* Color explícito: sin él el importe heredaba el texto por defecto de
+   ion-content (negro) y no se leía sobre el verde. */
+.cuenta__linea dd { margin: 0; color: var(--acento); font-weight: 600; }
 
 /* El descuento ganado en los juegos (punto 15) se muestra aparte y en verde:
    es una línea a favor del cliente, no un cargo más. */
@@ -182,10 +198,11 @@
 /* Anclado abajo: es el bloque con el que el cliente interactúa en los tres
    estados, y así el sobrante de pantalla queda entre el detalle y la acción,
    nunca partiendo el detalle al medio. */
+/* flex-shrink 0: el pie nunca mide menos que su contenido. Si falta lugar,
+   el que cede es el detalle (la lista scrollea), no el total ni el botón. */
 .cuenta__pie {
   display:flex;
-  flex: 1 1 auto;
-  min-height:0;
+  flex: 1 0 auto;
   margin: clamp(10px, 1.8vh, 16px) 0 0;
   padding-top: clamp(10px, 1.8vh, 16px);
 }
@@ -193,7 +210,7 @@
 .cuenta__paso {
   box-sizing: border-box;
 
-  padding: clamp(11px, 2vh, 16px) clamp(12px, 2.5vw, 16px);
+  padding: clamp(16px, 3.5vh, 28px) clamp(12px, 2.5vw, 16px);
 
   background: var(--fondo-card);
   border: 1px solid rgb(221 161 94 / 30%);
@@ -258,24 +275,39 @@
 }
 
 
-/* — Estado 2: el total, en grande y sin ambigüedad — */
+/* — Estado 2: el total, en grande y sin ambigüedad —
 
-.cuenta__paso--total { text-align: center; }
+   .cuenta__pie crece para llenar todo el alto que sobra bajo la lista
+   (flex: 1 0 auto), pero antes .cuenta__paso centraba su contenido con
+   justify-content:center: con pocos consumos (lista corta) ese sobrante es
+   mucho, y todo el bloque de nivel/total/botón quedaba apretado en el medio
+   con un hueco enorme y vacío arriba y abajo.
+
+   Acá en cambio se reparte ese alto EN VEZ de dejarlo vacío: space-evenly
+   separa nivel, total y botón a distancias iguales (llenando el cuadro de
+   punta a punta) y los tamaños de fuente escalan en vh, así que cuanto más
+   alto sobra, más grandes se ven en vez de quedar chicos en un cuadro
+   gigante. */
+.cuenta__paso--total {
+  justify-content: space-evenly;
+  text-align: center;
+}
+.cuenta__paso--total > * { flex-shrink: 0; }
 
 .cuenta__nivel {
   margin: 0;
 
   color: var(--acento);
 
-  font: 700 clamp(13px, 1.9vh, 16px)/1.2 var(--fuente-outfit);
+  font: 700 clamp(16px, 3.2vh, 26px)/1.2 var(--fuente-outfit);
 }
 
 .cuenta__total-etiqueta {
-  margin: clamp(6px, 1.2vh, 10px) 0 0;
+  margin: 0;
 
   color: var(--texto-suave);
 
-  font-size: clamp(11px, 1.6vh, 13px);
+  font-size: clamp(12px, 2.2vh, 17px);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -285,17 +317,17 @@
 .cuenta__total {
   display: block;
 
-  margin: 2px 0 clamp(10px, 1.8vh, 16px);
+  margin: 0;
 
   color: var(--texto-claro);
 
-  font: 700 clamp(34px, 6.4vh, 54px)/1.05 var(--fuente-outfit);
+  font: 700 clamp(38px, 9vh, 76px)/1.05 var(--fuente-outfit);
   letter-spacing: -0.01em;
 }
 
 .cuenta__pagar {
   width: 100%;
-  height: clamp(44px, 6.4vh, 56px);
+  height: clamp(48px, 7.5vh, 62px);
 
   margin: 0;
   padding: 0;

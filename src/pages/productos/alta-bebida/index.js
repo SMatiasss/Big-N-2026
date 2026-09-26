@@ -5,9 +5,9 @@ import { crearSelectorFotosProducto } from '../../../components/selector-fotos-p
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
-// Sólo la cáscara ".pantalla-lista" (header fijo + cuerpo flex): acá no hace
-// falta medir nada con JS, ver el comentario en alta-producto.css.
-import '../../../components/lista-ajustada/lista-ajustada.css';
+// Fija el alto de la pantalla al entrar, sin que el teclado lo achique: ver
+// el comentario en alta-producto.css.
+import { fijarAltoDisponible } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { SECTORES, TIPOS_PRODUCTO } from '../../../config/constantes.js';
 import { crearBebidaCompleta } from '../../../services/productos.service.js';
 import { navegarA } from '../../../router.js';
@@ -71,9 +71,9 @@ function mostrarResultadoValidacion(formulario, selectorFotos, errores) {
 export function render(container) {
   container.innerHTML = `
     <ion-page class="alta-producto alta-bebida">
-      <ion-content class="pantalla-lista" scroll-y="false">
+      <ion-content>
         <div data-header></div>
-        <main class="alta-producto__contenido pantalla-lista__cuerpo">
+        <main class="alta-producto__contenido">
 
           <form class="alta-producto__formulario" novalidate>
             <div class="alta-producto__fotos"></div>
@@ -224,5 +224,10 @@ export function render(container) {
     }
   });
 
-  window.addEventListener('hashchange', () => selectorFotos.destruir(), { once: true });
+  const altoFijo = fijarAltoDisponible(container.querySelector('.alta-producto__contenido'));
+
+  window.addEventListener('hashchange', () => {
+    selectorFotos.destruir();
+    altoFijo.destruir();
+  }, { once: true });
 }

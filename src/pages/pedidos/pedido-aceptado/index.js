@@ -8,21 +8,17 @@ import { ESTADOS_PEDIDO } from '../../../config/constantes.js';
 import { precargarCarritoDesdePedido } from '../../../utils/carrito-desde-pedido.js';
 import { obtenerMiPedidoEnCurso, suscribirseAMiPedido } from '../../../services/pedidos.service.js';
 
-const PEDIDO_DEMO = {
-  mesa: 1,
-  items: [
-    { cantidad: 1, nombre: 'Albóndigas', subtotal: 30000 },
-    { cantidad: 2, nombre: 'Albóndiguitas', subtotal: 180000 },
-  ],
-};
-
 const icono = (contenido) => `
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${contenido}</svg>
 `;
 
-export function render(container) {
-  const total = PEDIDO_DEMO.items.reduce((suma, item) => suma + item.subtotal, 0);
+// Subtotal con el precio congelado al hacer el pedido (precio_unitario); el
+// precio actual del producto queda sólo como respaldo.
+function subtotalItem(item) {
+  return item.cantidad * Number(item.precio_unitario ?? item.productos?.precio ?? 0);
+}
 
+export function render(container) {
   container.innerHTML = `
     <ion-page class="pedido-aceptado">
       <ion-content scroll-y="false">
@@ -44,20 +40,15 @@ export function render(container) {
             </button>
           </nav>
 
-          <section class="pedido-aceptado__resumen" aria-labelledby="titulo-pedido-demo">
+          <section class="pedido-aceptado__resumen" aria-labelledby="titulo-pedido">
             <header>
-              <h2 id="titulo-pedido-demo">${icono('<path d="M6 8h12l-1 11H7zM9 8V6a3 3 0 0 1 6 0v2"/>')} Tu pedido</h2>
-              <span>Mesa ${PEDIDO_DEMO.mesa}</span>
+              <h2 id="titulo-pedido">${icono('<path d="M6 8h12l-1 11H7zM9 8V6a3 3 0 0 1 6 0v2"/>')} Tu pedido</h2>
+              <span data-mesa></span>
             </header>
-            <ul>
-              ${PEDIDO_DEMO.items.map((item) => `
-                <li>
-                  <span class="pedido-aceptado__cantidad">${item.cantidad}</span>
-                  <span>${item.nombre}</span>
-                  <strong>${formatearMoneda(item.subtotal)}</strong>
-                </li>`).join('')}
+            <ul data-items aria-busy="true">
+              <li class="pedido-aceptado__aviso">Cargando tu pedido…</li>
             </ul>
-            <footer><span>Total parcial</span><strong>${formatearMoneda(total)}</strong></footer>
+            <footer><span>Total parcial</span><strong data-total>—</strong></footer>
 
             <aside class="pedido-aceptado__beneficio">
               <span aria-hidden="true">%</span>
@@ -90,6 +81,49 @@ export function render(container) {
     maximo: 1.16,
   });
 
+  const textoMesa = container.querySelector('[data-mesa]');
+  const listaItems = container.querySelector('[data-items]');
+  const textoTotal = container.querySelector('[data-total]');
+
+  // Antes esta pantalla mostraba un pedido de demostración fijo (mesa 1,
+  // albóndigas): ahora pinta el pedido real de la estadía del cliente.
+  function mostrarAviso(texto) {
+    const aviso = document.createElement('li');
+    aviso.className = 'pedido-aceptado__aviso';
+    aviso.textContent = texto;
+    listaItems.replaceChildren(aviso);
+  }
+
+  function pintarPedido(pedido) {
+    listaItems.removeAttribute('aria-busy');
+    const numeroMesa = pedido?.estadias?.mesas?.numero;
+    textoMesa.textContent = numeroMesa ? `Mesa ${numeroMesa}` : '';
+
+    const items = pedido?.pedido_items ?? [];
+    if (!items.length) {
+      mostrarAviso('Todavía no tenés un pedido en curso.');
+      textoTotal.textContent = formatearMoneda(0);
+      ajusteVista.actualizar();
+      return;
+    }
+
+    // Con textContent: los nombres de producto los cargan los empleados.
+    listaItems.replaceChildren(...items.map((item) => {
+      const fila = document.createElement('li');
+      const cantidad = document.createElement('span');
+      cantidad.className = 'pedido-aceptado__cantidad';
+      cantidad.textContent = item.cantidad;
+      const nombre = document.createElement('span');
+      nombre.textContent = item.productos?.nombre ?? 'Producto';
+      const subtotal = document.createElement('strong');
+      subtotal.textContent = formatearMoneda(subtotalItem(item));
+      fila.append(cantidad, nombre, subtotal);
+      return fila;
+    }));
+    textoTotal.textContent = formatearMoneda(items.reduce((suma, item) => suma + subtotalItem(item), 0));
+    ajusteVista.actualizar();
+  }
+
   // Punto 13: esta pantalla es la primera parada del cliente registrado
   // apenas confirma (ver ROLES_POR_RUTA['/pedidos/aceptado']); si el mozo
   // rechaza mientras sigue acá -no tiene por qué haberse ido a "Estado de tu
@@ -114,6 +148,7 @@ export function render(container) {
         reaccionarSiRechazado(pedido);
         return;
       }
+      pintarPedido(pedido);
       if (pedido) {
         desuscribirRechazo = suscribirseAMiPedido(pedido.id, async () => {
           const actualizado = await obtenerMiPedidoEnCurso().catch(() => null);
@@ -122,7 +157,11 @@ export function render(container) {
       }
     })
     .catch(() => {
-      // Silencioso: esta vigilancia es un accesorio, no debe romper la pantalla.
+      // La vigilancia del rechazo es un accesorio; sólo se avisa que el
+      // resumen no se pudo cargar, sin romper los atajos de la pantalla.
+      if (!container.isConnected) return;
+      listaItems.removeAttribute('aria-busy');
+      mostrarAviso('No se pudo cargar tu pedido. Lo podés ver en "Estado de tu pedido".');
     });
 
   window.addEventListener('hashchange', () => {

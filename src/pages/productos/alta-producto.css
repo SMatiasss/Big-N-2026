@@ -38,14 +38,19 @@
   --ah-escala: 1.58;
 }
 
-/* Antes esta pantalla medía su alto con JS (ajustarFormulario) y achicaba
-   todo si no entraba. Ahora usa la misma cáscara ".pantalla-lista" que las
-   pantallas de listado (ver lista-ajustada.css): ion-content deja de
-   scrollear y pasa a ser una columna flex (header fijo arriba, este <main>
-   ocupando el resto). Dentro, sólo el campo "Descripción" crece o se achica
-   (ver más abajo) para ocupar exactamente lo que sobra — el resto de los
-   campos, las fotos y el botón mantienen siempre su tamaño. No hace falta
-   medir nada: el ajuste lo hace el propio flexbox. */
+/* Este <main> mide como mínimo el alto libre bajo el header
+   (--vista-alto-disponible, lo publica fijarAltoDisponible en lista-ajustada.js).
+   Dentro, sólo el campo "Descripción" crece (ver más abajo) para ocupar
+   exactamente lo que sobra — el resto de los campos, las fotos y el botón
+   mantienen siempre su tamaño.
+
+   Antes era una columna flex del alto de ion-content y sin scroll
+   (".pantalla-lista"). Pero en Android el teclado achica el WebView: la
+   columna perdía la mitad del alto, "Descripción" se aplastaba a 0 y los
+   campos quedaban encimados. Ese alto ahora se toma al entrar y el teclado
+   no lo baja: ion-content scrollea hasta el campo en vez de aplastar nada.
+   Es min-height y no height para que en pantallas muy bajas, si no entra,
+   se pueda scrollear en lugar de encimarse. */
 
 .alta-producto__contenido {
   box-sizing: border-box;
@@ -55,6 +60,7 @@
 
   width: 100%;
   max-width: 440px;
+  min-height: var(--vista-alto-disponible, auto);
 
   margin: 0 auto;
   padding: 22px 18px 32px;
@@ -148,6 +154,9 @@
   position: absolute;
   right: -4px;
   bottom: -4px;
+  /* La foto elegida lleva z-index 2 (.cuadro-foto__img): sin esto la
+     imagen tapaba el círculo y sólo asomaba el borde. */
+  z-index: 3;
 
   box-sizing: border-box;
 

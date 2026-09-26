@@ -108,13 +108,81 @@ export function ajustarGrilla(grilla, { columnas = 3 } = {}) {
   return observar(grilla, aplicar);
 }
 
-// ¿El foco está en un campo del formulario? Si lo está, un "resize" es casi
-// seguro el teclado virtual tapando media pantalla, no un cambio real del alto
-// disponible: recalcular ahí aplastaría el formulario mientras se escribe.
-function hayCampoEnfoco(contenido) {
-  const activo = document.activeElement;
-  if (!activo || !contenido.contains(activo)) return false;
-  return /^(INPUT|TEXTAREA|SELECT|ION-SELECT|ION-INPUT|ION-TEXTAREA)$/.test(activo.tagName);
+// Mide el alto libre bajo el header ignorando el teclado virtual.
+//
+// En Android el WebView se achica cuando se abre el teclado, así que el alto
+// de ion-content baja a la mitad. Antes se intentaba adivinar si un "resize"
+// era el teclado mirando si había un campo con foco, pero al pasar de un campo
+// a otro (tocando otro input o con "siguiente") hay un instante sin foco: ahí
+// se medía con el teclado abierto y el formulario quedaba chiquito hasta el
+// próximo toque.
+//
+// El teclado sólo le quita ALTO a la pantalla, nunca ancho. Entonces, para un
+// mismo ancho, el mayor alto visto es el real: el teclado nunca puede achicar
+// la medición. Si cambia el ancho (rotar el teléfono) se vuelve a medir de cero.
+function crearMedidorAlto(contenido, margen) {
+  const ionContent = contenido.closest('ion-content');
+  let anchoReferencia = 0;
+  let altoReferencia = 0;
+
+  return function altoDisponible() {
+    const ancho = ionContent?.clientWidth ?? 0;
+    const alto = ionContent?.clientHeight ?? 0;
+    if (ancho !== anchoReferencia) {
+      anchoReferencia = ancho;
+      altoReferencia = 0;
+    }
+    altoReferencia = Math.max(altoReferencia, alto);
+
+    const header = ionContent?.querySelector('.app-header');
+    const altoHeader = header?.getBoundingClientRect().height ?? 0;
+    return Math.floor(altoReferencia - altoHeader - margen);
+  };
+}
+
+/**
+ * Publica en --vista-alto-disponible el alto libre bajo el header, sin
+ * achicar nada: para pantallas que reparten ese alto con flexbox (ej. el
+ * alta de plato/bebida, donde "Descripción" ocupa lo que sobra).
+ *
+ * El alto no baja al abrir el teclado (ver crearMedidorAlto): el contenido
+ * conserva su tamaño y es ion-content el que scrollea hasta el campo, en vez
+ * de aplastar el formulario y encimar los campos.
+ *
+ * @param {HTMLElement} contenido - Hijo directo de <ion-content>.
+ */
+export function fijarAltoDisponible(contenido, { margen = 0 } = {}) {
+  const altoDisponible = crearMedidorAlto(contenido, margen);
+
+  function aplicar() {
+    const disponible = altoDisponible();
+    if (disponible <= 0) return false;
+    contenido.style.setProperty('--vista-alto-disponible', `${disponible}px`);
+    return true;
+  }
+
+  let frames = 0;
+  function intentar() {
+    if (!contenido.isConnected || frames > 90) return;
+    frames += 1;
+    if (!aplicar()) requestAnimationFrame(intentar);
+  }
+  intentar();
+
+  // El header termina de hidratarse (ion-button) después del primer frame.
+  const reintento = setTimeout(aplicar, 300);
+  window.addEventListener('resize', aplicar);
+  window.addEventListener('orientationchange', aplicar);
+  document.fonts?.ready.then(aplicar).catch(() => {});
+
+  return {
+    actualizar: aplicar,
+    destruir() {
+      clearTimeout(reintento);
+      window.removeEventListener('resize', aplicar);
+      window.removeEventListener('orientationchange', aplicar);
+    },
+  };
 }
 
 /**
@@ -140,17 +208,14 @@ function hayCampoEnfoco(contenido) {
  *   abajo, para no depender de que el alto medido sea exacto al píxel.
  */
 export function ajustarFormulario(contenido, { variable, minimo = 0.72, margen = 6 }) {
-  const ionContent = contenido.closest('ion-content');
-
-  function altoDisponible() {
-    const header = ionContent?.querySelector('.app-header');
-    return (ionContent?.clientHeight ?? 0) - (header?.offsetHeight ?? 0) - margen;
-  }
+  const altoDisponible = crearMedidorAlto(contenido, margen);
+  let ultimoDisponible = null;
 
   // Devuelve false si todavía no se puede medir (ion-content sin hidratar).
   function aplicar() {
     const disponible = altoDisponible();
     if (disponible <= 0) return false;
+    ultimoDisponible = disponible;
     contenido.style.setProperty('--vista-alto-disponible', `${disponible}px`);
 
     // Se mide siempre partiendo de la escala completa: si no se resetea acá,
@@ -192,9 +257,11 @@ export function ajustarFormulario(contenido, { variable, minimo = 0.72, margen =
   // después del primer frame y pueden cambiar el alto de lo ya medido.
   const reintento = setTimeout(aplicar, 300);
 
+  // Abrir/cerrar el teclado dispara "resize" pero no cambia el alto medido
+  // (ver crearMedidorAlto), así que no hay nada que recalcular: el formulario
+  // queda del tamaño con el que se entró. Sólo rotar el teléfono lo cambia.
   function alCambiarVentana() {
-    if (hayCampoEnfoco(contenido)) return;
-    aplicar();
+    if (altoDisponible() !== ultimoDisponible) aplicar();
   }
 
   // Ni ResizeObserver ni MutationObserver sobre "contenido": el propio ajuste
@@ -202,9 +269,6 @@ export function ajustarFormulario(contenido, { variable, minimo = 0.72, margen =
   // reaccionar a los eventos que realmente cambian el alto disponible.
   window.addEventListener('resize', alCambiarVentana);
   window.addEventListener('orientationchange', alCambiarVentana);
-  // Al salir de un campo se cierra el teclado y vuelve el alto real: recién
-  // ahí tiene sentido recalcular lo que se ignoró durante la escritura.
-  contenido.addEventListener('focusout', alCambiarVentana);
   // Las fuentes web (@import de Google Fonts) cargan async: si el cálculo se
   // hizo con la tipografía de respaldo, se repite una vez que carga la real.
   document.fonts?.ready.then(aplicar).catch(() => {});
@@ -215,7 +279,6 @@ export function ajustarFormulario(contenido, { variable, minimo = 0.72, margen =
       clearTimeout(reintento);
       window.removeEventListener('resize', alCambiarVentana);
       window.removeEventListener('orientationchange', alCambiarVentana);
-      contenido.removeEventListener('focusout', alCambiarVentana);
     },
   };
 }
@@ -235,6 +298,9 @@ export function ajustarVista(contenido, {
   const ionContent = contenido.closest('ion-content');
   const limitar = (valor) => Math.min(maximo, Math.max(minimo, valor));
 
+  // A propósito NO usa crearMedidorAlto: estas vistas no scrollean
+  // (scroll-y="false"), así que achicarse con el teclado es lo que mantiene
+  // visible un campo como el comentario de la encuesta.
   function aplicar() {
     const header = ionContent?.querySelector('.app-header');
     const disponible = (ionContent?.clientHeight ?? 0) - (header?.offsetHeight ?? 0) - margen;

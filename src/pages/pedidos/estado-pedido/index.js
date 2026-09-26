@@ -6,7 +6,9 @@
 // 18: "El cliente verifica el cambio de estado en su pedido" — el progreso se
 //     actualiza solo por realtime a medida que cocina y bar terminan.
 // 19: "El cliente confirma la recepción de su pedido" y recién entonces se le
-//     habilitan los juegos, la encuesta y pedir la cuenta.
+//     habilitan la encuesta y pedir la cuenta.
+// 15: los juegos (sólo cliente registrado) se habilitan antes, apenas el mozo
+//     confirma el pedido.
 import './index.css';
 import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
@@ -25,6 +27,17 @@ import { precargarCarritoDesdePedido } from '../../../utils/carrito-desde-pedido
 import { navegarA } from '../../../router.js';
 
 const RUTA_CUENTA = '/cuenta/solicitar';
+
+// Punto 15: misma regla que aplica la base al jugar (hu15_jugar): los juegos
+// se habilitan cuando el mozo confirma el pedido, no recién al recibirlo.
+// Antes el botón aparecía sólo con el pedido recibido, y la única otra
+// entrada era "Pedido aceptado", a la que no se puede volver: al salir de
+// ahí el cliente se quedaba sin acceso a los juegos mientras esperaba.
+const ESTADOS_CON_JUEGOS = [
+  ESTADOS_PEDIDO.EN_PREPARACION,
+  ESTADOS_PEDIDO.LISTO,
+  ESTADOS_PEDIDO.ENTREGADO,
+];
 
 const ETIQUETAS_SECTOR = {
   cocina: 'Cocina',
@@ -138,7 +151,8 @@ export function render(container) {
               Modificar y volver a enviar
             </button>
 
-            <!-- Punto 19: se habilitan recién con el pedido recibido. -->
+            <!-- Punto 19: encuesta y cuenta se habilitan recién con el pedido
+                 recibido. Juegos antes, ver ESTADOS_CON_JUEGOS. -->
             <nav class="estado-pedido__siguientes" aria-label="Qué podés hacer ahora" hidden>
               <button type="button" data-ruta="/juegos">Juegos</button>
               <button type="button" data-ruta="/encuesta">Encuesta</button>
@@ -164,6 +178,8 @@ export function render(container) {
   const botonConfirmar = container.querySelector('.estado-pedido__confirmar:not(.estado-pedido__modificar)');
   const botonModificar = container.querySelector('.estado-pedido__modificar');
   const siguientes = container.querySelector('.estado-pedido__siguientes');
+  const botonJuegos = siguientes.querySelector('[data-ruta="/juegos"]');
+  const botonesPostRecepcion = siguientes.querySelectorAll('button:not([data-ruta="/juegos"])');
 
   const ajusteLista = ajustarLista(items);
 
@@ -202,12 +218,13 @@ export function render(container) {
   // descuentos, ver la nota del punto 14), y /juegos está restringido a ese rol
   // en config/navegacion.js: si le dejáramos el botón al anónimo, tocarlo lo
   // devolvería al home con un aviso de "no disponible para tu perfil".
-  // La encuesta y la cuenta sí son para los dos.
+  // La encuesta y la cuenta sí son para los dos. Hasta confirmar el rol el
+  // botón queda oculto (esClienteRegistrado arranca en false).
+  let esClienteRegistrado = false;
   void obtenerPerfilActual()
     .then((perfil) => {
-      if (perfil?.rol !== ROLES.CLIENTE_REGISTRADO) {
-        siguientes.querySelector('[data-ruta="/juegos"]')?.remove();
-      }
+      esClienteRegistrado = perfil?.rol === ROLES.CLIENTE_REGISTRADO;
+      if (pedido && container.isConnected) pintar();
     })
     .catch(() => {});
 
@@ -261,7 +278,10 @@ export function render(container) {
 
     botonModificar.hidden = !rechazado;
 
-    siguientes.hidden = !recibido;
+    const juegosHabilitados = esClienteRegistrado && ESTADOS_CON_JUEGOS.includes(pedido.estado);
+    botonJuegos.hidden = !juegosHabilitados;
+    botonesPostRecepcion.forEach((boton) => { boton.hidden = !recibido; });
+    siguientes.hidden = !recibido && !juegosHabilitados;
   }
 
   async function confirmar() {

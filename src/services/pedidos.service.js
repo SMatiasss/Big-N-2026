@@ -81,6 +81,7 @@ const SELECT_PEDIDO_EN_CURSO = `
   ),
   pedido_items (
     cantidad,
+    precio_unitario,
     sector,
     estado,
     productos ( id, nombre, precio, tipo, sector, tiempo_elaboracion_min, activo )

@@ -121,11 +121,14 @@ async function navegar(container) {
           return;
         }
       }
-    } catch (error) {
+    } catch {
       if (generacion !== generacionNavegacion) return;
       // Un perfil pendiente/rechazado ya fue desconectado por el servicio y
-      // debe poder ver el formulario junto con el mensaje correspondiente.
-      avisoNavegacion = error.message ?? 'No se pudo verificar la sesión.';
+      // sigue a la pantalla pública. No se guarda el motivo como aviso: sólo
+      // lo muestra el home, así que quedaba pendiente hasta el próximo login
+      // exitoso y un cliente recién aprobado veía "Tu registro está pendiente
+      // de aprobación". Si intenta entrar sin estar aprobado, el login ya le
+      // muestra ese mismo motivo (signIn lo rechaza).
     }
   }
 

@@ -162,6 +162,8 @@
   position: absolute;
   right: -6px;
   bottom: -9px;
+  /* Por encima de la foto ya tomada (su <img> lleva z-index 2). */
+  z-index: 3;
 
   width: 25px;
   height: 25px;
