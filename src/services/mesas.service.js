@@ -63,7 +63,10 @@ export async function crearMesaCompleta(datosMesa, foto) {
 export async function listarMesas() {
   // numero es unique en el schema, así que Postgres ya tiene el índice
   // que hace este order by gratis; no hace falta uno aparte.
-  const { data, error } = await getSupabase().from(TABLAS.MESAS).select('*').order('numero');
+  // Sólo las activas: una mesa dada de baja (activa = false, ver
+  // 03_baja_logica.sql) no se borra porque sus visitas viejas la siguen
+  // referenciando, pero no tiene que aparecer en la gestión.
+  const { data, error } = await getSupabase().from(TABLAS.MESAS).select('*').eq('activa', true).order('numero');
   if (error) throw error;
   return data;
 }
