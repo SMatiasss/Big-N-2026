@@ -32,8 +32,8 @@ const RUTA_CUENTA = '/cuenta/solicitar';
 // Punto 15: misma regla que aplica la base al jugar (hu15_jugar): los juegos
 // se habilitan cuando el mozo confirma el pedido, no recién al recibirlo.
 // Antes el botón aparecía sólo con el pedido recibido, y la única otra
-// entrada era "Pedido aceptado", a la que no se puede volver: al salir de
-// ahí el cliente se quedaba sin acceso a los juegos mientras esperaba.
+// El acceso permanece disponible en esta pantalla única de seguimiento
+// mientras el cliente espera el pedido.
 const ESTADOS_CON_JUEGOS = [
   ESTADOS_PEDIDO.EN_PREPARACION,
   ESTADOS_PEDIDO.LISTO,

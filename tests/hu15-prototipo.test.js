@@ -7,6 +7,7 @@ import { anguloFinalRuleta, revelarMemotest } from '../src/utils/juegos.js';
 test('HU15 restringe catálogo y juegos al cliente registrado', () => {
   assert.equal(puedeAccederRuta('/juegos', 'cliente_registrado'), true);
   assert.equal(puedeAccederRuta('/pedidos/aceptado', 'cliente_registrado'), true);
+  assert.equal(puedeAccederRuta('/pedidos/aceptado', 'cliente_anonimo'), true);
   assert.equal(puedeAccederRuta('/juegos', 'cliente_anonimo'), false);
   assert.equal(puedeAccederRuta('/juegos', 'mozo'), false);
 });
@@ -21,12 +22,12 @@ test('el catálogo comunica las tres reglas y porcentajes de HU15', async () => 
   assert.match(codigo, /porcentaje: 20/);
 });
 
-test('el acceso desde la carta no escribe partidas ni descuentos por sí mismo', async () => {
+test('el pedido enviado abre la pantalla única Mi pedido', async () => {
   const carta = await readFile(new URL('../src/pages/productos/carta/index.js', import.meta.url), 'utf8');
-  const aceptado = await readFile(new URL('../src/pages/pedidos/pedido-aceptado/index.js', import.meta.url), 'utf8');
-  assert.match(carta, /contexto\.rol === 'cliente_registrado'/);
-  assert.match(carta, /Probar juegos HU15/);
-  assert.doesNotMatch(aceptado, /registrarPartida|aplicarDescuento|\.from\(/);
+  const estado = await readFile(new URL('../src/pages/pedidos/estado-pedido/index.js', import.meta.url), 'utf8');
+  assert.match(carta, /navegarA\('\/pedidos\/estado'\)/);
+  assert.doesNotMatch(carta, /navegarA\('\/pedidos\/aceptado'\)/);
+  assert.doesNotMatch(estado, /registrarPartida|aplicarDescuento/);
 });
 
 test('el servicio no permite indicar un porcentaje de descuento desde el cliente', async () => {

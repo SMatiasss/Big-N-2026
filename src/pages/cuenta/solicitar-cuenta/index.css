@@ -31,6 +31,7 @@
 
 .cuenta__contenido {
   box-sizing: border-box;
+  min-width: 0;
 
   width: 100%;
   max-width: 480px;
@@ -203,12 +204,16 @@
 .cuenta__pie {
   display:flex;
   flex: 1 0 auto;
+  min-width: 0;
+  width: 100%;
   margin: clamp(10px, 1.8vh, 16px) 0 0;
   padding-top: clamp(10px, 1.8vh, 16px);
 }
 
 .cuenta__paso {
   box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
 
   padding: clamp(16px, 3.5vh, 28px) clamp(12px, 2.5vw, 16px);
 
@@ -326,17 +331,24 @@
 .cuenta__total {
   display: block;
 
+  max-width: 100%;
+
   margin: 0;
 
   overflow-wrap: break-word;
 
   color: var(--texto-claro);
 
-  font: 700 clamp(32px, min(9vh, 14vw), 76px)/1.05 var(--fuente-outfit);
+  /* El tamaño depende principalmente del ancho: usar vh hacía que en el A71
+     el importe creciera hasta desbordar la card aunque sobrara alto. */
+  font: 700 clamp(32px, 10.5vw, 54px)/1.05 var(--fuente-outfit);
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .cuenta__pagar {
+  box-sizing: border-box;
+  max-width: 100%;
   width: 100%;
   height: clamp(48px, 7.5vh, 62px);
 

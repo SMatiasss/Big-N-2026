@@ -44,7 +44,7 @@ export const ROLES_POR_RUTA = {
   // le corresponde al 19.
   // HU15 es exclusiva del cliente registrado. El cliente anónimo puede
   // pedir y seguir su pedido, pero no participa por descuentos.
-  '/pedidos/aceptado': [ROLES.CLIENTE_REGISTRADO],
+  '/pedidos/aceptado': CLIENTES,
   '/juegos': [ROLES.CLIENTE_REGISTRADO],
   '/juegos/1': [ROLES.CLIENTE_REGISTRADO],
   '/juegos/2': [ROLES.CLIENTE_REGISTRADO],
