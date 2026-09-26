@@ -107,11 +107,20 @@ export async function enviarEmailPerfil(req: Request, tipo: TipoCorreo) {
     terracota: '#bc6c25',    // acento fuerte
     crema: '#fefae0',        // texto principal
     suave: '#c8c8a0',        // texto secundario
+    // El rechazo usa la paleta del modal/toast de error (#ac6653 con borde
+    // crema): en verde se confundía con el de aprobación. Crema sobre la
+    // tarjeta roja 5,6:1, sobre el fondo 3,9:1 (igual que el modal).
+    ...(esAprobacion ? {} : {
+      fondo: '#ac6653',
+      tarjeta: '#8e4f3f',
+      borde: '#c98a78',
+      suave: '#f1d9cf',
+    }),
   };
 
   // La franja de arriba distingue un correo del otro. Los títulos van siempre
   // en crema: la terracota sobre la tarjeta no llega al contraste (2:1).
-  const colorAcento = esAprobacion ? COLOR.dorado : COLOR.terracota;
+  const colorAcento = esAprobacion ? COLOR.dorado : COLOR.crema;
   const tituloHeader = esAprobacion ? '¡Tu registro ha sido aprobado!' : 'Estado de tu solicitud de registro';
 
   const fuenteTitulos = "'Outfit', 'Trebuchet MS', Arial, sans-serif";
@@ -143,13 +152,11 @@ export async function enviarEmailPerfil(req: Request, tipo: TipoCorreo) {
                    gorro es verde oliva y sobre la tarjeta no se vería. -->
               <tr>
                 <td align="center" style="padding: 32px 20px 12px 20px;">
-                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                    <tr>
-                      <td align="center" valign="middle" bgcolor="${COLOR.crema}" width="116" height="116" style="width: 116px; height: 116px; background-color: ${COLOR.crema}; border-radius: 58px;">
-                        <img src="cid:logo_bign_inline" alt="Big N" width="104" height="104" style="display: block; width: 104px; height: 104px; border: 0;" />
-                      </td>
-                    </tr>
-                  </table>
+                  <!-- Logo_correo.png ya trae el círculo crema con el logo
+                       recortado como en inicio (scale 1.672): los clientes de
+                       correo no aplican transform ni overflow, así que el
+                       recorte va en la imagen. Está a 464px para verse nítido. -->
+                  <img src="cid:logo_bign_inline" alt="Big N" width="232" height="232" style="display: block; width: 232px; height: 232px; border: 0;" />
                 </td>
               </tr>
 
@@ -176,7 +183,7 @@ export async function enviarEmailPerfil(req: Request, tipo: TipoCorreo) {
                     </table>
                   ` : `
                     <p style="font-size: 15px; margin-bottom: 20px; color: ${COLOR.crema};">Te informamos que tu solicitud de registro <strong>no ha sido aprobada</strong> en este momento tras la revisión del supervisor.</p>
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="${COLOR.fondo}" style="margin: 20px 0; background-color: ${COLOR.fondo}; border-left: 4px solid ${COLOR.terracota}; border-radius: 6px;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="${COLOR.fondo}" style="margin: 20px 0; background-color: ${COLOR.fondo}; border-left: 4px solid ${colorAcento}; border-radius: 6px;">
                       <tr>
                         <td style="padding: 15px; font-size: 14px; line-height: 1.5; color: ${COLOR.crema};">
                           Para más detalles o resolver dudas sobre tu cuenta, te pedimos que te comuniques directamente con el equipo.
@@ -223,8 +230,8 @@ export async function enviarEmailPerfil(req: Request, tipo: TipoCorreo) {
       text: mensajeTexto,
       attachments: [
         {
-          filename: 'Icono_Big_N_2_1.png',
-          path: `${supabaseUrl}/storage/v1/object/public/Logo/Icono_Big_N_2_1.png`,
+          filename: 'Logo_correo.png',
+          path: `${supabaseUrl}/storage/v1/object/public/Logo/Logo_correo.png`,
           cid: 'logo_bign_inline', // Se mantiene igual para vincular con el HTML
         },
       ],

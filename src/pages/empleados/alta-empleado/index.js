@@ -15,7 +15,7 @@ import { mensajeDeErrorAlta } from '../../../utils/errores-alta.js';
 
 const ROLES_DISPONIBLES = ROLES_EMPLEADO;
 
-//test
+
 /* =========================================================
    ETIQUETAS DE ROLES
    ========================================================= */
