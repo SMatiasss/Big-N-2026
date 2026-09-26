@@ -1,0 +1,164 @@
+/* =========================================================
+   INFO DE MESA (QR de mesa leído por el personal)
+   Misma paleta oliva que la grilla de Mesas, con los mismos
+   colores de libre/ocupada para que se lean igual en las dos.
+   ========================================================= */
+
+.info-mesa {
+  --fondo: var(--form-fondo);
+  --fondo-card: var(--form-campo-fondo);
+  --acento: var(--form-dorado);
+  --texto-claro: var(--form-texto-claro);
+  --texto-suave: #c8c8a0;
+  --color-libre: #22c55e;
+  --color-ocupada: #eab308;
+
+  background: var(--fondo);
+  color: var(--texto-claro);
+  font-family: var(--fuente-geist);
+}
+
+.info-mesa ion-content { --background: var(--fondo); }
+
+/* Columna del alto libre bajo el header (--vista-alto-disponible, lo publica
+   fijarAltoDisponible): la foto mide lo suyo y los cuatro datos se estiran
+   para ocupar todo el resto, sin dejar espacio libre abajo. */
+.info-mesa__contenido {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  min-height: var(--vista-alto-disponible, auto);
+  margin: 0 auto;
+  padding: clamp(10px, 2vh, 18px) 16px max(16px, env(safe-area-inset-bottom));
+}
+
+.info-mesa__ficha {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.info-mesa__estado {
+  margin: 40px 0 0;
+  color: var(--texto-suave);
+  font-size: 15px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.info-mesa__foto {
+  position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  margin: 0 0 clamp(12px, 2vh, 18px);
+  overflow: hidden;
+  border: 2px solid rgb(221 161 94 / 35%);
+  border-radius: 16px;
+  background: var(--fondo-card);
+}
+
+.info-mesa__foto img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Queda debajo de la imagen: se ve sólo si no hay foto o si no carga. */
+.info-mesa__sin-foto {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+
+.info-mesa__sin-foto svg {
+  width: clamp(40px, 7vh, 56px);
+  height: clamp(40px, 7vh, 56px);
+  color: var(--acento);
+}
+
+.info-mesa__baja {
+  flex-shrink: 0;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-error-texto);
+  border-radius: 12px;
+  background: var(--fondo-card);
+  color: var(--color-error-texto);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Grilla 2x2 que se estira (flex:1) con dos filas iguales: las tarjetas
+   llenan todo el alto que deja la foto. Etiqueta chica arriba, valor grande
+   abajo. */
+.info-mesa__datos {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(96px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.info-mesa__dato {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(6px, 1.2vh, 12px);
+  padding: clamp(12px, 2vh, 20px) 16px;
+  box-sizing: border-box;
+  border: 1px solid rgb(221 161 94 / 18%);
+  border-radius: 14px;
+  background: var(--fondo-card);
+}
+
+.info-mesa__dato dt {
+  color: var(--texto-suave);
+  font-size: clamp(13px, 1.9vh, 16px);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.info-mesa__dato dd {
+  margin: 0;
+  color: var(--texto-claro);
+  font: 700 clamp(22px, 3.8vh, 32px)/1.2 var(--fuente-outfit);
+}
+
+.info-mesa__dato--numero dd {
+  color: var(--acento);
+  font-size: clamp(48px, 9vh, 80px);
+  line-height: 1;
+}
+
+/* Disponibilidad: el punto de color, igual que la leyenda de la grilla. */
+.info-mesa__dato--libre,
+.info-mesa__dato--ocupada { border-width: 2px; }
+.info-mesa__dato--libre { border-color: var(--color-libre); }
+.info-mesa__dato--ocupada { border-color: var(--color-ocupada); }
+
+.info-mesa__dato--libre dd::before,
+.info-mesa__dato--ocupada dd::before {
+  content: '';
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  margin-right: 0.35em;
+  border-radius: 50%;
+  vertical-align: 0.1em;
+}
+.info-mesa__dato--libre dd::before { background: var(--color-libre); }
+.info-mesa__dato--ocupada dd::before { background: var(--color-ocupada); }

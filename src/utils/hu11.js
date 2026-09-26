@@ -7,6 +7,11 @@ export function normalizarQrMesa(contenido) {
   return token.toLowerCase();
 }
 
+// La inversa de normalizarQrMesa: lo que se codifica dentro del QR físico.
+export function contenidoQrMesa(qrToken) {
+  return `mesa:${qrToken}`;
+}
+
 export function validarMensaje(texto) {
   const cuerpo = typeof texto === 'string' ? texto.trim() : '';
   if (!cuerpo) throw new Error('Escribí un mensaje antes de enviar.');

@@ -53,6 +53,13 @@ export const TIPOS_MESA = {
   MOVILIDAD_REDUCIDA: 'movilidad_reducida',
 };
 
+// Cómo se muestra cada tipo de mesa en pantalla (el enum viene en snake_case).
+export const ETIQUETAS_TIPO_MESA = {
+  [TIPOS_MESA.ESTANDAR]: 'Estándar',
+  [TIPOS_MESA.VIP]: 'VIP',
+  [TIPOS_MESA.MOVILIDAD_REDUCIDA]: 'Movilidad reducida',
+};
+
 export const ESTADOS_PERFIL = {
   PENDIENTE: 'pendiente',
   APROBADO: 'aprobado',

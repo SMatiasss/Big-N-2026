@@ -1,17 +1,60 @@
-// Generar/leer QR: wrapper fino sobre una lib externa (agregarla a package.json cuando se elija cuál).
+// Generar/leer QR.
+// La lectura la hace @capacitor-mlkit/barcode-scanning directo desde la
+// cámara (ver components/lector-qr): acá sólo queda la generación, con la
+// librería "qrcode" (agregada a package.json), para mostrar/exportar el QR
+// ya impreso en la mesa (ver components/modal-qr-mesa).
 // Validación del QR de ingreso al local (punto 9) contra configuracion.qr_ingreso_token,
 // que es de lectura pública para cualquier autenticado (policy config_lectura).
+import QRCode from 'qrcode';
+import { Capacitor } from '@capacitor/core';
+import { Share } from '@capacitor/share';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 import { getSupabase } from './supabase.client.js';
 import { TABLAS } from '../config/constantes.js';
 
 const CLAVE_QR_INGRESO = 'qr_ingreso_token';
 
-export function generarQR(valor) {
-  throw new Error('generarQR: falta instalar y conectar la librería de generación de QR');
+// Data URL (image/png) del QR de "valor". Tamaño fijo en píxeles CSS; se
+// duplica por devicePixelRatio para que se vea nítido en pantallas de alta
+// densidad y también sirva como imagen para compartir/imprimir.
+export async function generarQR(valor, { lado = 320 } = {}) {
+  const escala = Math.max(1, Math.round(window.devicePixelRatio || 1));
+  return QRCode.toDataURL(String(valor), {
+    width: lado * escala,
+    margin: 1,
+    color: { dark: '#283618', light: '#fefae0' },
+  });
 }
 
-export function leerQR(imagenOStream) {
-  throw new Error('leerQR: falta instalar y conectar la librería de lectura de QR');
+function puedeCompartirArchivosNativo() {
+  return Capacitor.isNativePlatform()
+    && Capacitor.isPluginAvailable('Share')
+    && Capacitor.isPluginAvailable('Filesystem');
+}
+
+// Comparte el PNG del QR con el selector nativo (Android "compartir a...").
+// En una notebook/navegador de escritorio no hay share sheet: se descarga el
+// PNG directo, que es la alternativa equivalente para el dueño en la web.
+//
+// El archivo se escribe primero en el caché de la app: Share.share() sólo
+// acepta URLs file:// (o content://), nunca un data URL, así que no alcanza
+// con pasarle directamente lo que generó generarQR().
+export async function compartirImagen(dataUrl, { nombreArchivo, titulo, texto }) {
+  if (!puedeCompartirArchivosNativo()) {
+    const enlace = document.createElement('a');
+    enlace.href = dataUrl;
+    enlace.download = nombreArchivo;
+    enlace.click();
+    return;
+  }
+
+  const base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+  const { uri } = await Filesystem.writeFile({
+    path: nombreArchivo,
+    data: base64,
+    directory: Directory.Cache,
+  });
+  await Share.share({ title: titulo, text: texto, files: [uri] });
 }
 
 export async function obtenerTokenIngreso() {

@@ -85,6 +85,7 @@
   gap: clamp(4px, 1vh, 8px);
   padding: 8px 4px;
   user-select: none;
+  cursor: pointer;
   transition: transform 0.1s;
 }
 

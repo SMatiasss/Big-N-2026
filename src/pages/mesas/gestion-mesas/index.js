@@ -15,7 +15,7 @@ function tarjetaMesa(mesa) {
   const comensalesTexto = `${mesa.cantidad_comensales ?? 4} pers`;
 
   return `
-    <article class="mesa-card ${estadoClase}" data-id="${mesa.id}" data-numero="${mesa.numero}">
+    <article class="mesa-card ${estadoClase}" data-id="${mesa.id}" data-numero="${mesa.numero}" role="button" tabindex="0" aria-label="Ver mesa ${mesa.numero}">
       <span class="mesa-card__numero">${mesa.numero}</span>
       <span class="mesa-card__comensales">${comensalesTexto}</span>
     </article>
@@ -83,6 +83,19 @@ export function render(container) {
   reintentarUnaVez(obtenerPermisos)
     .then((permisos) => { botonAlta.hidden = !puedeAltaMesa(permisos); })
     .catch((error) => console.error('No se pudieron cargar los permisos de mesas.', error));
+
+  // Tocar una mesa abre su ficha: la misma que al escanear su QR.
+  grid.addEventListener('click', (evento) => {
+    const tarjeta = evento.target.closest('.mesa-card');
+    if (tarjeta) navegarA(`/mesa/${tarjeta.dataset.id}`);
+  });
+  grid.addEventListener('keydown', (evento) => {
+    const tarjeta = evento.target.closest('.mesa-card');
+    if (tarjeta && (evento.key === 'Enter' || evento.key === ' ')) {
+      evento.preventDefault();
+      navegarA(`/mesa/${tarjeta.dataset.id}`);
+    }
+  });
 
   listarMesas()
     .then((mesas) => {

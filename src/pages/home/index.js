@@ -6,7 +6,10 @@ import {
   esRolCliente,
   obtenerAccionesHome,
   obtenerAccionesHomeEmpleado,
+  puedeAccederRuta,
 } from "../../config/navegacion.js";
+import { buscarMesaPorQr } from "../../services/mesas.service.js";
+import { normalizarQrMesa } from "../../utils/hu11.js";
 import { obtenerPerfilActual, signOut } from "../../services/auth.service.js";
 import { validarQrIngreso } from "../../services/qr.service.js";
 import {
@@ -108,6 +111,9 @@ export async function render(container) {
           <section class="home__perfil" aria-label="Perfil activo" hidden>
             <span class="home__avatar" data-inicial></span>
             <span class="home__perfil-datos"><strong data-nombre>Usuario</strong><small data-detalle></small></span>
+            <button class="home__qr-mesa" type="button" aria-label="Escanear QR de mesa" title="Escanear QR de mesa" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM18 18h3v3h-3z"/></svg>
+            </button>
             <button class="home__cerrar" type="button" aria-label="Cerrar sesión" title="Cerrar sesión">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>
             </button>
@@ -170,6 +176,45 @@ export async function render(container) {
         obtenerAccionesHomeEmpleado(perfil.rol),
         true,
       );
+    }
+
+    // QR de mesa para el personal (metre, mozo, dueño, supervisor): va en la
+    // barra de perfil y no como tarjeta, para no sumarle una fila a la grilla
+    // del home. Abre la cámara directo y lleva a la info de esa mesa.
+    const botonQrMesa = raiz.querySelector(".home__qr-mesa");
+    if (puedeAccederRuta("/mesa/:id", perfil.rol)) {
+      botonQrMesa.hidden = false;
+      botonQrMesa.addEventListener("click", () => abrirQrMesa(botonQrMesa));
+    }
+
+    function abrirQrMesa(boton) {
+      boton.disabled = true;
+      const lector = crearLectorQr({
+        titulo: "Escaneá el QR de la mesa",
+        descripcion: "Vas a ver su número, lugares, tipo y disponibilidad.",
+        textoBoton: "Escanear QR de mesa",
+        nombreObjeto: "QR de mesa",
+        variante: "acceso",
+        onLectura: async (contenido) => {
+          try {
+            const mesa = await buscarMesaPorQr(normalizarQrMesa(contenido));
+            if (!mesa) {
+              mostrarToastError("Ese QR no corresponde a ninguna mesa del local.");
+              return;
+            }
+            navegarA(`/mesa/${mesa.id}`);
+          } catch (e) {
+            mostrarToastError(e.message ?? "No se pudo leer el QR de la mesa.");
+          }
+        },
+      });
+      // El lector no se inserta en pantalla: sus errores (sin cámara, sin
+      // permiso, etc.) se muestran con el toast de siempre.
+      void lector.escanear().finally(() => {
+        const aviso = lector.elemento.querySelector("ion-note")?.textContent;
+        if (aviso) mostrarToastError(aviso);
+        if (boton.isConnected) boton.disabled = false;
+      });
     }
 
     function abrirIngresoLocal(boton) {
