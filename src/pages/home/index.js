@@ -93,7 +93,7 @@ export async function render(container) {
       <ion-content>
         <main class="home__contenido" aria-busy="true">
           <header class="home__encabezado">
-            <div class="home__marca"><img src="/assets/logo/Icono Big N.svg" alt=""><span>Big N</span></div>
+            <div class="home__marca"><span class="home__logo"><img src="/assets/logo/Icono Big N.svg" alt=""></span><span>Big N</span></div>
             <h1 class="home__saludo sr-only">Bienvenido <span data-nombre-saludo>Usuario</span></h1>
           </header>
           <p class="home__aviso" role="status" aria-live="polite" hidden></p>

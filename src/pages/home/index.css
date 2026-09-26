@@ -38,18 +38,25 @@
 
    Dibujo casi hasta el borde: el SVG trae mucho aire alrededor. Medido
    renderizándolo, la tinta está centrada y su punto más alejado llega al
-   56% del radio de la imagen. object-view-box recorta un 20,1% por lado, así
-   ese punto queda al 94% del radio del círculo: un 6% de margen. Se recorta
-   con CSS y no en el archivo porque el login usa el mismo SVG. */
-.home__marca img {
-  box-sizing: border-box;
+   56,14% del radio de la imagen. El círculo recorta (overflow hidden) y la
+   imagen se agranda x1,672 adentro, así ese punto queda al 94% del radio del
+   círculo: 56,14 x 1,672 = 93,9. Se agranda con transform y no recortando el
+   archivo porque el login usa el mismo SVG. (object-view-box hacía lo mismo
+   en Chrome de escritorio, pero el WebView de Android no lo aplica.) */
+.home__logo {
+  display: block;
   width: clamp(120px, 19.5dvh, 184px);
   height: clamp(120px, 19.5dvh, 184px);
-  padding: 0;
   border-radius: 50%;
   background: var(--home-texto);
+  overflow: hidden;
+}
+.home__logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  object-view-box: inset(20.1%);
+  transform: scale(1.672);
 }
 .home__saludo {
   margin: 0 0 clamp(10px, 2dvh, 20px);
