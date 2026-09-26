@@ -25,6 +25,7 @@ import {
 import { solicitarCuenta } from '../../../services/cuentas.service.js';
 import { precargarCarritoDesdePedido } from '../../../utils/carrito-desde-pedido.js';
 import { navegarA } from '../../../router.js';
+import { formatearTiempoEstimado } from '../../../utils/tiempo-pedido.js';
 
 const RUTA_CUENTA = '/cuenta/solicitar';
 
@@ -131,6 +132,7 @@ export function render(container) {
 
           <section class="estado-pedido__resumen" hidden>
             <p class="estado-pedido__mesa"></p>
+            <p class="estado-pedido__tiempo">Tiempo estimado del pedido completo: <strong></strong></p>
             <ol class="estado-pedido__pasos"></ol>
             <p class="estado-pedido__mensaje-estado" role="status" aria-live="polite"></p>
           </section>
@@ -170,6 +172,7 @@ export function render(container) {
   const estadoCarga = container.querySelector('.estado-pedido__estado-carga');
   const resumen = container.querySelector('.estado-pedido__resumen');
   const textoMesa = container.querySelector('.estado-pedido__mesa');
+  const textoTiempo = container.querySelector('.estado-pedido__tiempo strong');
   const pasos = container.querySelector('.estado-pedido__pasos');
   const mensajeEstadoEl = container.querySelector('.estado-pedido__mensaje-estado');
   const items = container.querySelector('.estado-pedido__items');
@@ -256,6 +259,7 @@ export function render(container) {
 
     const mesa = pedido.estadias?.mesas?.numero;
     textoMesa.textContent = mesa ? `Mesa ${mesa}` : 'Tu pedido';
+    textoTiempo.textContent = formatearTiempoEstimado(pedido.tiempo_estimado_min);
 
     // Punto 13: rechazado no es un paso más del progreso normal -no llegó a
     // cocina/bar-, así que la barra de pasos no aplica acá.
