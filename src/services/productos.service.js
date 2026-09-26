@@ -5,6 +5,28 @@ import { esArchivoImagen } from '../utils/validadores.js';
 
 const CANTIDAD_FOTOS_PRODUCTO = 3;
 
+// Fotografías curadas que forman parte del catálogo visual de la app. Se
+// resuelven contra el origen actual para funcionar igual en Vite y en el
+// WebView de Capacitor (http://localhost).
+const FOTOS_CATALOGO = {
+  'empanadas de carne (x6)': [
+    '/assets/productos/empanadas-carne-1.png',
+    '/assets/productos/empanadas-carne-2.png',
+    '/assets/productos/empanadas-carne-3.png',
+  ],
+};
+
+function fotosDePresentacion(producto) {
+  const nombre = String(producto.nombre ?? '').trim().toLocaleLowerCase('es');
+  const fotosLocales = FOTOS_CATALOGO[nombre];
+  if (!fotosLocales) return producto[TABLAS.PRODUCTO_FOTOS] ?? [];
+
+  return fotosLocales.map((ruta, indice) => ({
+    orden: indice + 1,
+    url: new URL(ruta, globalThis.location?.origin ?? 'http://localhost').href,
+  }));
+}
+
 // Traduce el MIME del File a una extensión admitida por el bucket.
 function obtenerExtensionImagen(archivo) {
   if (archivo.type === 'image/png') return 'png';
@@ -40,12 +62,16 @@ export async function listarCartaConFotos() {
     .order('nombre', { ascending: true });
   if (error) throw error;
 
-  return data.map((producto) => ({
-    ...producto,
-    // La miniatura es siempre la foto 1; el resto queda para el detalle (HU11).
-    fotoPrincipal: [...(producto[TABLAS.PRODUCTO_FOTOS] ?? [])]
-      .sort((fotoA, fotoB) => fotoA.orden - fotoB.orden)[0]?.url ?? null,
-  }));
+  return data.map((producto) => {
+    const fotos = fotosDePresentacion(producto)
+      .sort((fotoA, fotoB) => fotoA.orden - fotoB.orden);
+    return {
+      ...producto,
+      [TABLAS.PRODUCTO_FOTOS]: fotos,
+      // La miniatura es siempre la foto 1; el resto queda para el detalle (HU11).
+      fotoPrincipal: fotos[0]?.url ?? null,
+    };
+  });
 }
 
 // Busca coincidencias de nombre sin distinguir mayúsculas, igual que el índice
