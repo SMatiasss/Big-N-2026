@@ -11,17 +11,31 @@ import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.
 
 import './nuevos-estilos.css';
 import { CarritoService } from '../../../services/carrito.service.js';
-import { crearPedido } from '../../../services/pedidos.service.js';
+import { crearPedido, obtenerMiPedidoEnCurso } from '../../../services/pedidos.service.js';
+import { ESTADOS_PEDIDO } from '../../../config/constantes.js';
 import { avisarNuevoPedido } from '../../../services/notificaciones.service.js';
 import { atajarAtrasInvitado } from '../../../utils/salida-invitado.js';
 
+// Un solo pedido activo por estadía: si el último no fue rechazado, ya hay
+// uno en curso (o entregado) y la carta queda sólo para consultar. Antes se
+// podía volver a armar y confirmar otro, y al mozo le llegaban dos pedidos de
+// la misma mesa. Con el pedido rechazado sí se puede volver a pedir: es el
+// "modificalo y volvé a enviarlo" del punto 13.
+function hayPedidoActivo(pedido) {
+  return Boolean(pedido) && pedido.estado !== ESTADOS_PEDIDO.RECHAZADO;
+}
+
 export async function render(container) {
   const operativa = location.hash.replace('#', '') === '/mesa/carta';
+  // Si esta carta deja armar el carrito. Arranca en false hasta saber si la
+  // estadía ya tiene un pedido activo (ver hayPedidoActivo).
+  let puedePedir = false;
   container.innerHTML = `
     <ion-content class="hu11 pantalla-lista" scroll-y="false">
       <div data-header></div>
       <main class="hu11__main-espaciado pantalla-lista__cuerpo">
         <p data-mesa></p>
+        <p class="hu11__solo-lectura" data-solo-lectura hidden>Ya hiciste tu pedido. La carta queda sólo para consultar: seguilo desde "Mi pedido".</p>
         <div data-acciones class="hu11__acciones-contenedor"></div>
         <div data-pestanas></div>
         <p role="status"></p>
@@ -47,7 +61,6 @@ export async function render(container) {
      Sin opciones, igual que el resto de los listados: el hueco para el
      carrito flotante es un margin fijo de la lista (ver nuevos-estilos.css),
      así que el alto no cambia y no hay nada extra que reservar acá. */
-  if (operativa) lista.classList.add('hu11__productos--con-carrito');
 
   const ajusteLista = ajustarLista(lista);
   // Invitado: el botón atrás de Android pregunta si cerrar la sesión.
@@ -77,7 +90,22 @@ export async function render(container) {
   `;
 
   if (operativa) {
+    footerCarrito.hidden = true;
     container.appendChild(footerCarrito);
+  }
+
+  // Muestra u oculta todo lo que sirve para pedir: el carrito flotante (y el
+  // hueco que la lista le reserva) y el aviso de carta sólo de consulta.
+  function aplicarModoPedido(valor) {
+    puedePedir = valor;
+    footerCarrito.hidden = !valor;
+    lista.classList.toggle('hu11__productos--con-carrito', valor);
+    raiz.querySelector('[data-solo-lectura]').hidden = !operativa || valor;
+    if (!valor) {
+      // Lo que hubiera quedado en el carrito de antes no se puede enviar.
+      CarritoService.vaciarCarrito();
+      abrirCarrito(false);
+    }
   }
 
   const headerCarrito = footerCarrito.querySelector('.carrito-header');
@@ -176,6 +204,16 @@ export async function render(container) {
     statusCarrito.style.color = '#fefae0';
     
     try {
+      // Se vuelve a verificar contra la base justo antes de crear: la
+      // pantalla pudo quedar abierta desde antes del primer pedido.
+      if (hayPedidoActivo(await obtenerMiPedidoEnCurso())) {
+        aplicarModoPedido(false);
+        dibujarCarta();
+        statusCarrito.textContent = '';
+        btnConfirmar.disabled = false;
+        return;
+      }
+
       const contexto = await obtenerContextoMesa();
       const tiempoMaximo = Math.max(...carrito.map(item => item.producto.tiempo_elaboracion_min || 0));
       
@@ -272,7 +310,7 @@ export async function render(container) {
       tiempo.className = 'hu11-producto__tiempo';
       datos.append(nombre, descripcion, precio, tiempo);
       
-      if (operativa) {
+      if (puedePedir) {
         const controles = document.createElement('div');
         controles.className = 'hu11-producto__controles';
         
@@ -324,6 +362,9 @@ export async function render(container) {
       if (!vigente()) return;
       if (contexto.rol === 'mozo') throw new Error('Esta carta operativa es para el cliente de la mesa.');
       raiz.querySelector('[data-mesa]').textContent = `Mesa asignada: ${contexto.numero_mesa}`;
+      const pedido = await obtenerMiPedidoEnCurso();
+      if (!vigente()) return;
+      aplicarModoPedido(!hayPedidoActivo(pedido));
       if (!acciones.childElementCount) {
         const consulta = document.createElement('button');
         consulta.textContent = 'Consulta al mozo';
@@ -340,7 +381,9 @@ export async function render(container) {
     }
     const productos = await listarCartaConFotos();
     if (!vigente()) return;
-    const firma = JSON.stringify(productos);
+    // puedePedir entra en la firma: si sólo cambió eso (ej. se confirmó el
+    // pedido), igual hay que redibujar para sacar los controles de cantidad.
+    const firma = JSON.stringify({ productos, puedePedir });
     if (lista.dataset.firma === firma) return;
     lista.dataset.firma = firma;
     

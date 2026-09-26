@@ -1,6 +1,9 @@
 /* -- estilos añadidos -- */
 .hu11__main-espaciado { padding-bottom: max(16px, env(safe-area-inset-bottom)) !important; }
 .hu11 [data-mesa] { text-align: center; margin-top: 0; margin-bottom: 24px; font-size: 1.1rem; }
+/* Carta sólo de consulta: el cliente ya tiene un pedido activo (ver
+   hayPedidoActivo en index.js). Mismos tonos que el resto de la carta. */
+.hu11__solo-lectura { margin: -12px 0 20px; padding: 10px 14px; border: 1px solid #dda15e; border-radius: 12px; background: #4a572c; color: #fefae0; font-size: 0.9rem; line-height: 1.35; text-align: center; }
 .hu11__acciones-contenedor { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
 .hu11__acciones-contenedor button { flex: 1; width: 100%; }
 .hu11__acciones-contenedor .hu15-acceso-prueba {
