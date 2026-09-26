@@ -165,7 +165,9 @@ export function render(container) {
 
   function dibujar() {
     const pestana = PESTANAS[tipoSeleccionado];
-    const visibles = productos.filter((producto) => producto.tipo === tipoSeleccionado);
+    // Los postres van en la pestaña Platos: los prepara la misma cocina.
+    const visibles = productos.filter((producto) => producto.tipo === tipoSeleccionado
+      || (tipoSeleccionado === TIPOS_PRODUCTO.PLATO && producto.tipo === 'postre'));
 
     lista.setAttribute('aria-label', pestana.etiqueta);
     actualizarBotonAlta();

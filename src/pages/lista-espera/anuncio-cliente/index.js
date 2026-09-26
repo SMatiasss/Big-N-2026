@@ -5,9 +5,9 @@ import './index.css';
 import { navegarA, reemplazarRuta } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
-import { avisarNuevaEspera } from '../../../services/notificaciones.service.js';
+import { avisarNuevaEspera, borrarTokenActual } from '../../../services/notificaciones.service.js';
 import { ESTADOS_ESPERA, ROLES } from '../../../config/constantes.js';
-import { obtenerPerfilActual } from '../../../services/auth.service.js';
+import { obtenerPerfilActual, signOut } from '../../../services/auth.service.js';
 import { obtenerMiEstadiaActiva } from '../../../services/estadias.service.js';
 import {
   anotarse,
@@ -188,9 +188,34 @@ export function render(container) {
     seccionEncuestas.hidden = true;
   }
 
+  // El metre rechazó la espera (panel-metre/index.js): se saca al cliente de
+  // esta pantalla, con destino distinto según su rol -el anónimo no tiene
+  // nada más para hacer sin sesión, así que se cierra; el registrado vuelve
+  // a su inicio normal-. El aviso llega por el mismo UPDATE de la fila que
+  // ya se escucha para la mesa asignada (ver rechazarEspera).
+  async function reaccionarARechazo() {
+    mostrarToastError('El metre rechazó tu solicitud de espera.');
+    try {
+      const perfil = await obtenerPerfilActual();
+      if (perfil?.rol === ROLES.CLIENTE_ANONIMO) {
+        try { await borrarTokenActual(); } catch (error) { console.error('No se pudo borrar el token de avisos.', error); }
+        try { await signOut(); } catch (error) { console.error('No se pudo cerrar la sesión.', error); }
+        reemplazarRuta('/login');
+        return;
+      }
+    } catch (error) {
+      console.error('No se pudo determinar el rol tras el rechazo de la espera.', error);
+    }
+    reemplazarRuta('/home');
+  }
+
   function suscribirse(entrada) {
     entradaActual = entrada;
     cancelarSuscripcion = suscribirseAMiEspera(entrada.id, async (filaActualizada) => {
+      if (filaActualizada.estado === ESTADOS_ESPERA.CANCELADO) {
+        await reaccionarARechazo();
+        return;
+      }
       if (filaActualizada.estado !== ESTADOS_ESPERA.ASIGNADO) return;
 
       try {

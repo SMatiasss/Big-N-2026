@@ -18,6 +18,7 @@ import { crearLectorQr } from '../../../components/lector-qr/lector-qr.js';
 // consumos tiene su propio alto fijo de 3 ítems, ver index.css.
 import '../../../components/lista-ajustada/lista-ajustada.css';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { ESTADOS_CUENTA } from '../../../config/constantes.js';
 import {
   aplicarPropina,
@@ -28,7 +29,7 @@ import {
   validarQrPropina,
 } from '../../../services/cuentas.service.js';
 import { formatearMoneda } from '../../../utils/formato.js';
-import { navegarA } from '../../../router.js';
+import { navegarA, reemplazarRuta } from '../../../router.js';
 
 function plantillaItems(items) {
   if (!items.length) {
@@ -133,6 +134,9 @@ export function render(container) {
   let estadia = null;
   let cuenta = null;
   let desuscribir = null;
+  // Punto 22: evita repetir el toast/redirección si pintarPaso() se vuelve a
+  // llamar mientras ya está confirmada (p.ej. otro UPDATE de la suscripción).
+  let avisoConfirmacionMostrado = false;
 
   const lector = crearLectorQr({
     titulo: 'Para conocer el total, escaneá el QR de propina',
@@ -214,6 +218,18 @@ export function render(container) {
       esperandoTexto.textContent = confirmada
         ? '¡Listo! El mozo confirmó tu pago. Gracias por tu visita.'
         : 'Esperando la confirmación del mozo…';
+
+      // La visita terminó acá: se avisa con un toast y, unos segundos después
+      // -para que le dé tiempo a leerlo-, se lo manda al inicio como a
+      // cualquier cliente registrado (no hay nada más para hacer en esta
+      // pantalla ni sesión que cerrar, sea anónimo o no).
+      if (confirmada && !avisoConfirmacionMostrado) {
+        avisoConfirmacionMostrado = true;
+        mostrarToastNormal('¡Pago confirmado! Gracias por tu visita.');
+        setTimeout(() => {
+          if (container.isConnected) reemplazarRuta('/home');
+        }, 3000);
+      }
     }
   }
 

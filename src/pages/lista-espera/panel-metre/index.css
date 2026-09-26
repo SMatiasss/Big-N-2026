@@ -69,6 +69,8 @@
   --fila-foto: clamp(46px, calc(var(--fila-alto) * 0.28), 72px);
   --fila-control: clamp(38px, calc(var(--fila-alto) * 0.21), 50px);
 
+  position: relative;
+
   display: grid;
   grid-template-columns: var(--fila-foto) 1fr;
   grid-template-areas:
@@ -89,6 +91,42 @@
 
 .panel-metre__fila--solo-lectura {
   grid-template-areas: 'foto info';
+}
+
+.panel-metre__fila--solo-lectura .panel-metre__info {
+  padding-right: 0;
+}
+
+/* La "X" de rechazar flota sobre la esquina de la tarjeta en vez de ocupar
+   su propia área del grid; el padding de .panel-metre__info le deja lugar
+   para no taparse con el nombre. */
+.panel-metre__rechazar {
+  position: absolute;
+  top: clamp(8px, calc(var(--fila-alto, 200px) * 0.045), 12px);
+  right: clamp(8px, calc(var(--fila-alto, 200px) * 0.045), 12px);
+  z-index: 1;
+
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+
+  padding: 0;
+
+  background: rgb(254 250 224 / 10%);
+  border: 0;
+  border-radius: 50%;
+
+  color: var(--texto-suave);
+
+  font-size: 14px;
+  line-height: 1;
+}
+
+.panel-metre__rechazar:active {
+  background: rgb(254 250 224 / 20%);
+  color: var(--texto-claro);
 }
 
 .panel-metre__foto {
@@ -129,6 +167,9 @@
 .panel-metre__info {
   grid-area: info;
   min-width: 0;
+
+  /* Deja lugar a la "X" de rechazar, que flota encima de esta esquina. */
+  padding-right: 30px;
 }
 
 .panel-metre__nombre {
@@ -206,6 +247,22 @@
   font-size: clamp(12px, calc(var(--fila-alto, 200px) * 0.075), 16px);
 }
 
+/* --color no es una custom property soportada por ion-select (sólo por
+   ion-item/ion-input); el texto ya elegido se pinta con el color heredado
+   por su parte interna "text", así que hay que pisarlo por ::part. */
+.panel-metre__select-mesa::part(text) {
+  color: var(--texto-claro);
+}
+
+.panel-metre__select-mesa::part(placeholder) {
+  color: var(--texto-suave);
+  opacity: 1;
+}
+
+.panel-metre__select-mesa::part(icon) {
+  color: var(--texto-suave);
+}
+
 .panel-metre__asignar {
   grid-area: boton;
 
@@ -267,10 +324,15 @@
 
 
 /* =========================================================
-   POPOVER Y ALERTA
+   POPOVER
 
-   Ionic los monta fuera de la página (en el body), así que no alcanza con
-   anidarlos bajo .panel-metre: se enganchan por su cssClass.
+   Ionic lo monta fuera de la página (en el body), así que no alcanza con
+   anidarlo bajo .panel-metre: se engancha por su cssClass. El ion-list
+   interno y el ::part(native) de cada ion-item traen su propio fondo
+   blanco que no hereda --background/--color, así que hay que pisarlo con
+   !important; si no, quedan las franjas blancas arriba/abajo de la lista
+   y la opción marcada (radio checked) se ve blanca sobre blanco al
+   reabrir el combo.
    ========================================================= */
 
 .panel-metre-popover {
@@ -279,40 +341,35 @@
 }
 
 .panel-metre-popover::part(content) {
-  background: #4a572c;
-  border: 1px solid #6e6939;
-  border-radius: 10px;
+  background: #4a572c !important;
+  border: 1px solid #6e6939 !important;
+  border-radius: 10px !important;
+}
+
+.panel-metre-popover ion-list,
+.panel-metre-popover ion-select-popover {
+  --background: #4a572c !important;
+  --color: #fefae0 !important;
+
+  background: #4a572c !important;
+}
+
+.panel-metre-popover ion-list {
+  padding: 4px 0 !important;
 }
 
 .panel-metre-popover ion-select-popover ion-item {
-  --background: #4a572c;
-  --background-hover: #53632f;
-  --background-activated: #53632f;
-  --background-focused: #53632f;
-  --color: #fefae0;
+  --background: #4a572c !important;
+  --background-hover: #53632f !important;
+  --background-activated: #53632f !important;
+  --background-focused: #53632f !important;
+  --color: #fefae0 !important;
 
   font-size: 16px;
   min-height: 48px;
 }
 
-.panel-metre-alerta {
-  --background: #fefae0;
-  --max-width: 360px;
-}
-
-.panel-metre-alerta .alert-title,
-.panel-metre-alerta .alert-message {
-  color: #283618;
-}
-
-.panel-metre-alerta .alert-title {
-  font-family: var(--fuente-outfit);
-  font-weight: 700;
-}
-
-.panel-metre-alerta .alert-button {
-  min-height: 44px;
-  color: #bc6c25;
-  font-weight: 700;
-  text-transform: none;
+.panel-metre-popover ion-select-popover ion-item::part(native) {
+  background: #4a572c !important;
+  color: #fefae0 !important;
 }

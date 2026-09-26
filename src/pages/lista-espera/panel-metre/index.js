@@ -3,12 +3,13 @@
 import './index.css';
 import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
+import { crearModalConfirmacion } from '../../../components/modal-confirmacion/modal-confirmacion.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { ETIQUETAS_TIPO_MESA, ROLES } from '../../../config/constantes.js';
 import { puedeAsignarMesa } from '../../../config/permisos.js';
 import { obtenerPermisos } from '../../../services/auth.service.js';
 import { asignarMesa } from '../../../services/estadias.service.js';
-import { listarEsperando, suscribirseAListaEspera } from '../../../services/lista-espera.service.js';
+import { listarEsperando, rechazarEspera, suscribirseAListaEspera } from '../../../services/lista-espera.service.js';
 import { listarMesasLibres } from '../../../services/mesas.service.js';
 import { avisarMesaAsignada } from '../../../services/notificaciones.service.js';
 import { navegarA } from '../../../router.js';
@@ -23,6 +24,7 @@ function filaCliente(entrada) {
 
   return `
     <li class="panel-metre__fila" data-id="${entrada.id}" data-nombre="${nombre}">
+      <button class="panel-metre__rechazar" type="button" aria-label="Rechazar la espera de ${nombre}">✕</button>
       <div class="panel-metre__foto">${foto}</div>
       <div class="panel-metre__info">
         <p class="panel-metre__nombre">
@@ -79,6 +81,7 @@ export function render(container) {
   // insert (código 23505) y ese caso se atrapa en confirmarAsignacion.
   let mesasLibres = [];
   let puedeAsignar = false;
+  let confirmacion;
 
   function opcionesMesas() {
     return mesasLibres
@@ -91,50 +94,89 @@ export function render(container) {
     const mesa = mesasLibres.find((m) => m.id === select.value);
     if (!mesa) return;
 
-    const alerta = document.createElement('ion-alert');
-    alerta.cssClass = 'panel-metre-alerta';
-    alerta.header = 'Confirmar asignación';
-    alerta.message = `¿Asignar ${fila.dataset.nombre} a la mesa ${mesa.numero}?`;
-    alerta.buttons = [
-      { text: 'No', role: 'cancel' },
-      {
-        text: 'Sí',
-        handler: async () => {
-          const boton = fila.querySelector('.panel-metre__asignar');
-          boton.disabled = true;
+    const modal = crearModalConfirmacion({
+      variante: 'exito',
+      titulo: 'Confirmar asignación',
+      subtitulo: fila.dataset.nombre,
+      mensaje: `¿Asignar a la mesa ${mesa.numero}?`,
+      botones: [
+        { texto: 'No', rol: 'cancel' },
+        { texto: 'Sí', rol: 'confirm', destacado: true },
+      ],
+    });
+    confirmacion = modal;
+    let rol;
+    try {
+      rol = await modal.presentar();
+    } finally {
+      confirmacion = undefined;
+    }
+    if (rol !== 'confirm') return;
 
-          try {
-            const estadia = await asignarMesa({
-              clienteId: entrada.cliente_id,
-              mesaId: mesa.id,
-              listaEsperaId: entrada.id,
-            });
+    const boton = fila.querySelector('.panel-metre__asignar');
+    boton.disabled = true;
 
-            try {
-              // HU10: cubre el caso de que el cliente tenga la app en segundo
-              // plano y el realtime no le llegue en el momento. La asignación
-              // real (mesa ocupada + lista_espera 'asignado') ya la hizo el
-              // trigger; esto es sólo el aviso push.
-              await avisarMesaAsignada(estadia.id);
-            } catch (errorNotif) {
-              console.error('No se pudo enviar el aviso push de mesa asignada.', errorNotif);
-            }
-            // La fila desaparece sola por la suscripción realtime.
-          } catch (error) {
-            boton.disabled = false;
-            if (error.code === '23505') {
-              mostrarToastError('Esa mesa ya fue asignada, elegí otra.');
-            } else {
-              console.error('No se pudo asignar la mesa.', error);
-              mostrarToastError(`No se pudo asignar la mesa: ${error.message ?? 'error desconocido'}`);
-            }
-          }
-        },
-      },
-    ];
+    try {
+      const estadia = await asignarMesa({
+        clienteId: entrada.cliente_id,
+        mesaId: mesa.id,
+        listaEsperaId: entrada.id,
+      });
 
-    document.body.append(alerta);
-    await alerta.present();
+      try {
+        // HU10: cubre el caso de que el cliente tenga la app en segundo
+        // plano y el realtime no le llegue en el momento. La asignación
+        // real (mesa ocupada + lista_espera 'asignado') ya la hizo el
+        // trigger; esto es sólo el aviso push.
+        await avisarMesaAsignada(estadia.id);
+      } catch (errorNotif) {
+        console.error('No se pudo enviar el aviso push de mesa asignada.', errorNotif);
+      }
+      // La fila desaparece sola por la suscripción realtime.
+    } catch (error) {
+      boton.disabled = false;
+      if (error.code === '23505') {
+        mostrarToastError('Esa mesa ya fue asignada, elegí otra.');
+      } else {
+        console.error('No se pudo asignar la mesa.', error);
+        mostrarToastError(`No se pudo asignar la mesa: ${error.message ?? 'error desconocido'}`);
+      }
+    }
+  }
+
+  async function confirmarRechazo(fila, entrada) {
+    const modal = crearModalConfirmacion({
+      variante: 'error',
+      titulo: '¿Rechazar esta espera?',
+      subtitulo: fila.dataset.nombre,
+      mensaje: 'Se le va a avisar que su solicitud fue rechazada y va a salir de la lista de espera.',
+      botones: [
+        { texto: 'Cancelar', rol: 'cancel' },
+        { texto: 'Sí, rechazar', rol: 'confirm', destacado: true },
+      ],
+    });
+    confirmacion = modal;
+    let rol;
+    try {
+      rol = await modal.presentar();
+    } finally {
+      confirmacion = undefined;
+    }
+    if (rol !== 'confirm') return;
+
+    const botonRechazar = fila.querySelector('.panel-metre__rechazar');
+    botonRechazar.disabled = true;
+
+    try {
+      await rechazarEspera(entrada.id);
+      // La fila desaparece sola por la suscripción realtime; el cliente se
+      // entera y se lo redirige porque su pantalla escucha el UPDATE de su
+      // propia fila (ver suscribirseAMiEspera en anuncio-cliente).
+    } catch (error) {
+      botonRechazar.disabled = false;
+      console.error('No se pudo rechazar la espera.', error);
+      mostrarToastError(`No se pudo rechazar la espera: ${error.message ?? 'error desconocido'}`);
+    }
   }
 
   async function cargarListado() {
@@ -158,13 +200,16 @@ export function render(container) {
         const fila = lista.querySelector(`[data-id="${entrada.id}"]`);
         const select = fila.querySelector('.panel-metre__select-mesa');
         const boton = fila.querySelector('.panel-metre__asignar');
+        const botonRechazar = fila.querySelector('.panel-metre__rechazar');
 
         // El resto del staff puede mirar quién está esperando, pero asignar
-        // una mesa crea una estadía y eso es del metre o de un jefe (policy
-        // estadias_alta). Sin esto el insert fallaría recién contra la base.
+        // una mesa (policy estadias_alta) o rechazar la espera (policy
+        // espera_gestion) es sólo del metre o de un jefe. Sin esto el
+        // insert/update fallaría recién contra la base.
         if (!puedeAsignar) {
           select.hidden = true;
           boton.hidden = true;
+          botonRechazar.hidden = true;
           // Sin controles la fila sobra dos filas del grid (y sus gaps), así
           // que pasa a ser una tarjeta simple de foto + datos.
           fila.classList.add('panel-metre__fila--solo-lectura');
@@ -179,6 +224,7 @@ export function render(container) {
           boton.disabled = !select.value;
         });
         boton.addEventListener('click', () => confirmarAsignacion(fila, entrada));
+        botonRechazar.addEventListener('click', () => confirmarRechazo(fila, entrada));
       });
     } catch (error) {
       console.error('No se pudo cargar la lista de espera.', error);
@@ -202,5 +248,6 @@ export function render(container) {
   window.addEventListener('hashchange', () => {
     cancelarSuscripcion();
     ajusteLista.destruir();
+    confirmacion?.cerrar('cancel');
   }, { once: true });
 }

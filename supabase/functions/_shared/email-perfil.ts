@@ -1,4 +1,5 @@
 import nodemailer from 'npm:nodemailer@9.0.6';
+import { LOGO_CORREO_BASE64 } from './logo-correo.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -231,7 +232,8 @@ export async function enviarEmailPerfil(req: Request, tipo: TipoCorreo) {
       attachments: [
         {
           filename: 'Logo_correo.png',
-          path: `${supabaseUrl}/storage/v1/object/public/Logo/Logo_correo.png`,
+          content: LOGO_CORREO_BASE64,
+          encoding: 'base64',
           cid: 'logo_bign_inline', // Se mantiene igual para vincular con el HTML
         },
       ],

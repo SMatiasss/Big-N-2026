@@ -4,7 +4,7 @@
 
 - [Integrantes y responsabilidades](#integrantes-y-responsabilidades)
 - [Módulos asignados](#módulos-asignados)
-- [Cambios y reasignaciones](#cambios-y-reasignaciones)
+- [Reasignaciones](#reasignaciones)
 - [Códigos QR](#códigos-qr)
 - [Pantallas](#pantallas)
 - [Logo](#logo)

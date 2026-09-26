@@ -71,11 +71,18 @@
      necesita el disco claro atrás para poder leerse. */
   background: var(--texto-claro-login);
   border-radius: 50%;
+  overflow: hidden;
 }
 
+/* Mismo recorte que .home__logo img: el SVG trae mucho margen vacío, así que
+   se agranda dentro del círculo (que no cambia de tamaño) y el overflow
+   recorta lo que sobra. */
 .login__logo img {
+  display: block;
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  transform: scale(1.672);
 }
 
 .login__marca-nombre {
