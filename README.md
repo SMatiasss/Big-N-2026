@@ -110,6 +110,7 @@ from public.respuestas;
 
 ## Pantallas
 
+- [Splash screen](#splash-screen)
 - [Login](#login)
 - [Dueño](#dueño)
 - [Metre](#metre)
@@ -117,6 +118,14 @@ from public.respuestas;
 - [Cocinero](#cocinero)
 - [Cantinero](#cantinero)
 - [Flujo cliente](#flujo-cliente)
+
+### Splash screen
+
+Se muestra al abrir la aplicación, antes del login.
+
+| Nombre de pantalla | Imágen de pantalla | Misceláneos |
+| :---: | :---: | :---: |
+| Splash screen | <img src="assets/nuevos%20samples/Splash-screen.png" alt="Splash screen" width="240"> | <!-- sin misceláneos --> |
 
 ### Login
 
