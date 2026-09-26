@@ -15,6 +15,7 @@ import { crearPedido, obtenerMiPedidoEnCurso } from '../../../services/pedidos.s
 import { ESTADOS_PEDIDO } from '../../../config/constantes.js';
 import { avisarNuevoPedido } from '../../../services/notificaciones.service.js';
 import { atajarAtrasInvitado } from '../../../utils/salida-invitado.js';
+import { calcularTiempoEstimadoPedido, formatearTiempoEstimado } from '../../../utils/tiempo-pedido.js';
 
 // Un solo pedido activo por estadía: si el último no fue rechazado, ya hay
 // uno en curso (o entregado) y la carta queda sólo para consultar. Antes se
@@ -76,7 +77,10 @@ export async function render(container) {
   
   footerCarrito.innerHTML = `
     <div class="carrito-header">
-      <h3>Tu Pedido<span id="carrito-count"></span></h3>
+      <div class="carrito-header-resumen">
+        <h3>Tu Pedido<span id="carrito-count"></span></h3>
+        <small>Tiempo estimado: <strong id="carrito-tiempo-header"></strong></small>
+      </div>
       <div class="carrito-header-total">
         <strong id="carrito-total-header"></strong>
         <span id="carrito-icon">▲</span>
@@ -114,6 +118,7 @@ export async function render(container) {
   const itemsContainer = footerCarrito.querySelector('#carrito-items');
   const countSpan = footerCarrito.querySelector('#carrito-count');
   const totalHeader = footerCarrito.querySelector('#carrito-total-header');
+  const tiempoHeader = footerCarrito.querySelector('#carrito-tiempo-header');
   const btnConfirmar = footerCarrito.querySelector('#btn-confirmar-pedido');
   const statusCarrito = footerCarrito.querySelector('#carrito-status');
 
@@ -134,11 +139,13 @@ export async function render(container) {
     const carrito = CarritoService.getCarrito();
     const cantidadTotal = carrito.reduce((acc, item) => acc + item.cantidad, 0);
     const importeTotal = CarritoService.obtenerTotal();
+    const tiempoEstimado = calcularTiempoEstimadoPedido(carrito);
     
     const vacio = cantidadTotal === 0;
 
     countSpan.textContent = vacio ? '' : ` (${cantidadTotal})`;
     totalHeader.textContent = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(vacio ? 0 : importeTotal);
+    tiempoHeader.textContent = vacio ? '—' : formatearTiempoEstimado(tiempoEstimado);
 
     // Siempre a la vista en la carta operativa, aunque esté vacío: ocupa el
     // hueco que la lista le deja reservado abajo, que si no quedaba como
@@ -215,11 +222,11 @@ export async function render(container) {
       }
 
       const contexto = await obtenerContextoMesa();
-      const tiempoMaximo = Math.max(...carrito.map(item => item.producto.tiempo_elaboracion_min || 0));
+      const tiempoEstimado = calcularTiempoEstimadoPedido(carrito);
       
       const pedidoInfo = {
         estadia_id: contexto.estadia_id,
-        tiempo_estimado_min: tiempoMaximo > 0 ? tiempoMaximo : 15
+        tiempo_estimado_min: tiempoEstimado
       };
       
       const itemsInfo = carrito.map(item => ({

@@ -35,7 +35,7 @@
 }
 .pedido-aceptado__atajos svg { display: block; width: calc(29px * var(--pa-ajuste)); height: calc(29px * var(--pa-ajuste)); margin: 0 auto calc(5px * var(--pa-ajuste)); fill: none; stroke: var(--pa-acento); stroke-width: 2; }
 
-.pedido-aceptado__resumen { display: grid; flex: 1; grid-template-rows: auto minmax(0, 1fr) auto auto auto; min-height: 0; padding: calc(13px * var(--pa-ajuste)); border: 1px solid rgb(254 250 224 / 10%); border-radius: 16px; background: var(--pa-card); color: var(--pa-tinta); box-shadow: 0 4px 12px rgb(40 54 24 / 18%); font-size: clamp(13px, calc(15px * var(--pa-ajuste)), 17px); }
+.pedido-aceptado__resumen { display: grid; flex: 1; grid-template-rows: auto minmax(0, 1fr) auto auto auto auto; min-height: 0; padding: calc(13px * var(--pa-ajuste)); border: 1px solid rgb(254 250 224 / 10%); border-radius: 16px; background: var(--pa-card); color: var(--pa-tinta); box-shadow: 0 4px 12px rgb(40 54 24 / 18%); font-size: clamp(13px, calc(15px * var(--pa-ajuste)), 17px); }
 .pedido-aceptado__resumen header, .pedido-aceptado__resumen footer, .pedido-aceptado__resumen li { display: flex; align-items: center; gap: 10px; }
 .pedido-aceptado__resumen header { justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgb(254 250 224 / 14%); }
 .pedido-aceptado__resumen h2 { display: flex; align-items: center; gap: 8px; margin: 0; font: 700 clamp(16px, calc(18px * var(--pa-ajuste)), 21px)/1.2 var(--fuente-outfit); }
@@ -49,6 +49,8 @@
 .pedido-aceptado__cantidad { width: 20px; text-align: center; font-weight: 700; }
 .pedido-aceptado__resumen li strong, .pedido-aceptado__resumen footer strong { color: var(--pa-acento); }
 .pedido-aceptado__resumen footer { justify-content: space-between; padding-top: calc(9px * var(--pa-ajuste)); border-top: 1px solid rgb(254 250 224 / 14%); font-size: clamp(16px, calc(17px * var(--pa-ajuste)), 20px); font-weight: 700; }
+.pedido-aceptado__tiempo { margin: calc(7px * var(--pa-ajuste)) 0 0; color: rgb(254 250 224 / 82%); font-size: clamp(12px, calc(13px * var(--pa-ajuste)), 15px); text-align: right; }
+.pedido-aceptado__tiempo strong { color: var(--pa-acento); white-space: nowrap; }
 
 .pedido-aceptado__beneficio { display: flex; align-items: center; gap: 10px; margin: calc(10px * var(--pa-ajuste)) 0; padding: calc(9px * var(--pa-ajuste)) 10px; border: 1px solid rgb(221 161 94 / 32%); border-radius: 12px; background: var(--pa-profundo); }
 .pedido-aceptado__beneficio > span { display: grid; place-items: center; flex: 0 0 36px; height: 36px; border-radius: 10px; background: var(--pa-acento); color: var(--pa-profundo); font: 700 20px var(--fuente-outfit); transform: rotate(-8deg); }

@@ -75,6 +75,7 @@ const SELECT_PEDIDO_EN_CURSO = `
   confirmado_en,
   entregado_en,
   recibido_en,
+  tiempo_estimado_min,
   estadias (
     mesas ( numero ),
     cliente:perfiles!cliente_id ( nombres, apellidos )

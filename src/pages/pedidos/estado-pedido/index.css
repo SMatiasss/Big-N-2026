@@ -72,6 +72,19 @@
   text-align: center;
 }
 
+.estado-pedido__tiempo {
+  margin: calc(clamp(10px, 1.8vh, 16px) * -0.45) 0 clamp(10px, 1.8vh, 16px);
+  color: var(--texto-suave);
+  font-size: clamp(12px, 1.75vh, 15px);
+  line-height: 1.3;
+  text-align: center;
+}
+
+.estado-pedido__tiempo strong {
+  color: var(--acento);
+  white-space: nowrap;
+}
+
 
 /* — Progreso en cuatro pasos — */
 

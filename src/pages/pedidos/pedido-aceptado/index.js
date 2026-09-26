@@ -7,6 +7,7 @@ import { mostrarToastNormal } from '../../../components/toast-normal/toast-norma
 import { ESTADOS_PEDIDO } from '../../../config/constantes.js';
 import { precargarCarritoDesdePedido } from '../../../utils/carrito-desde-pedido.js';
 import { obtenerMiPedidoEnCurso, suscribirseAMiPedido } from '../../../services/pedidos.service.js';
+import { formatearTiempoEstimado } from '../../../utils/tiempo-pedido.js';
 
 const icono = (contenido) => `
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${contenido}</svg>
@@ -49,6 +50,7 @@ export function render(container) {
               <li class="pedido-aceptado__aviso">Cargando tu pedido…</li>
             </ul>
             <footer><span>Total parcial</span><strong data-total>—</strong></footer>
+            <p class="pedido-aceptado__tiempo">Tiempo estimado del pedido completo: <strong data-tiempo>—</strong></p>
 
             <aside class="pedido-aceptado__beneficio">
               <span aria-hidden="true">%</span>
@@ -84,6 +86,7 @@ export function render(container) {
   const textoMesa = container.querySelector('[data-mesa]');
   const listaItems = container.querySelector('[data-items]');
   const textoTotal = container.querySelector('[data-total]');
+  const textoTiempo = container.querySelector('[data-tiempo]');
 
   // Antes esta pantalla mostraba un pedido de demostración fijo (mesa 1,
   // albóndigas): ahora pinta el pedido real de la estadía del cliente.
@@ -103,6 +106,7 @@ export function render(container) {
     if (!items.length) {
       mostrarAviso('Todavía no tenés un pedido en curso.');
       textoTotal.textContent = formatearMoneda(0);
+      textoTiempo.textContent = 'No disponible';
       ajusteVista.actualizar();
       return;
     }
@@ -121,6 +125,7 @@ export function render(container) {
       return fila;
     }));
     textoTotal.textContent = formatearMoneda(items.reduce((suma, item) => suma + subtotalItem(item), 0));
+    textoTiempo.textContent = formatearTiempoEstimado(pedido.tiempo_estimado_min);
     ajusteVista.actualizar();
   }
 
