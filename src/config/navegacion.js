@@ -18,6 +18,9 @@ export const ROLES_POR_RUTA = {
   '/carta': [...JEFES, ROLES.COCINERO, ROLES.CANTINERO],
   '/mesas': [...JEFES, ROLES.METRE, ROLES.MOZO],
   '/mesas/alta': [...JEFES, ROLES.METRE],
+  // QR de mesa leído por el personal: número, lugares, tipo y disponibilidad.
+  // La ruta real es /mesa/<id> (ver rutasConParametro en router.js).
+  '/mesa/:id': [...JEFES, ROLES.METRE, ROLES.MOZO],
   '/clientes/alta': [ROLES.METRE],
   // Metre entra sólo a la pestaña "Activos" (ver PERMISOS_PESTANAS.clientes);
   // la pantalla decide sola qué le muestra, esto sólo la deja entrar.

@@ -4,7 +4,7 @@ import './index.css';
 import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
-import { ROLES } from '../../../config/constantes.js';
+import { ETIQUETAS_TIPO_MESA, ROLES } from '../../../config/constantes.js';
 import { puedeAsignarMesa } from '../../../config/permisos.js';
 import { obtenerPermisos } from '../../../services/auth.service.js';
 import { asignarMesa } from '../../../services/estadias.service.js';
@@ -12,12 +12,6 @@ import { listarEsperando, suscribirseAListaEspera } from '../../../services/list
 import { listarMesasLibres } from '../../../services/mesas.service.js';
 import { avisarMesaAsignada } from '../../../services/notificaciones.service.js';
 import { navegarA } from '../../../router.js';
-
-const ETIQUETAS_TIPO_MESA = {
-  estandar: 'Estándar',
-  vip: 'VIP',
-  movilidad_reducida: 'Movilidad reducida',
-};
 
 function filaCliente(entrada) {
   const cliente = entrada.cliente ?? {};

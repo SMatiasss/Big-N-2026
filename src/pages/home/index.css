@@ -207,7 +207,11 @@
   overflow-wrap: anywhere;
   white-space: normal;
 }
-.home__cerrar {
+/* .home__qr-mesa comparte el estilo pero NO la clase .home__cerrar: el
+   cierre de sesión se engancha con querySelector(".home__cerrar"), y con la
+   clase compartida tocar el QR de mesa cerraba la sesión. */
+.home__cerrar,
+.home__qr-mesa {
   display: grid;
   flex: 0 0 var(--touch-target);
   width: var(--touch-target);
@@ -219,7 +223,8 @@
   background: transparent;
   color: var(--home-acento);
 }
-.home__cerrar svg {
+.home__cerrar svg,
+.home__qr-mesa svg {
   width: 24px;
   height: 24px;
   fill: none;

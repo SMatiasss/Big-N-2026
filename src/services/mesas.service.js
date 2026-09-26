@@ -81,6 +81,37 @@ export async function listarMesasLibres() {
   return data;
 }
 
+// QR de mesa escaneado por el personal (metre, mozo, dueño, supervisor):
+// el QR lleva el qr_token, no el id, así que primero se busca la mesa.
+// La policy mesas_lectura deja leer mesas a cualquier usuario autenticado.
+export async function buscarMesaPorQr(token) {
+  const { data, error } = await getSupabase()
+    .from(TABLAS.MESAS)
+    .select('id')
+    .eq('qr_token', token)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+// El alta de mesa guarda la URL pública completa, pero las mesas del seed
+// (02_seed.sql) guardan la ruta dentro del bucket ("mesas/mesa-01.jpg"): se
+// resuelve acá para que la pantalla reciba siempre una URL que cargue.
+function urlFotoMesa(fotoUrl) {
+  if (!fotoUrl || /^https?:\/\//i.test(fotoUrl)) return fotoUrl;
+  return getSupabase().storage.from(BUCKETS.MESAS).getPublicUrl(fotoUrl).data.publicUrl;
+}
+
+export async function obtenerMesa(id) {
+  const { data, error } = await getSupabase()
+    .from(TABLAS.MESAS)
+    .select('id, numero, cantidad_comensales, tipo, estado, foto_url, activa')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) throw error;
+  return data && { ...data, foto_url: urlFotoMesa(data.foto_url) };
+}
+
 export async function actualizarDisponibilidad(mesaId, disponible) {
   const { data, error } = await getSupabase()
     .from(TABLAS.MESAS)

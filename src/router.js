@@ -48,6 +48,27 @@ const rutas = {
   '/cuenta/confirmar-pago': () => import('./pages/cuenta/confirmar-pago/index.js'),
 };
 
+// Rutas con parámetro: se prueban sólo si no hubo coincidencia exacta arriba
+// (así /mesa/escanear y /mesa/carta siguen yendo a sus pantallas). La clave
+// es la que usan los permisos (ROLES_POR_RUTA) y la página recibe los grupos
+// con nombre del patrón como segundo argumento de render().
+const rutasConParametro = [
+  {
+    clave: '/mesa/:id',
+    patron: /^\/mesa\/(?<id>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i,
+    cargar: () => import('./pages/mesas/info-mesa/index.js'),
+  },
+];
+
+function resolverRuta(ruta) {
+  if (rutas[ruta]) return { clave: ruta, cargarPagina: rutas[ruta], parametros: {} };
+  for (const { clave, patron, cargar } of rutasConParametro) {
+    const coincidencia = ruta.match(patron);
+    if (coincidencia) return { clave, cargarPagina: cargar, parametros: { ...coincidencia.groups } };
+  }
+  return { clave: ruta, cargarPagina: null, parametros: {} };
+}
+
 const RUTA_POR_DEFECTO = '/login';
 let generacionNavegacion = 0;
 let avisoNavegacion = '';
@@ -59,8 +80,9 @@ export async function iniciarRouter(container) {
 
 async function navegar(container) {
   const generacion = ++generacionNavegacion;
-  const ruta = location.hash.replace('#', '') || RUTA_POR_DEFECTO;
-  const cargarPagina = rutas[ruta];
+  const rutaHash = location.hash.replace('#', '') || RUTA_POR_DEFECTO;
+  // "ruta" es la clave (ej. '/mesa/:id'): la que usan permisos y rutas públicas.
+  const { clave: ruta, cargarPagina, parametros } = resolverRuta(rutaHash);
   container.removeAttribute('aria-busy');
 
   // Los permisos de ruta son la primera barrera de navegación. RLS sigue
@@ -134,7 +156,7 @@ async function navegar(container) {
 
   if (!cargarPagina) {
     container.removeAttribute('aria-busy');
-    container.textContent = `Página no encontrada: ${ruta}`;
+    container.textContent = `Página no encontrada: ${rutaHash}`;
     return;
   }
 
@@ -142,7 +164,7 @@ async function navegar(container) {
   if (generacion !== generacionNavegacion) return;
   container.removeAttribute('aria-busy');
   container.innerHTML = '';
-  modulo.render(container);
+  modulo.render(container, parametros);
 }
 
 /* =========================================================
