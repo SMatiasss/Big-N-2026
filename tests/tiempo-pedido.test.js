@@ -2,13 +2,20 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { calcularTiempoEstimadoPedido, formatearTiempoEstimado } from '../src/utils/tiempo-pedido.js';
 
-test('usa el producto más lento porque los sectores preparan en paralelo', () => {
+test('acumula el tiempo de todos los productos y sus cantidades', () => {
   const items = [
     { producto: { tiempo_elaboracion_min: 12 }, cantidad: 2 },
     { producto: { tiempo_elaboracion_min: 25 }, cantidad: 1 },
     { producto: { tiempo_elaboracion_min: 8 }, cantidad: 3 },
   ];
-  assert.equal(calcularTiempoEstimadoPedido(items), 25);
+  assert.equal(calcularTiempoEstimadoPedido(items), 73);
+});
+
+test('se actualiza al aumentar o disminuir la cantidad', () => {
+  const producto = { id: 1, tiempo_elaboracion_min: 10 };
+  assert.equal(calcularTiempoEstimadoPedido([{ producto, cantidad: 1 }]), 10);
+  assert.equal(calcularTiempoEstimadoPedido([{ producto, cantidad: 3 }]), 30);
+  assert.equal(calcularTiempoEstimadoPedido([{ producto, cantidad: 2 }]), 20);
 });
 
 test('admite productos recuperados desde un pedido y aplica respaldo', () => {

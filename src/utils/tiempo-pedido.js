@@ -1,13 +1,17 @@
 const TIEMPO_PREDETERMINADO_MIN = 15;
 
-// Cocina y bar preparan en paralelo: el pedido queda listo cuando termina
-// el producto que más demora, no al sumar los tiempos individuales.
+// El requisito pide el tiempo total del pedido y que cambie junto con las
+// cantidades. Cada unidad aporta el tiempo de elaboración de su producto.
 export function calcularTiempoEstimadoPedido(items, predeterminado = TIEMPO_PREDETERMINADO_MIN) {
-  const tiempos = (items ?? [])
-    .map((item) => Number(item?.producto?.tiempo_elaboracion_min ?? item?.productos?.tiempo_elaboracion_min ?? 0))
-    .filter((tiempo) => Number.isFinite(tiempo) && tiempo > 0);
+  const tiempos = (items ?? []).map((item) => {
+    const tiempo = Number(item?.producto?.tiempo_elaboracion_min ?? item?.productos?.tiempo_elaboracion_min ?? 0);
+    const cantidadInformada = Number(item?.cantidad ?? 1);
+    const cantidad = Number.isFinite(cantidadInformada) && cantidadInformada > 0 ? cantidadInformada : 1;
+    return Number.isFinite(tiempo) && tiempo > 0 ? tiempo * cantidad : 0;
+  });
 
-  return tiempos.length ? Math.max(...tiempos) : predeterminado;
+  const total = tiempos.reduce((suma, tiempo) => suma + tiempo, 0);
+  return total > 0 ? total : predeterminado;
 }
 
 export function formatearTiempoEstimado(minutos) {
