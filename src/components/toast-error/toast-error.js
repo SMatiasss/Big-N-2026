@@ -34,5 +34,5 @@ export function mostrarToastError(mensaje) {
     toast.classList.remove('toast-error--visible');
     toast.addEventListener('transitionend', () => toast.remove(), { once: true });
     setTimeout(() => toast.remove(), 600);
-  }, 2000);
+  }, 3000);
 }

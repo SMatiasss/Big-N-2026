@@ -1,4 +1,5 @@
 // Los estilos pertenecen al componente y se cargan cuando éste se importa.
+import { conCapaCarga } from '../capa-carga/capa-carga.js';
 import './selector-fotos-producto.css';
 import { ICONO_CAMARA_SVG } from '../cuadro-foto/cuadro-foto.js';
 import { obtenerErrorArchivoImagen } from '../../utils/validadores.js';
@@ -41,7 +42,8 @@ export function seleccionarImagenLocal() {
 // El componente indica el origen; la página nunca necesita conocerlo.
 async function obtenerImagenPredeterminada({ origen }) {
   if (!puedeUsarCameraNativa()) return seleccionarImagenLocal();
-  return obtenerImagenNativa(origen);
+  // La capa bloquea la pantalla mientras la foto se procesa (ver capa-carga).
+  return conCapaCarga(() => obtenerImagenNativa(origen), 'Cargando la foto');
 }
 
 // Crea el selector visual de tres fotos.

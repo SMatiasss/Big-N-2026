@@ -37,7 +37,7 @@ export function render(container) {
 
         <main class="listado-empleados__contenido pantalla-lista__cuerpo">
           <ul class="listado-empleados__lista lista-ajustada" aria-live="polite">
-            <li class="listado-empleados__mensaje">Cargando empleados…</li>
+            <li class="carga-lista" role="status"><ion-spinner name="crescent" aria-hidden="true"></ion-spinner><span>Cargando empleados…</span></li>
           </ul>
         </main>
 

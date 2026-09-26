@@ -26,5 +26,5 @@ export function mostrarToastNormal(mensaje) {
     toast.classList.remove('toast-normal--visible');
     toast.addEventListener('transitionend', () => toast.remove(), { once: true });
     setTimeout(() => toast.remove(), 600);
-  }, 2000);
+  }, 3000);
 }

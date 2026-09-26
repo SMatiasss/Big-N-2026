@@ -4,6 +4,9 @@ import { alPresionarAtras, navegarA } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { crearPestanas } from '../../../components/pestanas-filtro/pestanas-filtro.js';
 import { crearModalConfirmacion } from '../../../components/modal-confirmacion/modal-confirmacion.js';
+import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
+import { mostrarCapaCarga } from '../../../components/capa-carga/capa-carga.js';
+import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
 import { listarClientesPendientes, listarClientesAceptados, resolverClientePendiente, observarClientesPendientes } from '../../../services/aprobacion-clientes.service.js';
 import { obtenerPermisos } from '../../../services/auth.service.js';
 import { PERMISOS_PESTANAS } from '../../../config/navegacion.js';
@@ -45,7 +48,6 @@ export async function render(container) {
           <p role="status" aria-live="polite" data-mensaje></p>
           <p data-conexion>Conectando las actualizaciones…</p>
         </div>
-        <p class="aprobacion-clientes__resultado" role="status" aria-live="polite" data-decision></p>
         <section class="aprobacion-clientes__lista lista-ajustada" aria-label="Clientes pendientes"></section>
         <p class="aprobacion-clientes__aviso" data-aviso-email>Al aprobar o rechazar, se intentará enviar un correo al cliente.</p>
       </main>
@@ -55,7 +57,6 @@ export async function render(container) {
   const ajusteLista = ajustarLista(lista);
   const mensaje = raiz.querySelector('[data-mensaje]');
   const conexion = raiz.querySelector('[data-conexion]');
-  const decision = raiz.querySelector('[data-decision]');
 
   // Matriz de acceso: dueño/supervisor ven "Pendientes" habilitada y "Todos"
   // ("Clientes - Activos" en la matriz) gris; metre es al revés y además
@@ -207,7 +208,10 @@ export async function render(container) {
     if (cerrado || !raiz.isConnected) return;
     if (ocupado) { recargaPendiente = true; return; }
     bloquear(true);
-    if (!clientes.length) mensaje.textContent = 'Buscando solicitudes…';
+    if (!clientes.length) {
+      mensaje.textContent = '';
+      lista.innerHTML = '<div class="carga-lista" role="status"><ion-spinner name="crescent" aria-hidden="true"></ion-spinner><span>Buscando solicitudes…</span></div>';
+    }
     try {
       const [pendientes, aceptados] = await Promise.all([
         puedeVerPendientes ? listarClientesPendientes() : Promise.resolve([]),
@@ -237,6 +241,7 @@ export async function render(container) {
     // Bloquear antes del primer await evita doble clic y decisiones contradictorias.
     if (ocupado || cerrado) return;
     bloquear(true);
+    let cerrarCapa;
     try {
       const cliente = clientes.find((item) => item.id === id);
       if (!cliente) return;
@@ -264,21 +269,26 @@ export async function render(container) {
       } finally {
         confirmacion = undefined;
       }
-      decision.textContent = 'Guardando tu decisión…';
+      // Mientras se guarda (y se manda el correo), una capa oscurece la
+      // pantalla con el spinner encima; el resultado se avisa con un toast.
+      cerrarCapa = mostrarCapaCarga('Guardando la decisión');
       const resultado = await resolverClientePendiente(id, estado);
       if (cerrado || !raiz.isConnected) return;
       clientes = clientes.filter((cliente) => cliente.id !== id);
       if (aceptar) clientes.push(resultado.cliente);
       dibujar();
-      decision.textContent = `${cliente.nombres}: ${aceptar ? 'registro aprobado' : 'registro rechazado'}. ${resultado.emailEnviado
-        ? 'Correo enviado.'
-        : 'La decisión se guardó. No se pudo confirmar el envío del correo al cliente.'}`;
+      const texto = `${cliente.nombres}: ${aceptar ? 'registro aprobado' : 'registro rechazado'}.`;
+      if (resultado.emailEnviado) mostrarToastNormal(`${texto} Correo enviado.`);
+      else mostrarToastError(`${texto} No se pudo confirmar el envío del correo.`);
       recargaPendiente = true;
     } catch (error) {
       if (cerrado) return;
-      decision.textContent = error.message ?? 'No se pudo guardar la decisión.';
+      mostrarToastError(error.message ?? 'No se pudo guardar la decisión.');
       recargaPendiente = true;
-    } finally { bloquear(false); }
+    } finally {
+      cerrarCapa?.();
+      bloquear(false);
+    }
   }
 
   await cargar();

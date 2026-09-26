@@ -61,8 +61,8 @@
 .lista-espera-cliente__aviso-spinner {
   flex-shrink: 0;
 
-  width: 20px;
-  height: 20px;
+  width: 48px;
+  height: 48px;
 
   color: var(--acento);
 }

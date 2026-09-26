@@ -19,7 +19,7 @@ export async function render(container) {
   container.innerHTML = `<ion-content class="hu11 consulta-mozo" scroll-y="false"><div data-header></div><main>
     <p class="consulta-mozo__subtitulo" data-subtitulo>Atención clientes</p>
     <div class="consulta-mozo__estado consulta-mozo__estado--cargando" role="status" aria-live="polite">
-      <span class="consulta-mozo__estado-icono" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+      <span class="consulta-mozo__estado-icono" aria-hidden="true"><ion-spinner name="crescent"></ion-spinner></span>
       <span data-estado-texto>Verificando acceso…</span>
     </div>
     <label class="sr-only" data-salas hidden>Conversación<select aria-label="Seleccionar mesa"></select></label>

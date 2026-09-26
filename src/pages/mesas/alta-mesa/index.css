@@ -374,8 +374,8 @@
 
 .alta-mesa__submit ion-spinner {
   display: none;
-  width: 24px;
-  height: 24px;
+  width: calc(38px * var(--am-ajuste, 1));
+  height: calc(38px * var(--am-ajuste, 1));
   --color: var(--texto-claro);
 }
 

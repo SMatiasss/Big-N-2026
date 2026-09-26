@@ -69,13 +69,14 @@ const ACCIONES_HOME = {
   [ROLES.CLIENTE_ANONIMO]: { principales: [], secundarias: [] },
 };
 
-// Home de empleados: matriz de acceso pedida explícitamente. Las 7 tarjetas
-// se muestran SIEMPRE a todo el staff; esta matriz sólo decide cuáles quedan
-// habilitadas para cada rol y cuáles se ven grisadas (sin acceso de sólo
-// lectura real: el botón gris no navega a ningún lado). El resto del staff
-// visible por rol es una decisión de diseño, no un permiso de RLS: por eso
-// vive acá y no en ROLES_POR_RUTA (que sigue protegiendo la navegación real
-// si alguien llega por URL directa).
+// Home de empleados: matriz de acceso por rol. Cada rol ve SÓLO sus tarjetas
+// habilitadas (las demás no se muestran, ni siquiera en gris: el gris es sólo
+// para las pestañas internas, ver PERMISOS_PESTANAS). Es una decisión de
+// diseño, no un permiso de RLS: por eso vive acá y no en ROLES_POR_RUTA (que
+// sigue protegiendo la navegación real si alguien llega por URL directa).
+// Hoy quedan: dueño y supervisor 3 (Mesas, Empleados, Clientes), mozo 3
+// (Pedidos, Consultas, Cuentas), metre 2 (Lista de espera, Clientes),
+// cocinero y cantinero 2 (Productos, Pedidos).
 const PERMISOS_HOME = {
   [ROLES.DUENO]: {
     empleados: true, mesas: true, productos: false, pedidos: false,
@@ -162,20 +163,15 @@ export function obtenerAccionesHome(rol) {
   };
 }
 
-// Devuelve las 7 tarjetas siempre, marcadas con "habilitada" según el rol:
-// la pantalla las dibuja todas y grisa las que tengan habilitada:false.
+// Devuelve sólo las tarjetas habilitadas para el rol, en el orden fijo.
 export function obtenerAccionesHomeEmpleado(rol) {
   const permisos = PERMISOS_HOME[rol] ?? {};
-  return ORDEN_ACCIONES_HOME.map((clave) => {
+  return ORDEN_ACCIONES_HOME.filter((clave) => permisos[clave]).map((clave) => {
     let ruta = METADATA_ACCIONES_HOME[clave].ruta;
     if (clave === 'pedidos') {
       if (rol === ROLES.COCINERO) ruta = '/pedidos/cocina';
       if (rol === ROLES.CANTINERO) ruta = '/pedidos/bar';
     }
-    return {
-      ...METADATA_ACCIONES_HOME[clave],
-      ruta,
-      habilitada: Boolean(permisos[clave]),
-    };
+    return { ...METADATA_ACCIONES_HOME[clave], ruta };
   });
 }

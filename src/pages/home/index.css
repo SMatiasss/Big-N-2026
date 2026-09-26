@@ -87,10 +87,13 @@
 .home__seccion h2 {
   font-size: var(--text-lg);
 }
+/* Una columna y filas iguales: cada rol ve sólo sus 2 o 3 tarjetas y se
+   reparten todo el alto disponible, sin huecos ni tarjetas de distinto
+   tamaño. */
 .home__acciones {
   display: grid;
   flex: 1;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   grid-auto-rows: minmax(min-content, 1fr);
   gap: clamp(6px, 1dvh, 10px);
 }
@@ -122,17 +125,15 @@
 .home__accion--principal {
   min-height: clamp(56px, 8dvh, 108px);
 }
-.home__accion--bloqueada {
-  cursor: not-allowed;
-  opacity: 0.5;
-  box-shadow: none;
+/* Tarjetas de empleados (2 o 3 por rol): son más altas que antes, así que
+   ícono y título crecen para llenarlas en vez de quedar chicos en el medio. */
+.home__acciones:is([data-cantidad="2"], [data-cantidad="3"]) .home__accion svg {
+  width: clamp(40px, 8dvh, 76px);
+  height: clamp(40px, 8dvh, 76px);
+  margin-bottom: clamp(6px, 1.2dvh, 12px);
 }
-.home__accion--bloqueada:active {
-  transform: none;
-}
-.home__acciones .home__accion--principal:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-  min-height: clamp(48px, 7dvh, 96px);
+.home__acciones:is([data-cantidad="2"], [data-cantidad="3"]) .home__accion strong {
+  font-size: clamp(21px, 6vw, 30px);
 }
 .home__accion svg {
   width: clamp(26px, 5dvh, 42px);

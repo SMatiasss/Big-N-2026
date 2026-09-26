@@ -17,7 +17,11 @@ import { atajarAtrasInvitado } from '../../../utils/salida-invitado.js';
 
 function validarFormulario(nombre, foto) {
   const errores = {};
-  if (!esNombrePersonaValido(nombre)) errores.nombre = 'Ingresá tu nombre.';
+  // Vacío pide el nombre; con números o signos dice qué está mal (mismo
+  // criterio que las altas, que no aceptan números en el nombre).
+  if (!nombre) errores.nombre = 'Ingresá tu nombre.';
+  else if (/\d/.test(nombre)) errores.nombre = 'No se permiten números en el nombre.';
+  else if (!esNombrePersonaValido(nombre)) errores.nombre = 'Ingresá un nombre válido.';
   if (!esArchivoImagen(foto)) errores.foto = 'Sacate una foto para continuar.';
   return errores;
 }

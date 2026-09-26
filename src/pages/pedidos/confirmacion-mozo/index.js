@@ -4,6 +4,7 @@ import { avisarSectoresPedido, avisarPedidoRechazado } from '../../../services/n
 import { crearActualizacionHu11 } from '../../../utils/actualizacion-hu11.js';
 import { navegarA } from '../../../router.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
+import { formatearFechaHora } from '../../../utils/formato.js';
 
 export async function render(container) {
   container.innerHTML = `
@@ -11,7 +12,7 @@ export async function render(container) {
       <div data-header></div>
       <main class="confirmacion-mozo__main">
         <p role="status"></p>
-        <div class="confirmacion-mozo__lista" aria-live="polite"></div>
+        <div class="confirmacion-mozo__lista" aria-live="polite"><div class="carga-lista" role="status"><ion-spinner name="crescent" aria-hidden="true"></ion-spinner><span>Cargando pedidos…</span></div></div>
       </main>
     </ion-content>
   `;
@@ -38,7 +39,10 @@ export async function render(container) {
     try {
       pedidos = await listarPedidosPendientes();
     } catch (err) {
-      if (vigente()) aviso.textContent = 'Error al cargar pedidos: ' + err.message;
+      if (vigente()) {
+        aviso.textContent = 'Error al cargar pedidos: ' + err.message;
+        lista.querySelector('.carga-lista')?.remove();
+      }
       return;
     }
     
@@ -76,6 +80,7 @@ export async function render(container) {
         <div class="pedido-card__header">
           <h3>Mesa ${mesaNumero}</h3>
           <p class="pedido-card__cliente">${clienteNombre}</p>
+          <time class="pedido-card__fecha" datetime="${pedido.creado_en}">Pedido: ${formatearFechaHora(pedido.creado_en)}</time>
         </div>
         <div class="pedido-card__cuerpo">
           <ul>${itemsHtml}</ul>

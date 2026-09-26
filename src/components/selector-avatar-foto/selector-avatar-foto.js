@@ -1,4 +1,5 @@
 import './selector-avatar-foto.css';
+import { conCapaCarga } from '../capa-carga/capa-carga.js';
 import { obtenerErrorArchivoImagen } from '../../utils/validadores.js';
 import { obtenerImagenNativa, ORIGEN_IMAGEN, puedeUsarCameraNativa } from '../../services/imagenes-dispositivo.service.js';
 
@@ -34,7 +35,9 @@ export function crearSelectorAvatarFoto({ onCambio = () => {} } = {}) {
 
     boton.disabled = true;
     try {
-      const archivo = await obtenerImagenNativa(ORIGEN_IMAGEN.CAMARA);
+      // Del cierre de la cámara a la foto lista hay unos segundos (el plugin
+      // la redimensiona y acá se comprime): la capa bloquea la pantalla.
+      const archivo = await conCapaCarga(() => obtenerImagenNativa(ORIGEN_IMAGEN.CAMARA), 'Cargando la foto');
       if (!archivo) return;
       const errorArchivo = obtenerErrorArchivoImagen(archivo);
       if (errorArchivo) {

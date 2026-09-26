@@ -59,14 +59,14 @@
    hueco fijo, como el de una pantalla con botón al pie, no se puede
    desincronizar. */
 
-/* Medida exacta, no estimada: el carrito colapsado asoma 72px (es el
-   translateY(calc(100% - 72px)) de .carrito-flotante, más abajo). El <main>
+/* Medida exacta, no estimada: el carrito colapsado asoma 86px (es el
+   translateY(calc(100% - 86px)) de .carrito-flotante, más abajo). El <main>
    ya deja max(16px, safe-area) de padding al pie, así que la lista sólo
    tiene que sumar la diferencia + 8px de aire sobre el carrito. Si cambia
-   el alto colapsado del carrito, cambiar el 72 acá también. */
+   el alto colapsado del carrito, cambiar el 86 acá también. */
 
 .hu11__productos--con-carrito {
-  margin-bottom: calc(72px + 8px - max(16px, env(safe-area-inset-bottom)));
+  margin-bottom: calc(86px + 8px - max(16px, env(safe-area-inset-bottom)));
 }
 
 /* El <p role="status"> vive entre las pestañas y la lista. Vacío seguía
@@ -141,7 +141,7 @@
 }
 
 /* Carrito Flotante */
-.carrito-flotante { position: fixed; bottom: 0; left: 0; right: 0; background: #283618; color: #fefae0; padding: 14px 16px; border-radius: 20px 20px 0 0; box-shadow: 0 -4px 10px rgba(0,0,0,0.5); z-index: 1000; max-height: 80vh; display: none; flex-direction: column; transition: transform 0.3s ease; transform: translateY(calc(100% - 72px)); }
+.carrito-flotante { position: fixed; bottom: 0; left: 0; right: 0; background: #283618; color: #fefae0; padding: 14px 16px; border-radius: 20px 20px 0 0; box-shadow: 0 -4px 10px rgba(0,0,0,0.5); z-index: 1000; max-height: 80vh; display: none; flex-direction: column; transition: transform 0.3s ease; transform: translateY(calc(100% - 86px)); }
 .carrito-flotante--visible { display: flex; }
 .carrito-flotante--abierto { transform: translateY(0); }
 
@@ -150,23 +150,33 @@
 .carrito-flotante--vacio .carrito-header { cursor: default; }
 .carrito-flotante--vacio #carrito-icon { visibility: hidden; }
 
-.carrito-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; height: 44px; }
+.carrito-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; height: 58px; }
+/* "Tu Pedido" y sobre todo el tiempo estimado se leen de un vistazo con el
+   carrito cerrado. Alto del header 58px: con el padding (14 + 14) da los
+   86px que asoma el carrito colapsado (ver .hu11__productos--con-carrito). */
 .carrito-header-resumen { min-width: 0; }
-.carrito-header h3 { margin: 0; font-size: 1.1rem; }
-.carrito-header-resumen small { display: block; margin-top: 2px; color: #e5e4c9; font-size: clamp(.72rem, 3.2vw, .86rem); }
-.carrito-header-resumen small strong { color: #dda15e; }
-.carrito-header-total { display: flex; align-items: center; gap: 10px; }
-.carrito-header-total strong { color: #dda15e; font-size: 1.1rem; }
+.carrito-header h3 { margin: 0; font-size: 1.3rem; line-height: 1.2; }
+.carrito-header-resumen small { display: block; margin-top: 3px; color: #fefae0; font-size: clamp(1rem, 4.6vw, 1.2rem); font-weight: 700; line-height: 1.2; white-space: nowrap; }
+.carrito-header-resumen small strong { color: #dda15e; font-weight: 800; }
+.carrito-header-total { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.carrito-header-total strong { color: #dda15e; font-size: 1.25rem; }
 
 .carrito-body { overflow-y: auto; margin-top: 16px; border-top: 1px solid #4a572c; padding-top: 16px; display: none; }
 .carrito-body--visible { display: block; }
 
 .carrito-items { display: flex; flex-direction: column; gap: 12px; }
 .carrito-item { display: flex; justify-content: space-between; align-items: center; background: #4a572c; padding: 12px; border-radius: 8px; }
-.carrito-item-info { flex: 1; }
-.carrito-item-info h4 { margin: 0 0 4px; font-size: 1rem; }
+/* Precio y tiempo de elaboración son los datos que el TP pide bien visibles:
+   en cada ítem del carrito van más grandes y en negrita que el nombre. El
+   cuerpo del carrito tiene max-height y scroll, así que con muchos ítems no
+   se sale nada de pantalla; min-width:0 deja que el texto se ajuste al lado
+   de los controles en vez de empujarlos. */
+.carrito-item { gap: 10px; }
+.carrito-item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.carrito-item-info h4 { margin: 0 0 2px; font-size: 1rem; overflow-wrap: anywhere; }
 .carrito-item-info p { margin: 0; color: #e5e4c9; font-size: 0.85em; }
-.carrito-item-subtotal { color: #dda15e; font-size: 1rem; }
+.carrito-item-subtotal { color: #dda15e; font-size: clamp(1.15rem, 5vw, 1.35rem); font-weight: 800; line-height: 1.2; }
+.carrito-item-tiempo { color: #fefae0; font-size: clamp(.95rem, 4.2vw, 1.1rem); font-weight: 700; line-height: 1.25; }
 
 .btn-confirmar-pedido { width: 100%; padding: 14px; margin-top: 16px; font-weight: bold; font-size: 1.1rem; background: var(--form-dorado); color: var(--form-texto-claro); border: none; border-radius: 8px; }
 .carrito-status { text-align: center; margin-top: 10px; font-weight: bold; }

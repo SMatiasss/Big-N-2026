@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Terracota de la app: tiñe el ícono y el nombre en la notificación. -->
+    <color name="notificacion_acento">#BC6C25</color>
+</resources>

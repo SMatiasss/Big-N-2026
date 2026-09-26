@@ -1,4 +1,5 @@
 // Selector visual de foto de la mesa adaptado al diseño de Alta Mesa:
+import { conCapaCarga } from '../capa-carga/capa-carga.js';
 // contenedor rectangular con borde punteado, ícono de cámara y texto "Tomar o subir foto".
 import './selector-foto-mesa.css';
 import { ICONO_CAMARA_SVG } from '../cuadro-foto/cuadro-foto.js';
@@ -33,7 +34,8 @@ function seleccionarImagenLocal() {
 // Unifica las fuentes nativas y web bajo el mismo contrato: Promise<File|null>.
 async function obtenerImagenPredeterminada({ origen }) {
   if (!puedeUsarCameraNativa()) return seleccionarImagenLocal();
-  return obtenerImagenNativa(origen);
+  // La capa bloquea la pantalla mientras la foto se procesa (ver capa-carga).
+  return conCapaCarga(() => obtenerImagenNativa(origen), 'Cargando la foto');
 }
 
 export function crearSelectorFotoMesa({

@@ -62,8 +62,11 @@ async function prepararDispositivoParaPerfil(usuarioId) {
   tokenActual = null;
 }
 
-// Rutas a las que puede llevar un toque sobre la notificación (o el botón
-// "Ver" mientras la app está en primer plano). Cada HU agrega la suya acá.
+// Rutas a las que puede llevar un toque sobre la notificación. Con la app
+// abierta Android también muestra la notificación nativa (presentationOptions
+// en capacitor.config.json), así que no hace falta un aviso propio en la app:
+// el toque llega siempre por pushNotificationActionPerformed. Cada HU agrega
+// la suya acá.
 const RUTAS_NOTIFICACION = ['/clientes/aprobacion', '/lista-espera/metre', '/lista-espera', '/pedidos/consulta', '/pedidos/confirmacion', '/pedidos/entrega', '/pedidos/estado', '/cuenta/confirmar-pago'];
 
 function guardarContextoNotificacion(notification) {
@@ -77,20 +80,6 @@ export function consumirEstadiaPushHu11() {
   const id = globalThis.sessionStorage?.getItem(CLAVE_ESTADIA_PUSH) ?? null;
   globalThis.sessionStorage?.removeItem(CLAVE_ESTADIA_PUSH);
   return id;
-}
-
-function mostrarAvisoEnPrimerPlano(notification) {
-  const toast = document.createElement('ion-toast');
-  toast.header = notification.title || 'Nuevo aviso';
-  toast.message = notification.body || 'Tenés una nueva notificación.';
-  toast.duration = 5000;
-  toast.position = 'top';
-  const ruta = notification.data?.ruta;
-  toast.buttons = RUTAS_NOTIFICACION.includes(ruta)
-    ? [{ text: 'Ver', handler: () => { guardarContextoNotificacion(notification); navegarA(ruta); } }]
-    : [];
-  document.body.appendChild(toast);
-  toast.present();
 }
 
 async function abrirRutaDeNotificacion(notification) {
@@ -217,7 +206,6 @@ export async function iniciarPushAdministracion(perfil) {
     inicializado = false;
     console.error('Android no pudo registrar las notificaciones.', error);
   });
-  await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
   const permiso = await PushNotifications.checkPermissions();
   const estado = permiso.receive === 'prompt'
     ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
@@ -272,7 +260,6 @@ export async function iniciarPushListaEspera(perfil) {
     inicializadoListaEspera = false;
     console.error('Android no pudo registrar las notificaciones.', error);
   });
-  await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
   const permiso = await PushNotifications.checkPermissions();
   const estado = permiso.receive === 'prompt'
     ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
@@ -316,7 +303,6 @@ export async function iniciarPushCliente(perfil) {
     inicializadoCliente = false;
     console.error('Android no pudo registrar las notificaciones.', error);
   });
-  await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
   const permiso = await PushNotifications.checkPermissions();
   const estado = permiso.receive === 'prompt'
     ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
@@ -362,7 +348,6 @@ export async function iniciarPushConsultasMozo(perfil) {
     inicializadoConsultasMozo = false;
     console.error('Android no pudo registrar las notificaciones del chat.', error);
   });
-  await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
   const permiso = await PushNotifications.checkPermissions();
   const estado = permiso.receive === 'prompt' ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
   if (estado !== 'granted') { inicializadoConsultasMozo = false; return false; }
@@ -404,7 +389,6 @@ export async function iniciarPushSectores(perfil) {
   await PushNotifications.addListener('registrationError', error => {
     console.error('Android no pudo registrar las notificaciones de sectores.', error);
   });
-  await PushNotifications.addListener('pushNotificationReceived', mostrarAvisoEnPrimerPlano);
   const permiso = await PushNotifications.checkPermissions();
   const estado = permiso.receive === 'prompt' ? (await PushNotifications.requestPermissions()).receive : permiso.receive;
   if (estado !== 'granted') { return false; }

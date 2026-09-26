@@ -1,0 +1,20 @@
+/* Capa de espera a pantalla completa: oscurece lo que hay atrás con el mismo
+   verde translúcido del fondo de los modales (no negro: el TP no admite
+   fondos oscuritos) y centra el spinner de marca. Tapa toda la pantalla, así
+   que no deja tocar nada hasta que termina. Queda debajo de los toasts
+   (9999), que suelen avisar el resultado. */
+.capa-carga {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(40 54 24 / 55%);
+  touch-action: none;
+}
+
+.capa-carga ion-spinner {
+  width: 104px;
+  height: 104px;
+}

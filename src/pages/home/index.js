@@ -79,14 +79,6 @@ function crearTarjetaAccion(accion, principal = false) {
     descripcion.textContent = accion.descripcion;
     boton.append(descripcion);
   }
-  // habilitada === false sólo aparece en las tarjetas de empleados (ver
-  // config/navegacion.js): se muestran siempre las 7, grisadas si el rol no
-  // tiene esa función. No es un "sólo lectura": el botón no navega a nada.
-  if (accion.habilitada === false) {
-    boton.disabled = true;
-    boton.classList.add("home__accion--bloqueada");
-    boton.title = "No disponible para tu perfil";
-  }
   return boton;
 }
 
@@ -163,8 +155,8 @@ export async function render(container) {
       });
     };
 
-    // Empleados: se muestran las 7 tarjetas siempre; la matriz de acceso en
-    // config/navegacion.js decide cuáles quedan grisadas para cada rol.
+    // Empleados: sólo las tarjetas de su rol (matriz de acceso en
+    // config/navegacion.js); la grilla se reparte entre las que quedan.
     // Clientes siguen con su propia lista por rol, sin cambios.
     if (esRolCliente(perfil.rol)) {
       const acciones = obtenerAccionesHome(perfil.rol);

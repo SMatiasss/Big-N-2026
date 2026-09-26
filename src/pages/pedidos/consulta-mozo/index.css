@@ -14,7 +14,7 @@
 .consulta-mozo__estado--cargando { min-height:clamp(150px, 28dvh, 240px); gap:clamp(14px, 4vw, 22px); padding:clamp(16px, 3dvh, 24px); box-sizing:border-box; border-radius:16px; background:var(--consulta-tarjeta); font-size:clamp(16px, 4.5vw, 20px); }
 .consulta-mozo__estado--cargando .consulta-mozo__estado-icono { display:grid; flex:0 0 clamp(72px, 12dvh, 104px); width:clamp(72px, 12dvh, 104px); height:clamp(72px, 12dvh, 104px); place-items:center; border-radius:50%; background:#283618; color:var(--consulta-acento); }
 .consulta-mozo__estado--cargando ~ .consulta-mozo__conversacion { display:none; }
-.consulta-mozo__estado-icono svg { width:58%; height:58%; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.consulta-mozo__estado-icono ion-spinner { width:92%; height:92%; }
 .consulta-mozo__bandeja { display: grid; gap: 12px; }
 .consulta-mozo .consulta-mozo__tarjeta { display: flex; flex-direction: column; min-height: 100px; padding: 14px; border: 1px solid rgb(221 161 94 / 13%); border-radius: 15px; background: var(--consulta-tarjeta); color: var(--consulta-texto); text-align: left; box-shadow: 0 5px 13px rgb(40 54 24 / 14%); }
 .consulta-mozo .consulta-mozo__tarjeta--pendiente { border: 2px solid var(--consulta-acento-fuerte); }

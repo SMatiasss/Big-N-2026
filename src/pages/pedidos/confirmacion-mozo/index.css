@@ -95,6 +95,13 @@
   font-size: clamp(14px, 4.1vw, 18px);
 }
 
+.pedido-card__fecha {
+  display: block;
+  margin: 2px 0 0 0;
+  color: var(--texto-suave);
+  font-size: clamp(13px, 3.8vw, 16px);
+}
+
 .pedido-card__cuerpo ul {
   list-style: none;
   padding: 0;

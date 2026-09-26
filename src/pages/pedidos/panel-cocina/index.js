@@ -12,7 +12,7 @@ export async function render(container) {
       <div data-header></div>
       <main class="panel-sector__main pantalla-lista__cuerpo">
         <p role="status"></p>
-        <div class="panel-sector__lista lista-ajustada" aria-live="polite"></div>
+        <div class="panel-sector__lista lista-ajustada" aria-live="polite"><div class="carga-lista" role="status"><ion-spinner name="crescent" aria-hidden="true"></ion-spinner><span>Cargando pedidos…</span></div></div>
       </main>
     </ion-content>
   `;
@@ -34,7 +34,10 @@ export async function render(container) {
     try {
       pedidos = await listarPedidosPorSector('cocina');
     } catch (err) {
-      if (vigente()) aviso.textContent = 'Error al cargar pedidos: ' + err.message;
+      if (vigente()) {
+        aviso.textContent = 'Error al cargar pedidos: ' + err.message;
+        lista.querySelector('.carga-lista')?.remove();
+      }
       return;
     }
     

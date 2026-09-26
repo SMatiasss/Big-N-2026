@@ -26,8 +26,6 @@
 .aprobacion-clientes__resumen { margin: 10px 0 12px; flex-shrink: 0; }
 .aprobacion-clientes__resumen [data-mensaje] { margin: 0; font-size: 1.3rem; font-weight: 700; line-height: 1.25; }
 .aprobacion-clientes__resumen [data-conexion] { margin: 5px 0 0; font-size: 1rem; line-height: 1.45; color: #e0e3ca; }
-.aprobacion-clientes__resultado { padding: 16px 20px; border-radius: 12px; background: #fefae0; color: #283618; line-height: 1.6; overflow-wrap: anywhere; }
-.aprobacion-clientes__resultado:empty { display: none; }
 .aprobacion-clientes__aviso { margin: 12px 0 0; font-size: .85rem; line-height: 1.4; flex-shrink: 0; }
 
 /* Visor de la foto a pantalla completa (se abre al tocar la foto de un

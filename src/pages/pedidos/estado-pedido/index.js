@@ -13,6 +13,7 @@ import './index.css';
 import { ajustarLista } from '../../../components/lista-ajustada/lista-ajustada.js';
 import { crearAppHeader } from '../../../components/app-header/app-header.js';
 import { mostrarToastError } from '../../../components/toast-error/toast-error.js';
+import { mostrarCapaCarga } from '../../../components/capa-carga/capa-carga.js';
 import { mostrarToastNormal } from '../../../components/toast-normal/toast-normal.js';
 import { ESTADOS_ITEM, ESTADOS_PEDIDO, ROLES } from '../../../config/constantes.js';
 import { obtenerPerfilActual } from '../../../services/auth.service.js';
@@ -206,15 +207,31 @@ export function render(container) {
 
   // solicitarCuenta es idempotente: si el cliente vuelve a tocar el botón (o
   // ya había pedido la cuenta antes) no duplica la fila ni reavisa al mozo.
+  //
+  // Pedir la cuenta son varias consultas seguidas más el aviso al mozo, así
+  // que la capa de carga aparece apenas se toca el botón y se va recién
+  // cuando la pantalla de la cuenta reemplaza a esta (esa ya trae su propio
+  // spinner). Si la navegación no llegara a ocurrir, se cierra sola igual.
   async function pedirCuenta(boton) {
     boton.disabled = true;
+    const cerrarCapa = mostrarCapaCarga('Pidiendo la cuenta');
     try {
       await solicitarCuenta();
-      navegarA(RUTA_CUENTA);
     } catch (error) {
+      cerrarCapa();
       mostrarToastError(`No se pudo pedir la cuenta: ${error.message ?? 'error desconocido'}`);
       boton.disabled = false;
+      return;
     }
+    const terminar = () => {
+      observador.disconnect();
+      clearTimeout(respaldo);
+      cerrarCapa();
+    };
+    const observador = new MutationObserver(() => { if (!boton.isConnected) terminar(); });
+    const respaldo = setTimeout(terminar, 15000);
+    observador.observe(container, { childList: true });
+    navegarA(RUTA_CUENTA);
   }
 
   // Los juegos son sólo para el cliente registrado (el anónimo no participa por

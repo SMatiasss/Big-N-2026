@@ -40,7 +40,7 @@ export async function render(container) {
         <div data-acciones class="hu11__acciones-contenedor"></div>
         <div data-pestanas></div>
         <p role="status"></p>
-        <section class="hu11__productos lista-ajustada" aria-label="Productos"></section>
+        <section class="hu11__productos lista-ajustada" aria-label="Productos"><div class="carga-lista"><ion-spinner name="crescent" aria-hidden="true"></ion-spinner></div></section>
       </main>
     </ion-content>
   `;
@@ -162,6 +162,7 @@ export async function render(container) {
         <div class="carrito-item-info">
           <h4>${item.producto.nombre}</h4>
           <strong class="carrito-item-subtotal">${new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(item.producto.precio * item.cantidad)}</strong>
+          <span class="carrito-item-tiempo">Preparación: ${item.producto.tiempo_elaboracion_min} min</span>
         </div>
         <div class="carrito-item-controles">
           <button type="button" class="btn-menos carrito-item-btn">-</button>

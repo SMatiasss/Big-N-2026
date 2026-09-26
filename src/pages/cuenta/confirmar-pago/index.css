@@ -264,14 +264,15 @@
 
 .confirmar-pago__estado-carga {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 14px;
 
   margin: 40px 0 0;
 
   color: var(--texto-suave);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .confirmar-pago__estado-carga ion-spinner {

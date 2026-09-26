@@ -54,7 +54,7 @@ Las responsabilidades se organizan según los módulos (objetivos) funcionales a
 | Fecha | Módulo | Responsable anterior | Nuevo responsable | Branch | Nueva finalización |
 | :--- | :---: | :--- | :--- | :--- | :---: |
 | 16/09 | 16 | Terenghi Goy | Romero | feature/14-16-17 | 16/09 |
-| 16/09 | 21 | Romero | Terenghi Goy | - | - |
+| 16/09 | 21 | Romero | Terenghi Goy | - | 17/09 |
 
 ## Logo
 

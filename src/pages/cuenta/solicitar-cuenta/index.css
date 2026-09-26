@@ -389,7 +389,7 @@
   text-align: left;
 }
 
-.cuenta__esperando-spinner { flex-shrink: 0; color: var(--acento); }
+.cuenta__esperando-spinner { flex-shrink: 0; width: 72px; height: 72px; color: var(--acento); }
 
 .cuenta__esperando-texto {
   color: var(--texto-claro);
@@ -406,14 +406,15 @@
 
 .cuenta__cargando {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 14px;
 
   margin: 40px 0 0;
 
   color: var(--texto-suave);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .cuenta__cargando ion-spinner { color: var(--acento); }

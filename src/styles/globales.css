@@ -64,3 +64,55 @@ body {
 
   border: 0;
 }
+
+/* Spinner de marca (TP: "spinners con el logo de la empresa, en todas las
+   esperas"). Se sigue usando <ion-spinner> en todas las pantallas: su aro se
+   dibuja con currentColor, así que queda transparente, y en su lugar gira el
+   logo en su disco crema, recortado como en inicio (167.2% = scale 1.672).
+   Por defecto mide 72px (Ionic trae 28px, más chico que un ícono de app);
+   las pantallas que lo ponen en un botón o al lado de un texto lo ajustan. */
+ion-spinner {
+  width: 72px;
+  height: 72px;
+  color: transparent !important;
+  border-radius: 50%;
+  background: #fefae0 url("/assets/logo/Icono Big N.svg") center / 167.2% no-repeat;
+  animation: spinner-logo-giro 1.1s linear infinite;
+}
+
+@keyframes spinner-logo-giro {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ion-spinner { animation-duration: 3s; }
+}
+
+/* Espera inicial de un listado: spinner + texto centrados en todo el alto
+   de la lista. Va como hijo directo de la lista: en las .lista-ajustada cada
+   hijo toma el alto de una tarjeta (--la-alto), así que acá se lo pisa para
+   que ocupe la lista entera. La primera respuesta del servidor reemplaza el
+   contenido de la lista, así que desaparece sola. */
+.carga-lista,
+.lista-ajustada > .carga-lista {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--form-texto-claro);
+  font-size: 17px;
+  text-align: center;
+}
+
+.carga-lista ion-spinner {
+  width: 88px;
+  height: 88px;
+}

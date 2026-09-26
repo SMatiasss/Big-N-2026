@@ -36,7 +36,7 @@ export function render(container, { id } = {}) {
       <ion-content>
         <div data-header></div>
         <main class="info-mesa__contenido">
-          <p class="info-mesa__estado" role="status">Cargando la mesa…</p>
+          <div class="info-mesa__estado" role="status"><div class="carga-lista" role="status"><ion-spinner name="crescent" aria-hidden="true"></ion-spinner><span>Cargando la mesa…</span></div></div>
           <section class="info-mesa__ficha" hidden>
             <div class="info-mesa__foto">
               <span class="info-mesa__sin-foto">${ICONO_CAMARA_SVG}<span>Sin foto</span></span>
